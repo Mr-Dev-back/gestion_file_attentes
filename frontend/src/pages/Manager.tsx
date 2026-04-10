@@ -1,0 +1,158 @@
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Globe, GitBranch, BarChart3, ClipboardCheck, LayoutDashboard, Truck, History, FileText, Activity } from 'lucide-react';
+import ManagerDashboard from './dashboards/ManagerDashboard';
+
+// Header section for Manager
+const ManagerHeader = () => {
+  const location = useLocation();
+  const path = location.pathname;
+
+  let title = "Espace Manager";
+  let description = "Vue d'ensemble et pilotage de l'activité";
+  let Icon = Globe;
+  let bgGradient = "from-primary/20 via-primary/5 to-transparent";
+
+  // Match the paths with the 4 poles
+  if (path.includes('/map') || path.includes('/dashboard') || path.includes('/benchmark')) {
+    title = "Pilotage Société";
+    description = "Vision stratégique et état de santé global des différents sites.";
+    Icon = Globe;
+    bgGradient = "from-blue-500/20 via-blue-500/5 to-transparent";
+  } else if (path.includes('/workflows') || path.includes('/alerts')) {
+    title = "Flux & Workflows";
+    description = "Supervision opérationnelle en temps réel des flux physiques.";
+    Icon = GitBranch;
+    bgGradient = "from-orange-500/20 via-orange-500/5 to-transparent";
+  } else if (path.includes('/reports') || path.includes('/stats/')) {
+    title = "Analyses & Rapports";
+    description = "Statistiques décisionnelles et analytique avancée.";
+    Icon = BarChart3;
+    bgGradient = "from-purple-500/20 via-purple-500/5 to-transparent";
+  } else if (path.includes('/history') || path.includes('/audit')) {
+    title = "Traçabilité & Contrôle";
+    description = "Historique consolidé et vérification de la conformité.";
+    Icon = ClipboardCheck;
+    bgGradient = "from-emerald-500/20 via-emerald-500/5 to-transparent";
+  }
+
+  return (
+    <div className={`relative overflow-hidden bg-gradient-to-r ${bgGradient} border-b border-white/20 p-8 pt-10 pb-12 transition-colors duration-500`}>
+      {/* Decorative background elements blur */}
+      <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
+        <Icon className="w-48 h-48 rotate-12" />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10 flex items-center gap-6">
+        <div className="p-4 bg-white/40 backdrop-blur-md rounded-2xl shadow-xl shadow-black/5 border border-white/50">
+          <Icon className="w-10 h-10 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-text-main to-primary filter drop-shadow-sm tracking-tight mb-2">
+            {title}
+          </h1>
+          <p className="text-text-muted font-medium text-lg max-w-2xl">
+            {description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Generic Placeholder Component for Views in construction
+const ViewPlaceholder = ({ title, description, icon: Icon }: { title: string, description: string, icon: any }) => (
+  <div className="flex flex-col items-center justify-center py-24 px-4 text-center space-y-6">
+    <div className="p-6 bg-primary/5 rounded-full ring-8 ring-primary/5 shadow-inner">
+      <Icon className="w-16 h-16 text-primary/40" />
+    </div>
+    <div className="max-w-md space-y-2">
+      <h2 className="text-2xl font-black text-slate-700 tracking-tight">{title}</h2>
+      <p className="text-slate-500 font-medium leading-relaxed">
+        {description}
+      </p>
+    </div>
+    <div className="pt-4 flex items-center gap-3 text-sm text-primary/60 font-bold bg-white px-4 py-2 rounded-xl shadow-sm border border-black/5">
+      <span className="relative flex h-3 w-3">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20"></span>
+        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary/40"></span>
+      </span>
+      En cours de développement
+    </div>
+  </div>
+);
+
+export default function Manager() {
+  return (
+    <div className="flex-1 w-full bg-slate-50/50 relative min-h-screen">
+      {/* Decorative global background dots */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
+
+      <ManagerHeader />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 -mt-8">
+        <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl p-6 md:p-8 border border-white/60 min-h-[500px]">
+          <Routes>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            
+            {/* 1. Pilotage Société */}
+            <Route path="map" element={<ViewPlaceholder 
+              title="Cartographie Interactive" 
+              description="Vue visuelle de tous les sites (Abidjan, San Pedro, etc.) avec indicateurs d'état en temps réel." 
+              icon={Globe} />} 
+            />
+            <Route path="dashboard" element={<ManagerDashboard />} />
+            <Route path="benchmark" element={<ViewPlaceholder 
+              title="Comparatif Inter-Sites" 
+              description="Graphiques dynamiques comparant la performance, les volumes et la fluidité de chaque site." 
+              icon={BarChart3} />} 
+            />
+
+            {/* 2. Flux & Workflows */}
+            <Route path="workflows/monitor" element={<ViewPlaceholder 
+              title="Supervision des Workflows" 
+              description="Vue en direct de la répartition des camions par étape (flux physiques et numériques)." 
+              icon={Truck} />} 
+            />
+            <Route path="alerts" element={<ViewPlaceholder 
+              title="Goulots & Alertes Live" 
+              description="Liste centralisée des points de blocages critiques et temps d'attentes anormaux signalés." 
+              icon={Activity} />} 
+            />
+
+            {/* 3. Analyses & Rapports */}
+            <Route path="reports" element={<ViewPlaceholder 
+              title="Rapports Décisionnels" 
+              description="Génération et planification d'exports PDF/Excel consolidés pour la direction générale." 
+              icon={FileText} />} 
+            />
+            <Route path="stats/categories" element={<ViewPlaceholder 
+              title="Volume par Catégorie" 
+              description="Répartition des volumes et des tickets de type INFRA, BATIMENT, ELECTRICITE, etc." 
+              icon={BarChart3} />} 
+            />
+            <Route path="stats/timing" element={<ViewPlaceholder 
+              title="Analyse du Temps de Cadencement" 
+              description="Étude détaillée des temps de cycle (Time-in-Site) de l'entrée à la sortie des transporteurs." 
+              icon={Activity} />} 
+            />
+
+            {/* 4. Contrôle */}
+            <Route path="history" element={<ViewPlaceholder 
+              title="Historique Global" 
+              description="Recherche multi-critères poussée sur tous les tickets archivés de la société." 
+              icon={History} />} 
+            />
+            <Route path="audit" element={<ViewPlaceholder 
+              title="Journaux d'Opérations" 
+              description="Traçabilité totale et consultation des logs métiers (Pesée entrées/sorties, affectations)." 
+              icon={ClipboardCheck} />} 
+            />
+
+            {/* Catch-all */}
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
+          </Routes>
+        </div>
+      </main>
+    </div>
+  );
+}

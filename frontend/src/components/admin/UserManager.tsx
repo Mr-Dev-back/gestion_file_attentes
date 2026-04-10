@@ -1,0 +1,541 @@
+import { useState, useMemo } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '../molecules/ui/card';
+import { Button } from '../atoms/ui/button';
+import { Input } from '../atoms/ui/input';
+import { Badge } from '../atoms/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/ui/table';
+import { Modal, ConfirmModal } from '../molecules/ui/modal';
+import { toast } from '../molecules/ui/toast';
+import { 
+    UserPlus, 
+    Search, 
+    Trash2, 
+    Edit2, 
+    Lock, 
+    Smartphone, 
+    ToggleRight, 
+    ToggleLeft, 
+    Shield, 
+    Loader2, 
+    LogOut,
+    Check,
+    Layers
+} from 'lucide-react';
+import { useUsers } from '../../hooks/useUsers';
+import { useRoles } from '../../hooks/useRoles';
+import { useCompanies } from '../../hooks/useCompanies';
+import { useSites } from '../../hooks/useSites';
+import { useQueues } from '../../hooks/useQueues';
+import { useBulkSelection } from '../../hooks/useBulkSelection';
+import { BulkActionsToolbar } from '../molecules/BulkActionsToolbar';
+import { AdminSkeleton } from '../molecules/ui/admin-skeleton';
+import { EmptyState } from '../molecules/ui/empty-state';
+import { cn } from '../../lib/utils';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { userSchema } from '../../lib/validation';
+
+export const UserManager = () => {
+    const isAdmin = useAuthStore(state => state.isAdmin());
+    const { 
+        users, 
+        isLoading: isLoadingUsers, 
+        createUser, 
+        updateUser, 
+        deleteUser, 
+        toggleActive, 
+        unlockUser, 
+        getUserSessions, 
+        revokeSession,
+        bulkDeleteUsers,
+        bulkUpdateStatus
+    } = useUsers();
+    const { roles } = useRoles();
+    const { companies } = useCompanies();
+    const { sites } = useSites();
+    const { queues } = useQueues();
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        setValue,
+        formState: { errors, isValid, isDirty }
+    } = useForm({
+        resolver: zodResolver(userSchema),
+        defaultValues: {
+            username: '',
+            email: '',
+            password: '',
+            role: 'MANAGER' as any,
+            siteId: '',
+            companyId: '',
+            queueId: '',
+            queueIds: [] as string[]
+        },
+        mode: 'onChange'
+    });
+
+    const watchedRole = watch('role');
+    const watchedQueueIds = watch('queueIds') || [];
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<any>(null);
+    
+    const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
+    const [sessionsUser, setSessionsUser] = useState<any>(null);
+    const [activeSessions, setActiveSessions] = useState<any[]>([]);
+    
+    const [userSearch, setUserSearch] = useState('');
+    
+    const [confirmState, setConfirmState] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        variant?: 'danger' | 'warning' | 'primary';
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+    });
+
+    const closeConfirm = () => setConfirmState(prev => ({ ...prev, isOpen: false }));
+
+    const filteredUsers = useMemo(() => 
+        users.filter(user =>
+            (user.username || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+            (user.email || '').toLowerCase().includes(userSearch.toLowerCase())
+        ),
+        [users, userSearch]
+    );
+
+    const {
+        selectedIds,
+        selectedCount,
+        isAllSelected,
+        toggleSelect,
+        toggleSelectAll,
+        clearSelection,
+        isSelected
+    } = useBulkSelection(filteredUsers.map(u => u.userId));
+
+    const handleBulkDeleteUsers = () => {
+        setConfirmState({
+            isOpen: true,
+            title: 'Suppression groupée',
+            message: `Voulez-vous vraiment supprimer les ${selectedCount} utilisateurs sélectionnés ? Cette action est irréversible et d'autres entités liées pourraient être affectées.`,
+            variant: 'danger',
+            onConfirm: async () => {
+                try {
+                    await bulkDeleteUsers.mutateAsync(selectedIds);
+                    clearSelection();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        });
+    };
+
+    const handleBulkToggleUsers = async (isActive: boolean) => {
+        const action = isActive ? 'activer' : 'désactiver';
+        setConfirmState({
+            isOpen: true,
+            title: `${isActive ? 'Activation' : 'Désactivation'} groupée`,
+            message: `Voulez-vous vraiment ${action} les ${selectedCount} utilisateurs sélectionnés ?`,
+            onConfirm: async () => {
+                try {
+                    await bulkUpdateStatus.mutateAsync({ ids: selectedIds, isActive });
+                    clearSelection();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        });
+    };
+
+    const handleUnlockUser = (user: any) => {
+        setConfirmState({
+            isOpen: true,
+            title: 'Débloquer l\'utilisateur',
+            message: `Voulez-vous débloquer l'utilisateur ${user.username} ?`,
+            onConfirm: () => {
+                unlockUser.mutate(user.userId, {
+                    onSuccess: () => toast('Utilisateur débloqué avec succès', 'success'),
+                    onError: () => toast('Erreur lors du déblocage', 'error')
+                });
+            },
+            variant: 'primary'
+        });
+    };
+
+    const handleOpenSessions = async (user: any) => {
+        setSessionsUser(user);
+        setIsSessionsModalOpen(true);
+        setActiveSessions([]);
+        try {
+            const sessions = await getUserSessions(user.userId);
+            setActiveSessions(sessions);
+        } catch (error) {
+            console.error("Failed to load sessions", error);
+        }
+    };
+
+    const handleRevokeSession = (sessionId: string) => {
+        setConfirmState({
+            isOpen: true,
+            title: 'Révoquer la session',
+            message: 'Voulez-vous vraiment déconnecter cet appareil à distance ?',
+            variant: 'danger',
+            onConfirm: () => {
+                revokeSession.mutate(sessionId, {
+                    onSuccess: () => {
+                        setActiveSessions(prev => prev.filter(s => s.sessionId !== sessionId));
+                    }
+                });
+            }
+        });
+    };
+
+    const handleOpenUserModal = (user: any = null) => {
+        if (user) {
+            setEditingUser(user);
+            reset({ 
+                username: user.username, 
+                email: user.email, 
+                password: '', 
+                role: user.role, 
+                siteId: user.siteId || '',
+                companyId: user.companyId || '',
+                queueId: user.queueId || '',
+                queueIds: user.queues?.map((q: any) => q.queueId) || []
+            });
+        } else {
+            setEditingUser(null);
+            reset({ 
+                username: '', 
+                email: '', 
+                password: '', 
+                role: 'MANAGER', 
+                siteId: '', 
+                companyId: '', 
+                queueId: '',
+                queueIds: []
+            });
+        }
+        setIsUserModalOpen(true);
+    };
+
+    const toggleQueue = (qid: string) => {
+        const current = watchedQueueIds;
+        const next = current.includes(qid)
+            ? current.filter(id => id !== qid)
+            : [...current, qid];
+        setValue('queueIds', next, { shouldValidate: true });
+        setValue('queueId', next.length > 0 ? next[0] : '', { shouldValidate: true });
+    };
+
+    const onSaveUser = (data: any) => {
+        const payload: any = { ...data };
+        
+        if (payload.role === 'ADMINISTRATOR') {
+            payload.siteId = null; payload.companyId = null; payload.queueIds = []; payload.queueId = null;
+        } else if (payload.role === 'MANAGER') {
+            payload.siteId = null; payload.queueIds = []; payload.queueId = null;
+        } else if (payload.role === 'SUPERVISOR' || payload.role === 'AGENT_GUERITE') {
+            payload.companyId = null; payload.queueIds = []; payload.queueId = null;
+        } else if (payload.role === 'AGENT_QUAI') {
+            payload.siteId = null; payload.companyId = null;
+        }
+
+        if (payload.password === '') delete payload.password;
+
+        if (editingUser) {
+            updateUser.mutate({ id: editingUser.userId, data: payload } as any, {
+                onSuccess: () => setIsUserModalOpen(false)
+            });
+        } else {
+            createUser.mutate(payload as any, {
+                onSuccess: () => setIsUserModalOpen(false)
+            });
+        }
+    };
+
+    const handleDelete = (id: string, mutation: any, message: string) => {
+        setConfirmState({
+            isOpen: true,
+            title: 'Confirmation de suppression',
+            message: message,
+            variant: 'danger',
+            onConfirm: () => {
+                mutation.mutate(id, {
+                    onSuccess: () => toast('Suppression réussie', 'success'),
+                    onError: () => toast('Erreur lors de la suppression', 'error')
+                });
+            }
+        });
+    };
+
+    return (
+        <div className="space-y-4 animate-slide-up">
+            <Card className="border border-slate-200/60 shadow-lg bg-white rounded-2xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 p-8 border-b border-white/10 bg-white/30">
+                    <div className="flex flex-col gap-1">
+                        <CardTitle className="text-2xl font-black flex items-center gap-3"><span className="w-2 h-8 bg-primary rounded-full"></span>Gestion des Comptes</CardTitle>
+                        <p className="text-sm text-text-muted font-medium ml-5">Gérez les accès et les rôles des utilisateurs</p>
+                    </div>
+                    {isAdmin && (
+                        <Button onClick={() => handleOpenUserModal()} className="gap-2 rounded-xl shadow-lg shadow-primary/20"><UserPlus className="h-4 w-4" />Nouvel Utilisateur</Button>
+                    )}
+                </CardHeader>
+                <CardContent className="p-0">
+                    <div className="p-6 border-b border-white/10 bg-white/20">
+                        <div className="relative max-w-md group">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+                            <Input placeholder="Rechercher un utilisateur (nom, email)..." value={userSearch} onChange={(e) => setUserSearch(e.target.value)} className="pl-10 h-10 bg-white/50 border-white/40 focus:bg-white rounded-xl shadow-sm" />
+                        </div>
+                    </div>
+                    {isLoadingUsers ? <div className="p-6"><AdminSkeleton variant="table" count={10} /></div> : (
+                        <Table stickyHeader maxHeight="65vh">
+                            <TableHeader sticky>
+                                <TableRow className="border-b border-white/10 hover:bg-transparent bg-white/10">
+                                    <TableHead className="w-[50px] pl-6">
+                                        <div className="flex items-center gap-2">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={isAllSelected} 
+                                                onChange={toggleSelectAll} 
+                                                className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
+                                            />
+                                        </div>
+                                    </TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">UTILISATEUR</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">CONTEXTE (SITE/SOCIÉTÉ/FILE)</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">RÔLE</TableHead>
+                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">STATUT</TableHead>
+                                    <TableHead className="text-right pr-8 text-[10px] font-black uppercase text-slate-400 tracking-widest">ACTIONS</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredUsers.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="p-0 border-0 hover:bg-transparent">
+                                            <EmptyState
+                                                icon={Search}
+                                                title="Aucun utilisateur trouvé"
+                                                description={userSearch ? "Aucun utilisateur ne correspond à votre recherche." : "Vous n'avez pas encore d'utilisateurs. Ajoutez-en un pour commencer."}
+                                                actionLabel={!userSearch ? "Nouvel Utilisateur" : undefined}
+                                                onAction={!userSearch ? () => handleOpenUserModal() : undefined}
+                                                className="py-16"
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filteredUsers.map(user => (
+                                    <TableRow 
+                                        key={user.userId} 
+                                        className={cn(
+                                            "transition-all duration-200 border-white/5", 
+                                            isSelected(user.userId) 
+                                                ? "bg-primary/10 border-l-4 border-l-primary shadow-sm" 
+                                                : "hover:bg-white/40 border-l-4 border-l-transparent"
+                                        )}
+                                    >
+                                        <TableCell className="pl-6">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={isSelected(user.userId)} 
+                                                onChange={() => toggleSelect(user.userId)} 
+                                                className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110" 
+                                            />
+                                        </TableCell>
+                                        <TableCell><div className="flex flex-col"><span className="font-bold text-text-main text-base">{user.username}</span><span className="text-xs text-text-muted font-medium">{user.email}</span></div></TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-1.5 max-w-[300px]">
+                                                {user.role === 'ADMINISTRATOR' && <Badge variant="outline" className="bg-slate-50 border-slate-200 text-slate-500">ACCÈS GLOBAL</Badge>}
+                                                {user.role === 'MANAGER' && <Badge className="bg-primary/10 text-primary border-primary/10">{user.company?.name || 'Inconnu'}</Badge>}
+                                                {(user.role === 'SUPERVISOR' || user.role === 'AGENT_GUERITE') && <Badge className="bg-blue-50 text-blue-600 border-blue-100">{user.site?.name || 'Inconnu'}</Badge>}
+                                                {user.role === 'AGENT_QUAI' && (
+                                                    (user.queues && user.queues.length > 0) ? (
+                                                        user.queues.map(q => <Badge key={q.queueId} className="bg-emerald-50 text-emerald-600 border-emerald-100">{q.name}</Badge>)
+                                                    ) : (
+                                                        <Badge variant="secondary" className="opacity-50">Aucune file</Badge>
+                                                    )
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell><Badge variant="outline" className="bg-white/50 border-white/40"><Shield className="h-3 w-3 mr-1.5 opacity-70" />{roles.find(r => r.name === user.role)?.name || user.role}</Badge></TableCell>
+                                        <TableCell><Badge variant={user.isActive ? "success" : "secondary"}>{user.isActive ? "Actif" : "Inactif"}</Badge></TableCell>
+                                        <TableCell className="text-right pr-6">
+                                            <div className="flex justify-end gap-1">
+                                                {isAdmin && (
+                                                    <>
+                                                        <Button variant="ghost" size="sm" onClick={() => toggleActive.mutate({ id: user.userId, isActive: !user.isActive })} className="h-8 w-8">{user.isActive ? <ToggleRight className="h-5 w-5 text-success" /> : <ToggleLeft className="h-5 w-5 text-text-muted" />}</Button>
+                                                        {user.lockUntil && new Date(user.lockUntil) > new Date() && <Button variant="ghost" size="sm" onClick={() => handleUnlockUser(user)} className="h-8 w-8 text-warning" title="Débloquer"><Lock className="h-4 w-4" /></Button>}
+                                                        <Button variant="ghost" size="sm" onClick={() => handleOpenSessions(user)} className="h-8 w-8 text-info" title="Sessions Actives"><Smartphone className="h-4 w-4" /></Button>
+                                                        <Button variant="ghost" size="sm" onClick={() => handleOpenUserModal(user)} className="h-8 w-8" title="Modifier"><Edit2 className="h-4 w-4" /></Button>
+                                                        <Button variant="ghost" size="sm" onClick={() => handleDelete(user.userId, deleteUser, 'Supprimer ?')} className="h-8 w-8 text-danger" title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
+                </CardContent>
+            </Card>
+
+            <Modal size="lg" isOpen={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} title={editingUser ? `Modifier: ${editingUser.username}` : "Nouveau Collaborateur"} isDirty={isDirty}>
+                <form onSubmit={handleSubmit(onSaveUser)} className="space-y-4 py-4">
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Nom d'utilisateur</label>
+                        <Input placeholder="Nom d'utilisateur" {...register('username')} error={errors.username?.message} />
+                    </div>
+                    
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Email professionnel</label>
+                        <Input placeholder="Email" type="email" {...register('email')} error={errors.email?.message} />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">{editingUser ? "Modifier le mot de passe (optionnel)" : "Mot de passe"}</label>
+                        <Input placeholder="Mot de passe" type="password" {...register('password')} error={errors.password?.message} />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Rôle Système</label>
+                        <select className={cn("w-full h-10 px-3 border border-slate-200 rounded-xl outline-none font-bold text-sm bg-white transition-all focus:border-primary focus:ring-2 focus:ring-primary/20", errors.role && "border-danger focus:border-danger focus:ring-danger/20")} {...register('role')}>
+                            <option value="">-- Sélectionner un Rôle --</option>
+                            {roles.map((r: any) => <option key={r.roleId} value={r.name}>{r.name}</option>)}
+                        </select>
+                        {errors.role && <p className="text-[10px] font-bold text-danger ml-1">{errors.role.message}</p>}
+                    </div>
+
+                    {watchedRole === 'MANAGER' && (
+                        <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Société de rattachement</label>
+                            <select className={cn("w-full h-10 px-3 border border-slate-200 rounded-xl outline-none font-bold text-sm bg-white transition-all focus:border-primary focus:ring-2 focus:ring-primary/20", errors.companyId && "border-danger focus:border-danger focus:ring-danger/20")} {...register('companyId')}>
+                                <option value="">-- Sélectionner une Société --</option>
+                                {companies.map(c => <option key={c.companyId} value={c.companyId}>{c.name}</option>)}
+                            </select>
+                            {errors.companyId && <p className="text-[10px] font-bold text-danger ml-1">{errors.companyId.message}</p>}
+                        </div>
+                    )}
+
+                    {(watchedRole === 'SUPERVISOR' || watchedRole === 'AGENT_GUERITE') && (
+                        <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Site de rattachement</label>
+                            <select className={cn("w-full h-10 px-3 border border-slate-200 rounded-xl outline-none font-bold text-sm bg-white transition-all focus:border-primary focus:ring-2 focus:ring-primary/20", errors.siteId && "border-danger focus:border-danger focus:ring-danger/20")} {...register('siteId')}>
+                                <option value="">-- Sélectionner un Site --</option>
+                                {companies.map(c => (
+                                    <optgroup key={c.companyId} label={c.name}>
+                                        {sites.filter(s => s.companyId === c.companyId).map(s => <option key={s.siteId} value={s.siteId}>{s.name}</option>)}
+                                    </optgroup>
+                                ))}
+                            </select>
+                            {errors.siteId && <p className="text-[10px] font-bold text-danger ml-1">{errors.siteId.message}</p>}
+                        </div>
+                    )}
+
+                    {watchedRole === 'AGENT_QUAI' && (
+                        <div className="space-y-3 animate-in slide-in-from-top-2 border-t pt-4 border-slate-50">
+                            <div className="flex items-center justify-between">
+                                <label className="text-[10px] font-black uppercase text-slate-400 ml-1 flex items-center gap-2">
+                                    <Layers className="h-3 w-3" /> Files d'attente assignées
+                                </label>
+                                <span className="text-[10px] font-black text-primary px-2 py-0.5 bg-primary/10 rounded-full">{watchedQueueIds.length} file(s)</span>
+                            </div>
+                            <div className="flex flex-wrap gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100 max-h-[200px] overflow-y-auto">
+                                {queues.map(q => {
+                                    const isSelectedRow = watchedQueueIds.includes(q.queueId);
+                                    return (
+                                        <button
+                                            key={q.queueId}
+                                            type="button"
+                                            onClick={() => toggleQueue(q.queueId)}
+                                            className={cn(
+                                                "flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-200 text-xs font-bold",
+                                                isSelectedRow 
+                                                    ? "bg-white border-primary text-primary shadow-sm ring-2 ring-primary/5" 
+                                                    : "bg-transparent border-slate-200 text-slate-400 hover:border-slate-300"
+                                            )}
+                                        >
+                                            <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center transition-colors", isSelectedRow ? "bg-primary border-primary" : "border-slate-300")}>
+                                                {isSelectedRow && <Check className="h-2.5 w-2.5 text-white stroke-[4]" />}
+                                            </div>
+                                            {q.name}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            {errors.queueIds && <p className="text-[10px] font-bold text-danger ml-1">{errors.queueIds.message}</p>}
+                        </div>
+                    )}
+
+                    <div className="flex justify-end gap-3 pt-6">
+                        <Button type="button" variant="outline" onClick={() => setIsUserModalOpen(false)} className="rounded-xl px-6">Annuler</Button>
+                        <Button type="submit" className="rounded-xl px-10 shadow-lg shadow-primary/20" disabled={!isValid || createUser.isPending || updateUser.isPending}>
+                            {createUser.isPending || updateUser.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                            {editingUser ? 'Enregistrer les modifications' : 'Créer l\'utilisateur'}
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
+
+            <Modal isOpen={isSessionsModalOpen} onClose={() => setIsSessionsModalOpen(false)} title={`Sessions Actives: ${sessionsUser?.username}`}>
+                <div className="space-y-4">
+                    <p className="text-xs text-text-muted font-bold uppercase tracking-wider">Appareils et navigateurs connectés</p>
+                    <div className="max-h-[50vh] overflow-y-auto space-y-2 pr-2">
+                        {activeSessions.map((session) => (
+                            <div key={session.sessionId} className="flex items-center justify-between p-4 bg-white/40 border border-white/60 rounded-2xl group hover:border-primary/30 transition-all">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                                        <Smartphone className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-text-main line-clamp-1">{session.userAgent || 'Appareil inconnu'}</p>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                            <Badge variant="outline" className="text-[10px] py-0">{session.ipAddress}</Badge>
+                                            <span className="text-[10px] text-text-muted font-medium italic">Dernier accès: {new Date(session.updatedAt).toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleRevokeSession(session.sessionId)}
+                                    className="h-9 w-9 text-danger hover:bg-danger/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    title="Révoquer la session"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </Modal>
+
+            <ConfirmModal
+                isOpen={confirmState.isOpen}
+                onClose={closeConfirm}
+                onConfirm={confirmState.onConfirm}
+                title={confirmState.title}
+                message={confirmState.message}
+                variant={confirmState.variant}
+            />
+
+            <BulkActionsToolbar
+                selectedCount={selectedCount}
+                onDelete={handleBulkDeleteUsers}
+                onActivate={() => handleBulkToggleUsers(true)}
+                onDeactivate={() => handleBulkToggleUsers(false)}
+                onClear={clearSelection}
+                isLoading={bulkDeleteUsers.isPending || bulkUpdateStatus.isPending}
+                label="utilisateurs sélectionnés"
+            />
+        </div>
+    );
+};

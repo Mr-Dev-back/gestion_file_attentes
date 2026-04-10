@@ -1,0 +1,360 @@
+[
+  {
+    "orderNumber": "CMD2024-001",
+    "client": {
+      "name": "ENTREPRISE BTP DÉCO"
+    },
+    "commercial": {
+      "name": "Jean Dupont"
+    },
+    "categories": [
+      {
+        "code": "BAT",
+        "label": "BATIMENT"
+      },
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "PAID",
+    "products": [
+      {
+        "sku": "AGLO-15-C",
+        "label": "Agglos creux 15x20x40",
+        "quantity": 1000,
+        "theoreticalWeightKg": 18000
+      },
+      {
+        "sku": "PAVE-B-6",
+        "label": "Pavés autobloquants Gris 6cm",
+        "quantity": 500,
+        "theoreticalWeightKg": 67500
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-002",
+    "client": {
+      "name": "LB BUILDING"
+    },
+    "commercial": {
+      "name": "Albert Mathurin"
+    },
+    "categories": [
+      {
+        "code": "BAT",
+        "label": "BATIMENT"
+      },
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "BS-SIBM-25",
+        "label": "Béton sec SIBM (Sac 25kg)",
+        "quantity": 200,
+        "theoreticalWeightKg": 5000
+      },
+      {
+        "sku": "BORD-T2",
+        "label": "Bordure de trottoir type T2",
+        "quantity": 150,
+        "theoreticalWeightKg": 9000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-003",
+    "client": {
+      "name": "PORTEO BTP"
+    },
+    "commercial": {
+      "name": "Marc Elioth"
+    },
+    "categories": [
+      {
+        "code": "ELECT",
+        "label": "ELECTRICITE"
+      },
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "POT-BA-9-400",
+        "label": "Poteau Béton Armé 9m / 400 daN",
+        "quantity": 25,
+        "theoreticalWeightKg": 18750
+      },
+      {
+        "sku": "TUY-BA-800",
+        "label": "Tuyau béton armé Ø800 (Classe 90A)",
+        "quantity": 10,
+        "theoreticalWeightKg": 12500
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-004",
+    "client": {
+      "name": "SOGEA SATOM"
+    },
+    "commercial": {
+      "name": "Koffi Kouamé"
+    },
+    "categories": [
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "PAID",
+    "products": [
+      {
+        "sku": "TUY-BA-1000",
+        "label": "Tuyau béton armé Ø1000 Classe 135A",
+        "quantity": 20,
+        "theoreticalWeightKg": 32000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-005",
+    "client": {
+      "name": "BOUYGUES CI"
+    },
+    "commercial": {
+      "name": "Awa Touré"
+    },
+    "categories": [
+      {
+        "code": "ELECT",
+        "label": "ELECTRICITE"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "POT-BA-12-600",
+        "label": "Poteau Béton Armé 12m / 600 daN",
+        "quantity": 15,
+        "theoreticalWeightKg": 21000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-006",
+    "client": {
+      "name": "GROUPE PFO AFRICA"
+    },
+    "commercial": {
+      "name": "Jean Dupont"
+    },
+    "categories": [
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      },
+      {
+        "code": "BAT",
+        "label": "BATIMENT"
+      }
+    ],
+    "paymentStatus": "PAID",
+    "products": [
+      {
+        "sku": "CAN-L-50",
+        "label": "Caniveau en U 50x50x100",
+        "quantity": 100,
+        "theoreticalWeightKg": 25000
+      },
+      {
+        "sku": "DAL-COUV-50",
+        "label": "Dalle de couverture caniveau 50",
+        "quantity": 100,
+        "theoreticalWeightKg": 8000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-007",
+    "client": {
+      "name": "SOCIETE MAGIL CI"
+    },
+    "commercial": {
+      "name": "Marc Elioth"
+    },
+    "categories": [
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "BORD-T3",
+        "label": "Bordure de trottoir type T3",
+        "quantity": 300,
+        "theoreticalWeightKg": 16500
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-008",
+    "client": {
+      "name": "SADE CI"
+    },
+    "commercial": {
+      "name": "Albert Mathurin"
+    },
+    "categories": [
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "PAID",
+    "products": [
+      {
+        "sku": "REG-VIS-100",
+        "label": "Regard de visite Ø1000",
+        "quantity": 5,
+        "theoreticalWeightKg": 4500
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-009",
+    "client": {
+      "name": "QUARTIER VIP SERVICES"
+    },
+    "commercial": {
+      "name": "Awa Touré"
+    },
+    "categories": [
+      {
+        "code": "BAT",
+        "label": "BATIMENT"
+      }
+    ],
+    "paymentStatus": "PAID",
+    "products": [
+      {
+        "sku": "PAVE-H-8",
+        "label": "Pavés H (Huit) Rouge 8cm",
+        "quantity": 250,
+        "theoreticalWeightKg": 42000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-010",
+    "client": {
+      "name": "ENERGIE CI"
+    },
+    "commercial": {
+      "name": "Koffi Kouamé"
+    },
+    "categories": [
+      {
+        "code": "ELECT",
+        "label": "ELECTRICITE"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "POT-BA-11-500",
+        "label": "Poteau Béton Armé 11m / 500 daN",
+        "quantity": 40,
+        "theoreticalWeightKg": 48000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-011",
+    "client": {
+      "name": "PROMOGIM"
+    },
+    "commercial": {
+      "name": "Jean Dupont"
+    },
+    "categories": [
+      {
+        "code": "BAT",
+        "label": "BATIMENT"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "AGLO-20-C",
+        "label": "Agglos creux 20x20x40",
+        "quantity": 2000,
+        "theoreticalWeightKg": 44000
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-012",
+    "client": {
+      "name": "SOCIETE IVOIRIENNE DE CONSTRUCTION"
+    },
+    "commercial": {
+      "name": "Marc Elioth"
+    },
+    "categories": [
+      {
+        "code": "BAT",
+        "label": "BATIMENT"
+      }
+    ],
+    "paymentStatus": "PAID",
+    "products": [
+      {
+        "sku": "BS-SIBM-25",
+        "label": "Béton sec SIBM (Sac 25kg)",
+        "quantity": 500,
+        "theoreticalWeightKg": 12500
+      }
+    ]
+  },
+  {
+    "orderNumber": "CMD2024-013",
+    "client": {
+      "name": "RAZEL-BEC"
+    },
+    "commercial": {
+      "name": "Albert Mathurin"
+    },
+    "categories": [
+      {
+        "code": "INFRA",
+        "label": "INFRASTRUCTURE"
+      }
+    ],
+    "paymentStatus": "UNPAID",
+    "products": [
+      {
+        "sku": "BORD-A2",
+        "label": "Bordure d'accotement type A2",
+        "quantity": 400,
+        "theoreticalWeightKg": 22000
+      },
+      {
+        "sku": "CS-1",
+        "label": "Caniveau de sécurité CS1",
+        "quantity": 50,
+        "theoreticalWeightKg": 11000
+      }
+    ]
+  }
+]
