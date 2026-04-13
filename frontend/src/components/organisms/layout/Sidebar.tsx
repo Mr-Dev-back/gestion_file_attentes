@@ -82,7 +82,7 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-slate-800 leading-none">GFA</span>
+              <span className="text-xl font-bold text-slate-800 leading-none">GesParc</span>
             </div>
           )}
         </div>
