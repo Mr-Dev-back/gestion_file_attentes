@@ -326,10 +326,6 @@ export const SiteManager = () => {
                             <input type="checkbox" {...register('isActive')} className="rounded accent-primary h-4 w-4" />
                             <span className="text-sm font-medium">Actif</span>
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" {...register('isMonoUserProcess')} className="rounded accent-primary h-4 w-4" />
-                            <span className="text-sm font-medium">Mode Mono-Utilisateur</span>
-                        </label>
                     </div>
                     <div className="flex justify-end gap-2 pt-4 border-t border-slate-100">
                         <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} className="rounded-xl">Annuler</Button>
