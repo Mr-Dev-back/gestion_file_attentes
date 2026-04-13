@@ -151,7 +151,7 @@ export default function Entry() {
                         <img src="/sibm.png" alt="GFA SIBM" className="relative h-12 w-auto rounded-xl border border-white/50 transition-transform group-hover:scale-105 object-contain bg-white/50" />
                     </div>
                     <div className="flex flex-col">
-                        <h1 className="text-2xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">GFA SIBM</h1>
+                        <h1 className="text-2xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">GesParc</h1>
                         <p className="text-[10px] text-text-muted font-bold tracking-widest uppercase opacity-80">Gestion des files d'attentes</p>
                     </div>
                 </div>
