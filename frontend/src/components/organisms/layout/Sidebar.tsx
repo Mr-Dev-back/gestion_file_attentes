@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LogOut, ChevronLeft, Menu, Loader2 } from 'lucide-react';
+import { LogOut, ChevronLeft, Menu, Loader2, Home } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../atoms/ui/button';
 import { useAuthStore } from '../../../stores/useAuthStore';
@@ -12,28 +13,16 @@ interface SidebarProps {
   setCollapsed: (collapsed: boolean) => void;
 }
 
-/**
- * Structure de réponse attendue de l'API pour les quais actifs.
- */
 interface QuaiApiResponse {
   quaiId: string;
   label: string;
 }
 
-/**
- * Composant de navigation latérale dynamique.
- * Gère le chargement des quais en temps réel et les permissions d'accès.
- */
 export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   const { user, logout } = useAuthStore();
-  
-  // États locaux pour la gestion dynamique des quais
   const [quais, setQuais] = useState<QuaiMenuData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  /**
-   * Effet de chargement des données dynamiques au montage ou changement d'utilisateur.
-   */
   useEffect(() => {
     if (!user) {
       setIsLoading(false);
@@ -43,15 +32,11 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
     const fetchActiveQuais = async () => {
       try {
         setIsLoading(true);
-        // Appel API vers le endpoint des quais actifs
         const response = await api.get<QuaiApiResponse[]>('/quais/active');
-        
-        // Mapping vers notre interface interne
         const mappedQuais: QuaiMenuData[] = response.data.map((q) => ({
           quaiId: q.quaiId,
           label: q.label,
         }));
-        
         setQuais(mappedQuais);
       } catch (error) {
         console.error("Échec de la récupération des quais:", error);
@@ -64,120 +49,173 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
     fetchActiveQuais();
   }, [user]);
 
-  // Calcul des menus accessibles
   const menuItems = getMenuItems(user, quais);
 
   if (!user) return null;
 
   return (
-    <aside className={cn(
-      'fixed left-0 top-0 z-40 h-screen flex flex-col bg-white border-r border-slate-100 shadow-xl transition-all duration-300',
-      collapsed ? 'w-20' : 'w-64'
-    )}>
+    <motion.aside 
+      initial={false}
+      animate={{ width: collapsed ? 80 : 256 }}
+      className={cn(
+        'fixed left-0 top-0 z-50 h-screen flex flex-col bg-white border-r border-slate-200/60 shadow-2xl shadow-slate-200/50 transition-colors duration-300',
+      )}
+    >
       {/* Header : Logo & Toggle */}
-      <div className="flex h-20 items-center justify-between px-6 border-b border-slate-50">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
-            <img src="/sibm.png" alt="Logo" className="h-6 w-6" />
+      <div className="flex h-20 items-center justify-between px-5 border-b border-slate-50">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center shadow-md border border-slate-100 shrink-0 p-1">
+            <img src="/sibm.png" alt="Logo" className="h-10 w-10 object-contain" />
           </div>
-          {!collapsed && (
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-slate-800 leading-none">GesParc</span>
-            </div>
-          )}
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="flex flex-col"
+              >
+                <span className="text-lg font-black text-slate-800 tracking-tighter leading-none">SIBM</span>
+                <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">GesParc</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
+        
+        <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-primary transition-colors"
+          className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-primary transition-all active:scale-90"
         >
-          {collapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
-        </Button>
+          <motion.div animate={{ rotate: collapsed ? 180 : 0 }}>
+            <ChevronLeft size={18} />
+          </motion.div>
+        </button>
       </div>
 
-      {/* Navigation : Menu dynamique & statique */}
-      <nav className="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto p-3 space-y-1.5 no-scrollbar">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-10 gap-3 text-slate-400">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            {!collapsed && <span className="text-xs font-medium italic">Chargement...</span>}
+          <div className="flex flex-col items-center justify-center py-10 gap-3 text-slate-300">
+            <Loader2 className="h-5 w-5 animate-spin text-primary/50" />
           </div>
         ) : (
           menuItems.map((item, index) => {
-            if (item.isGroup) {
+            const isGroup = 'items' in item;
+            
+            if (isGroup) {
               return (
-                <div key={`group-${index}`} className={cn("pt-4 pb-2", collapsed ? "px-0 text-center" : "px-2")}>
+                <div key={`group-${index}`} className="pt-2">
                   {!collapsed ? (
-                    <div className="flex items-center gap-2 mb-2 text-[10px] font-black tracking-widest uppercase text-slate-400">
-                      <item.icon className="h-3 w-3" />
-                      {item.title}
+                    <div className="px-3 mb-2 text-[10px] font-black tracking-[0.15em] uppercase text-slate-400 flex items-center gap-2">
+                       <span className="w-1.5 h-1.5 rounded-full bg-primary/20" />
+                       {item.title}
                     </div>
                   ) : (
-                    <div className="w-full flex justify-center mb-2" title={item.title}>
-                      <item.icon className="h-4 w-4 text-slate-400" />
-                    </div>
+                    <div className="h-px bg-slate-100 my-4 mx-3" />
                   )}
+                  
                   <div className="space-y-1">
                     {item.items.map((subItem) => (
-                      <NavLink
-                        key={subItem.path}
-                        to={subItem.path}
-                        className={({ isActive }) =>
-                          cn(
-                            'flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-all duration-200 group text-sm font-bold',
-                            collapsed ? 'justify-center px-0' : 'justify-start',
-                            isActive
-                              ? 'bg-primary text-white shadow-md shadow-primary/20'
-                              : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
-                          )
-                        }
-                      >
-                        <subItem.icon className={cn('h-5 w-5 shrink-0 transition-transform', !collapsed && 'group-hover:scale-110')} />
-                        {!collapsed && <span className="truncate">{subItem.label}</span>}
-                      </NavLink>
+                      <SidebarLink 
+                        key={subItem.path} 
+                        to={subItem.path} 
+                        icon={subItem.icon} 
+                        label={subItem.label} 
+                        collapsed={collapsed} 
+                      />
                     ))}
                   </div>
                 </div>
               );
             } else {
               return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-sm font-bold',
-                      collapsed ? 'justify-center px-0' : 'justify-start',
-                      isActive
-                        ? 'bg-primary text-white shadow-md shadow-primary/20'
-                        : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
-                    )
-                  }
-                >
-                  <item.icon className={cn('h-5 w-5 shrink-0 transition-transform', !collapsed && 'group-hover:scale-110')} />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
-                </NavLink>
+                <SidebarLink 
+                  key={item.path} 
+                  to={item.path} 
+                  icon={item.icon} 
+                  label={item.label} 
+                  collapsed={collapsed} 
+                />
               );
             }
           })
         )}
       </nav>
 
-      {/* Footer : Actions utilisateur */}
-      <div className="p-4 border-t border-slate-50">
-        <Button
-          variant="ghost"
+      {/* Footer */}
+      <div className="p-3 border-t border-slate-50">
+        <button
           onClick={logout}
           className={cn(
-            'w-full h-12 justify-start text-red-500 hover:bg-red-50 hover:text-red-600 rounded-2xl font-bold transition-all',
-            collapsed && 'justify-center px-0'
+            'group w-full h-11 flex items-center text-rose-500 hover:bg-rose-50/50 rounded-xl font-bold transition-all relative overflow-hidden active:scale-x-95',
+            collapsed ? 'justify-center' : 'px-3'
           )}
         >
-          <LogOut size={20} className="shrink-0" />
-          {!collapsed && <span className="ml-3 uppercase tracking-widest text-xs">Déconnexion</span>}
-        </Button>
+          <LogOut size={18} className="shrink-0 group-hover:-translate-x-1 transition-transform" />
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.span 
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -5 }}
+                className="ml-3 text-xs uppercase tracking-widest"
+              >
+                Quitter
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </button>
       </div>
-    </aside>
+    </motion.aside>
+  );
+}
+
+function SidebarLink({ to, icon: Icon, label, collapsed }: { to: string, icon: any, label: string, collapsed: boolean }) {
+  return (
+    <NavLink
+      to={to}
+      title={collapsed ? label : undefined}
+      className={({ isActive }) =>
+        cn(
+          'flex items-center rounded-xl transition-all duration-300 relative group overflow-hidden h-11',
+          collapsed ? 'justify-center mx-1' : 'px-3 mx-1',
+          isActive
+            ? 'bg-slate-900 text-white shadow-xl shadow-slate-200'
+            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+        )
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <Icon className={cn('h-5 w-5 shrink-0 transition-all duration-300', isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-primary')} />
+          
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.span 
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                className="ml-3 text-xs font-black truncate"
+              >
+                {label}
+              </motion.span>
+            )}
+          </AnimatePresence>
+          
+          {isActive && (
+            <motion.div 
+              layoutId="active-indicator"
+              className="absolute left-0 w-1 h-1/2 bg-primary rounded-r-full" 
+            />
+          )}
+
+          {collapsed && (
+             <div className="absolute left-[85px] px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                {label}
+             </div>
+          )}
+        </>
+      )}
+    </NavLink>
   );
 }

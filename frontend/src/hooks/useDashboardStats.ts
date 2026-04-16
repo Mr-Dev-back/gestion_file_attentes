@@ -72,7 +72,7 @@ export const useSupervisorStats = () => {
     return useQuery<SupervisorStatsResponse>({
         queryKey: ['dashboard', 'supervisor', 'stats'],
         queryFn: async () => {
-            const { data } = await dashboardApi.getSupervisorStats();
+            const { data } = await dashboardApi.getSummary();
             return data;
         },
         enabled: isAuthenticated && hasRole(['SUPERVISOR', 'ADMINISTRATOR']),
@@ -117,7 +117,7 @@ export const useManagerStats = (department?: string) => {
     return useQuery<ManagerStatsResponse>({
         queryKey: ['dashboard', 'manager', 'stats', department],
         queryFn: async () => {
-            const { data } = await dashboardApi.getManagerStats(department);
+            const { data } = await dashboardApi.getSummary();
             return data;
         },
         enabled: isAuthenticated && hasRole(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
@@ -131,7 +131,7 @@ export const useManagerPerformance = (department?: string) => {
     return useQuery<ManagerPerformanceResponse>({
         queryKey: ['dashboard', 'manager', 'performance', department],
         queryFn: async () => {
-            const { data } = await dashboardApi.getManagerPerformance(department);
+            const { data } = await dashboardApi.getPerformance();
             return data;
         },
         enabled: isAuthenticated && hasRole(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),

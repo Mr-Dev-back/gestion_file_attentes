@@ -1,0 +1,1556 @@
+{
+  "resources": [
+    {
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "name": "Utilisateurs",
+      "slug": "USER",
+      "description": "Gestion des comptes utilisateurs et profils",
+      "createdAt": "2026-04-07T13:47:59.188Z",
+      "updatedAt": "2026-04-07T13:47:59.188Z"
+    },
+    {
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "name": "Rôles & Permissions",
+      "slug": "ROLE",
+      "description": "Configuration des accès et droits",
+      "createdAt": "2026-04-07T13:47:59.216Z",
+      "updatedAt": "2026-04-07T13:47:59.216Z"
+    },
+    {
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "name": "Tickets",
+      "slug": "TICKET",
+      "description": "Gestion des tickets de pesée et d'exploitation",
+      "createdAt": "2026-04-07T13:47:59.219Z",
+      "updatedAt": "2026-04-07T13:47:59.219Z"
+    },
+    {
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "name": "Files d'attente",
+      "slug": "QUEUE",
+      "description": "Configuration des files de traitement",
+      "createdAt": "2026-04-07T13:47:59.222Z",
+      "updatedAt": "2026-04-07T13:47:59.222Z"
+    },
+    {
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "name": "Sites",
+      "slug": "SITE",
+      "description": "Paramétrage des sites physiques",
+      "createdAt": "2026-04-07T13:47:59.224Z",
+      "updatedAt": "2026-04-07T13:47:59.224Z"
+    },
+    {
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "name": "Quais",
+      "slug": "QUAI",
+      "description": "Gestion des points de passage et terminaux",
+      "createdAt": "2026-04-07T13:47:59.227Z",
+      "updatedAt": "2026-04-07T13:47:59.227Z"
+    },
+    {
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "name": "Rapports",
+      "slug": "REPORT",
+      "description": "Accès aux statistiques et exports",
+      "createdAt": "2026-04-07T13:47:59.230Z",
+      "updatedAt": "2026-04-07T13:47:59.230Z"
+    },
+    {
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "name": "Workflows",
+      "slug": "WORKFLOW",
+      "description": "Configuration des parcours clients",
+      "createdAt": "2026-04-07T13:47:59.232Z",
+      "updatedAt": "2026-04-07T13:47:59.232Z"
+    },
+    {
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "name": "Bornes",
+      "slug": "BORNE",
+      "description": "Gestion des bornes tactiles",
+      "createdAt": "2026-04-07T13:47:59.234Z",
+      "updatedAt": "2026-04-07T13:47:59.234Z"
+    },
+    {
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "name": "Sociétés",
+      "slug": "SOCIETES",
+      "description": "Gestion des sociétés ",
+      "createdAt": "2026-04-07T16:06:29.065Z",
+      "updatedAt": "2026-04-07T16:06:29.065Z"
+    },
+    {
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "name": "LOGS",
+      "slug": "LOGS",
+      "description": "Gestion des logs",
+      "createdAt": "2026-04-13T11:24:04.618Z",
+      "updatedAt": "2026-04-13T11:24:04.618Z"
+    }
+  ],
+  "actions": [
+    {
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "name": "Créer",
+      "slug": "CREATE",
+      "description": "Droit de création d'un nouvel objet",
+      "createdAt": "2026-04-07T13:47:59.243Z",
+      "updatedAt": "2026-04-07T13:47:59.243Z"
+    },
+    {
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "name": "Lire",
+      "slug": "READ",
+      "description": "Droit de consultation des données",
+      "createdAt": "2026-04-07T13:47:59.246Z",
+      "updatedAt": "2026-04-07T13:47:59.246Z"
+    },
+    {
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "name": "Modifier",
+      "slug": "UPDATE",
+      "description": "Droit d'édition des données existantes",
+      "createdAt": "2026-04-07T13:47:59.249Z",
+      "updatedAt": "2026-04-07T13:47:59.249Z"
+    },
+    {
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "name": "Supprimer",
+      "slug": "DELETE",
+      "description": "Droit de suppression",
+      "createdAt": "2026-04-07T13:47:59.252Z",
+      "updatedAt": "2026-04-07T13:47:59.252Z"
+    },
+    {
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "name": "Valider",
+      "slug": "VALIDATE",
+      "description": "Droit de validation/approbation (ex: pesée)",
+      "createdAt": "2026-04-07T13:47:59.255Z",
+      "updatedAt": "2026-04-07T13:47:59.255Z"
+    },
+    {
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "name": "Transférer",
+      "slug": "TRANSFER",
+      "description": "Droit de réassignation ou transfert",
+      "createdAt": "2026-04-07T13:47:59.257Z",
+      "updatedAt": "2026-04-07T13:47:59.257Z"
+    },
+    {
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "name": "Appeler",
+      "slug": "CALL",
+      "description": "Droit d'appel d'un véhicule au quai",
+      "createdAt": "2026-04-07T13:47:59.260Z",
+      "updatedAt": "2026-04-07T13:47:59.260Z"
+    },
+    {
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "name": "Imprimer",
+      "slug": "PRINT",
+      "description": "Droit de génération de documents physiques",
+      "createdAt": "2026-04-07T13:47:59.263Z",
+      "updatedAt": "2026-04-07T13:47:59.263Z"
+    }
+  ],
+  "permissions": [
+    {
+      "permissionId": "efe429cd-7182-44ea-912c-5764ecbaba6c",
+      "code": "USER:CREATE",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.275Z",
+      "updatedAt": "2026-04-07T13:47:59.275Z"
+    },
+    {
+      "permissionId": "c7463e7f-f09d-4ae8-bf48-f877224a62f0",
+      "code": "USER:READ",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.358Z",
+      "updatedAt": "2026-04-07T13:47:59.358Z"
+    },
+    {
+      "permissionId": "6df3d341-91eb-42fc-83b2-1c082897c5d5",
+      "code": "USER:UPDATE",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.365Z",
+      "updatedAt": "2026-04-07T13:47:59.365Z"
+    },
+    {
+      "permissionId": "b6bc25a8-e504-4c74-a2ea-51b57d82baae",
+      "code": "USER:DELETE",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.370Z",
+      "updatedAt": "2026-04-07T13:47:59.370Z"
+    },
+    {
+      "permissionId": "4ca31afc-cad2-411a-b946-b8fd31ebbf63",
+      "code": "USER:VALIDATE",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.374Z",
+      "updatedAt": "2026-04-07T13:47:59.374Z"
+    },
+    {
+      "permissionId": "3ccbae8d-8c1a-444f-92cb-c9acb5111f36",
+      "code": "USER:TRANSFER",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.378Z",
+      "updatedAt": "2026-04-07T13:47:59.378Z"
+    },
+    {
+      "permissionId": "f4cb6ba2-2b72-456d-8cf5-b1515965d074",
+      "code": "USER:CALL",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.382Z",
+      "updatedAt": "2026-04-07T13:47:59.382Z"
+    },
+    {
+      "permissionId": "ec3aa31a-9a5d-46ef-8308-a0c0db0c2f56",
+      "code": "USER:PRINT",
+      "description": null,
+      "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.387Z",
+      "updatedAt": "2026-04-07T13:47:59.387Z"
+    },
+    {
+      "permissionId": "fdf1d6d3-ec65-4ec4-9323-34cdae891dfd",
+      "code": "ROLE:CREATE",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.391Z",
+      "updatedAt": "2026-04-07T13:47:59.391Z"
+    },
+    {
+      "permissionId": "a5df1c77-eccc-436d-b4c9-941064a4e775",
+      "code": "ROLE:READ",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.395Z",
+      "updatedAt": "2026-04-07T13:47:59.395Z"
+    },
+    {
+      "permissionId": "1f5f1f18-0481-4434-9eda-a5e6e8859b0f",
+      "code": "ROLE:UPDATE",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.399Z",
+      "updatedAt": "2026-04-07T13:47:59.399Z"
+    },
+    {
+      "permissionId": "a45d6b20-acf9-414b-bae1-9965391f5ce0",
+      "code": "ROLE:DELETE",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.403Z",
+      "updatedAt": "2026-04-07T13:47:59.403Z"
+    },
+    {
+      "permissionId": "4855961d-1add-4f2c-99bf-1705cbed3442",
+      "code": "ROLE:VALIDATE",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.406Z",
+      "updatedAt": "2026-04-07T13:47:59.406Z"
+    },
+    {
+      "permissionId": "fb1b26fd-e4d4-45ad-9fd9-9d9a0eb61dfa",
+      "code": "ROLE:TRANSFER",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.410Z",
+      "updatedAt": "2026-04-07T13:47:59.410Z"
+    },
+    {
+      "permissionId": "5e4f5e53-143a-43e1-a914-61aaff08bca3",
+      "code": "ROLE:CALL",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.414Z",
+      "updatedAt": "2026-04-07T13:47:59.414Z"
+    },
+    {
+      "permissionId": "cce70c79-f2d5-4479-866b-c1fb4227ff0b",
+      "code": "ROLE:PRINT",
+      "description": null,
+      "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.418Z",
+      "updatedAt": "2026-04-07T13:47:59.418Z"
+    },
+    {
+      "permissionId": "c1e40447-34f9-49f4-9eab-a004c680a5b7",
+      "code": "TICKET:CREATE",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.422Z",
+      "updatedAt": "2026-04-07T13:47:59.422Z"
+    },
+    {
+      "permissionId": "baf0d716-097c-40f5-8ecf-6024803e8b3b",
+      "code": "TICKET:READ",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.480Z",
+      "updatedAt": "2026-04-07T13:47:59.480Z"
+    },
+    {
+      "permissionId": "72abdbe5-ad9a-4b54-9023-7d0b0c95b13b",
+      "code": "TICKET:UPDATE",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.487Z",
+      "updatedAt": "2026-04-07T13:47:59.487Z"
+    },
+    {
+      "permissionId": "55bac2a5-8e1b-4448-8371-aba7148f0f46",
+      "code": "TICKET:DELETE",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.493Z",
+      "updatedAt": "2026-04-07T13:47:59.493Z"
+    },
+    {
+      "permissionId": "b163dbe9-b715-4074-bb64-5ec3ed16e010",
+      "code": "TICKET:VALIDATE",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.498Z",
+      "updatedAt": "2026-04-07T13:47:59.498Z"
+    },
+    {
+      "permissionId": "465ed602-e9dc-475b-8acf-e4e43a9440ff",
+      "code": "TICKET:TRANSFER",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.502Z",
+      "updatedAt": "2026-04-07T13:47:59.502Z"
+    },
+    {
+      "permissionId": "0c1a9ccc-89c2-4177-871d-07feb59250e6",
+      "code": "TICKET:CALL",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.506Z",
+      "updatedAt": "2026-04-07T13:47:59.506Z"
+    },
+    {
+      "permissionId": "482a72c1-7091-481a-8704-c7ab0c347ac9",
+      "code": "TICKET:PRINT",
+      "description": null,
+      "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.509Z",
+      "updatedAt": "2026-04-07T13:47:59.509Z"
+    },
+    {
+      "permissionId": "12061b61-0a2a-4247-b933-4b9e80edd88c",
+      "code": "QUEUE:CREATE",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.513Z",
+      "updatedAt": "2026-04-07T13:47:59.513Z"
+    },
+    {
+      "permissionId": "ff309d59-394e-48d8-954f-286c3108dd4d",
+      "code": "QUEUE:READ",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.518Z",
+      "updatedAt": "2026-04-07T13:47:59.518Z"
+    },
+    {
+      "permissionId": "acd63819-9390-49bb-b30e-811e6a405e51",
+      "code": "QUEUE:UPDATE",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.523Z",
+      "updatedAt": "2026-04-07T13:47:59.523Z"
+    },
+    {
+      "permissionId": "7ec17510-9a12-4e76-802c-0dcbb1a3b155",
+      "code": "QUEUE:DELETE",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.528Z",
+      "updatedAt": "2026-04-07T13:47:59.528Z"
+    },
+    {
+      "permissionId": "908f64ae-d057-4aec-a81f-e0c40cdc6b0c",
+      "code": "QUEUE:VALIDATE",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.532Z",
+      "updatedAt": "2026-04-07T13:47:59.532Z"
+    },
+    {
+      "permissionId": "4b16264f-0104-44a6-aa9c-cd942080ea33",
+      "code": "QUEUE:TRANSFER",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.536Z",
+      "updatedAt": "2026-04-07T13:47:59.536Z"
+    },
+    {
+      "permissionId": "74426f74-0a98-4084-8701-4128f28e9e1f",
+      "code": "QUEUE:CALL",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.542Z",
+      "updatedAt": "2026-04-07T13:47:59.542Z"
+    },
+    {
+      "permissionId": "be068500-0f4d-4825-8c9d-9bc9f67eeb5c",
+      "code": "QUEUE:PRINT",
+      "description": null,
+      "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.547Z",
+      "updatedAt": "2026-04-07T13:47:59.547Z"
+    },
+    {
+      "permissionId": "b53255e3-f84a-49db-a4a6-5a1fd98f2c0c",
+      "code": "SITE:CREATE",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.552Z",
+      "updatedAt": "2026-04-07T13:47:59.552Z"
+    },
+    {
+      "permissionId": "20d9708d-cfd6-4589-b3c6-32ddf8596f3f",
+      "code": "SITE:READ",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.557Z",
+      "updatedAt": "2026-04-07T13:47:59.557Z"
+    },
+    {
+      "permissionId": "6587b7ac-9dc4-4115-a1b3-ce4649b87366",
+      "code": "SITE:UPDATE",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.562Z",
+      "updatedAt": "2026-04-07T13:47:59.562Z"
+    },
+    {
+      "permissionId": "e7a4e4f5-3f27-4269-afd6-a4e16830acc7",
+      "code": "SITE:DELETE",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.569Z",
+      "updatedAt": "2026-04-07T13:47:59.569Z"
+    },
+    {
+      "permissionId": "03dd4673-f56f-44ef-80be-0ada6179a787",
+      "code": "SITE:VALIDATE",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.572Z",
+      "updatedAt": "2026-04-07T13:47:59.572Z"
+    },
+    {
+      "permissionId": "8bd0e63a-620a-48ce-a794-ecd8d947b72c",
+      "code": "SITE:TRANSFER",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.577Z",
+      "updatedAt": "2026-04-07T13:47:59.577Z"
+    },
+    {
+      "permissionId": "3ec1168e-fa53-4f98-ae33-f448e7d63e08",
+      "code": "SITE:CALL",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.581Z",
+      "updatedAt": "2026-04-07T13:47:59.581Z"
+    },
+    {
+      "permissionId": "0741b018-0159-4141-b40e-eb7f7b095346",
+      "code": "SITE:PRINT",
+      "description": null,
+      "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.587Z",
+      "updatedAt": "2026-04-07T13:47:59.587Z"
+    },
+    {
+      "permissionId": "4dd3a7d9-ba10-4166-8e9d-4a606364d926",
+      "code": "QUAI:CREATE",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.591Z",
+      "updatedAt": "2026-04-07T13:47:59.591Z"
+    },
+    {
+      "permissionId": "497a37be-93e0-47d4-abda-f529b61571de",
+      "code": "QUAI:READ",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.598Z",
+      "updatedAt": "2026-04-07T13:47:59.598Z"
+    },
+    {
+      "permissionId": "06954e69-79bc-42ba-8e5e-cb94b1063756",
+      "code": "QUAI:UPDATE",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.603Z",
+      "updatedAt": "2026-04-07T13:47:59.603Z"
+    },
+    {
+      "permissionId": "9ec66af9-aff9-4c33-9094-2d4a65e7f902",
+      "code": "QUAI:DELETE",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.609Z",
+      "updatedAt": "2026-04-07T13:47:59.609Z"
+    },
+    {
+      "permissionId": "17f86014-ba2e-43f9-a4c8-2e6f5a98ed38",
+      "code": "QUAI:VALIDATE",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.615Z",
+      "updatedAt": "2026-04-07T13:47:59.615Z"
+    },
+    {
+      "permissionId": "beee2494-4020-4069-96ea-d0c98ba74fc6",
+      "code": "QUAI:TRANSFER",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.620Z",
+      "updatedAt": "2026-04-07T13:47:59.620Z"
+    },
+    {
+      "permissionId": "9d002f0e-4eda-4628-9140-458d23650bf1",
+      "code": "QUAI:CALL",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.626Z",
+      "updatedAt": "2026-04-07T13:47:59.626Z"
+    },
+    {
+      "permissionId": "9a675c81-ed21-4bc7-b3b1-33a9e9e2e131",
+      "code": "QUAI:PRINT",
+      "description": null,
+      "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.631Z",
+      "updatedAt": "2026-04-07T13:47:59.631Z"
+    },
+    {
+      "permissionId": "93bfd0ba-3700-4df5-9ac9-e3aa7849bf30",
+      "code": "REPORT:CREATE",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.635Z",
+      "updatedAt": "2026-04-07T13:47:59.635Z"
+    },
+    {
+      "permissionId": "7a829b4c-1fed-45c1-a7c5-62f119490e1b",
+      "code": "REPORT:READ",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.640Z",
+      "updatedAt": "2026-04-07T13:47:59.640Z"
+    },
+    {
+      "permissionId": "648ba86d-2cfd-4873-84a8-c39ba1dd30b2",
+      "code": "REPORT:UPDATE",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.644Z",
+      "updatedAt": "2026-04-07T13:47:59.644Z"
+    },
+    {
+      "permissionId": "0d029cee-2681-4c20-913d-4022143b6c46",
+      "code": "REPORT:DELETE",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.650Z",
+      "updatedAt": "2026-04-07T13:47:59.650Z"
+    },
+    {
+      "permissionId": "999d0153-30fa-4b3b-a902-494addfdcdb8",
+      "code": "REPORT:VALIDATE",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.654Z",
+      "updatedAt": "2026-04-07T13:47:59.654Z"
+    },
+    {
+      "permissionId": "e00ed8d2-cdcd-484d-bfff-149ee66ca080",
+      "code": "REPORT:TRANSFER",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.658Z",
+      "updatedAt": "2026-04-07T13:47:59.658Z"
+    },
+    {
+      "permissionId": "b84a404e-ebec-4702-a7c7-8f134af87bb1",
+      "code": "REPORT:CALL",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.662Z",
+      "updatedAt": "2026-04-07T13:47:59.662Z"
+    },
+    {
+      "permissionId": "a6b37cb5-3d80-456d-b975-70429495224b",
+      "code": "REPORT:PRINT",
+      "description": null,
+      "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.666Z",
+      "updatedAt": "2026-04-07T13:47:59.666Z"
+    },
+    {
+      "permissionId": "224a776d-823e-4e64-ac3a-8c394d881493",
+      "code": "WORKFLOW:CREATE",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.670Z",
+      "updatedAt": "2026-04-07T13:47:59.670Z"
+    },
+    {
+      "permissionId": "26f082fe-8cd0-4e9c-adc9-2a92a6b3a9f7",
+      "code": "WORKFLOW:READ",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.674Z",
+      "updatedAt": "2026-04-07T13:47:59.674Z"
+    },
+    {
+      "permissionId": "6303a98a-c24f-451f-af75-38562915ab8b",
+      "code": "WORKFLOW:UPDATE",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.678Z",
+      "updatedAt": "2026-04-07T13:47:59.678Z"
+    },
+    {
+      "permissionId": "2701ea06-2600-4cbb-ac0b-c6eb87c405e5",
+      "code": "WORKFLOW:DELETE",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.683Z",
+      "updatedAt": "2026-04-07T13:47:59.683Z"
+    },
+    {
+      "permissionId": "084271f1-ccc9-4627-82d2-eb4feefbb486",
+      "code": "WORKFLOW:VALIDATE",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.688Z",
+      "updatedAt": "2026-04-07T13:47:59.688Z"
+    },
+    {
+      "permissionId": "0d8053cd-48b9-4441-b7d9-36a2b848b756",
+      "code": "WORKFLOW:TRANSFER",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.693Z",
+      "updatedAt": "2026-04-07T13:47:59.693Z"
+    },
+    {
+      "permissionId": "d190308d-7550-45db-afb4-b0e582971ea1",
+      "code": "WORKFLOW:CALL",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.699Z",
+      "updatedAt": "2026-04-07T13:47:59.699Z"
+    },
+    {
+      "permissionId": "81f7bd5d-80a7-4861-bf1f-9ccc7c61a1f0",
+      "code": "WORKFLOW:PRINT",
+      "description": null,
+      "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.704Z",
+      "updatedAt": "2026-04-07T13:47:59.704Z"
+    },
+    {
+      "permissionId": "1b9caf50-00fc-42be-8db6-210d52417ca5",
+      "code": "BORNE:CREATE",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T13:47:59.708Z",
+      "updatedAt": "2026-04-07T13:47:59.708Z"
+    },
+    {
+      "permissionId": "3356bc2c-c8f4-49e1-bb5b-7079b8fd1816",
+      "code": "BORNE:READ",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T13:47:59.712Z",
+      "updatedAt": "2026-04-07T13:47:59.712Z"
+    },
+    {
+      "permissionId": "cf066b3e-57aa-4aa8-88ef-53e304247295",
+      "code": "BORNE:UPDATE",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T13:47:59.717Z",
+      "updatedAt": "2026-04-07T13:47:59.717Z"
+    },
+    {
+      "permissionId": "9637e011-311e-4a11-8c2a-a49a808839f8",
+      "code": "BORNE:DELETE",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T13:47:59.721Z",
+      "updatedAt": "2026-04-07T13:47:59.721Z"
+    },
+    {
+      "permissionId": "a875de60-8bd0-45d6-9a32-e1dac34f5ab9",
+      "code": "BORNE:VALIDATE",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T13:47:59.725Z",
+      "updatedAt": "2026-04-07T13:47:59.725Z"
+    },
+    {
+      "permissionId": "471f2122-3c65-4cc0-8688-684e735d8c17",
+      "code": "BORNE:TRANSFER",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T13:47:59.729Z",
+      "updatedAt": "2026-04-07T13:47:59.729Z"
+    },
+    {
+      "permissionId": "d09ddc01-38df-4b5c-8292-4d0915c88e5e",
+      "code": "BORNE:CALL",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T13:47:59.735Z",
+      "updatedAt": "2026-04-07T13:47:59.735Z"
+    },
+    {
+      "permissionId": "3db1ccfe-89d9-4489-a5a2-f17174d4f51e",
+      "code": "BORNE:PRINT",
+      "description": null,
+      "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T13:47:59.740Z",
+      "updatedAt": "2026-04-07T13:47:59.740Z"
+    },
+    {
+      "permissionId": "9ac990c0-7929-41c7-a1fa-0de4276e3b50",
+      "code": "SOCIETES:CREATE",
+      "description": "Permission auto-générée pour Sociétés : Créer",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "7506f309-a255-48f3-9606-ca45918729e5",
+      "code": "SOCIETES:READ",
+      "description": "Permission auto-générée pour Sociétés : Lire",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "8a94a251-8160-44bc-91c8-8118ff715a8f",
+      "code": "SOCIETES:UPDATE",
+      "description": "Permission auto-générée pour Sociétés : Modifier",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "6709a95a-7c34-4d0e-86af-a2112f8b3e4d",
+      "code": "SOCIETES:DELETE",
+      "description": "Permission auto-générée pour Sociétés : Supprimer",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "12a4a096-bd78-41ba-b38d-476d6e88b28a",
+      "code": "SOCIETES:VALIDATE",
+      "description": "Permission auto-générée pour Sociétés : Valider",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "9ee25f2a-a60a-4b1a-aa2b-5ea2d37557e0",
+      "code": "SOCIETES:TRANSFER",
+      "description": "Permission auto-générée pour Sociétés : Transférer",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "9cc67f28-edd6-48a4-bd00-729ec252da1a",
+      "code": "SOCIETES:CALL",
+      "description": "Permission auto-générée pour Sociétés : Appeler",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "a0809fb1-7d94-425b-a463-d6d390916e12",
+      "code": "SOCIETES:PRINT",
+      "description": "Permission auto-générée pour Sociétés : Imprimer",
+      "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-07T16:06:29.089Z",
+      "updatedAt": "2026-04-07T16:06:29.089Z"
+    },
+    {
+      "permissionId": "bdd67bd9-5e24-4496-ab15-ee8795c3a4fa",
+      "code": "LOGS:CREATE",
+      "description": "Permission auto-générée pour LOGS : Créer",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
+      "createdAt": "2026-04-13T11:24:04.678Z",
+      "updatedAt": "2026-04-13T11:24:04.678Z"
+    },
+    {
+      "permissionId": "851b88d4-cca4-427d-8e0b-3156f425f82d",
+      "code": "LOGS:READ",
+      "description": "Permission auto-générée pour LOGS : Lire",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
+      "createdAt": "2026-04-13T11:24:04.679Z",
+      "updatedAt": "2026-04-13T11:24:04.679Z"
+    },
+    {
+      "permissionId": "2b0b6114-145f-45e6-b22e-c1d2f30cc1d6",
+      "code": "LOGS:UPDATE",
+      "description": "Permission auto-générée pour LOGS : Modifier",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
+      "createdAt": "2026-04-13T11:24:04.680Z",
+      "updatedAt": "2026-04-13T11:24:04.680Z"
+    },
+    {
+      "permissionId": "b5303248-048b-40b8-95ba-5b7f027b215c",
+      "code": "LOGS:DELETE",
+      "description": "Permission auto-générée pour LOGS : Supprimer",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
+      "createdAt": "2026-04-13T11:24:04.680Z",
+      "updatedAt": "2026-04-13T11:24:04.680Z"
+    },
+    {
+      "permissionId": "bedb02c4-b0a4-4cdd-8de4-126dd104192b",
+      "code": "LOGS:VALIDATE",
+      "description": "Permission auto-générée pour LOGS : Valider",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
+      "createdAt": "2026-04-13T11:24:04.681Z",
+      "updatedAt": "2026-04-13T11:24:04.681Z"
+    },
+    {
+      "permissionId": "eadcd0e7-9f40-4670-96c4-a387539d5968",
+      "code": "LOGS:TRANSFER",
+      "description": "Permission auto-générée pour LOGS : Transférer",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
+      "createdAt": "2026-04-13T11:24:04.681Z",
+      "updatedAt": "2026-04-13T11:24:04.681Z"
+    },
+    {
+      "permissionId": "ef925135-2309-4bf7-b20e-88404b91140a",
+      "code": "LOGS:CALL",
+      "description": "Permission auto-générée pour LOGS : Appeler",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
+      "createdAt": "2026-04-13T11:24:04.681Z",
+      "updatedAt": "2026-04-13T11:24:04.681Z"
+    },
+    {
+      "permissionId": "f5d161e1-4383-4e3e-9fe5-bfac2368e887",
+      "code": "LOGS:PRINT",
+      "description": "Permission auto-générée pour LOGS : Imprimer",
+      "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
+      "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
+      "createdAt": "2026-04-13T11:24:04.683Z",
+      "updatedAt": "2026-04-13T11:24:04.683Z"
+    }
+  ],
+  "roles": [
+    {
+      "roleId": "a38bb09b-bb74-48fd-8a51-65fc847f1246",
+      "name": "ADMINISTRATOR",
+      "description": "Accès total système",
+      "scope": "GLOBAL",
+      "createdAt": "2026-03-30T10:55:05.060Z",
+      "updatedAt": "2026-03-30T10:55:05.060Z"
+    },
+    {
+      "roleId": "1572879e-1266-4890-a0ec-cd4ea4014a05",
+      "name": "MANAGER",
+      "description": "Pilotage société",
+      "scope": "COMPANY",
+      "createdAt": "2026-03-30T10:55:05.101Z",
+      "updatedAt": "2026-03-30T10:55:05.101Z"
+    },
+    {
+      "roleId": "9603ffc2-486f-45a9-8e22-a34b7d8d3c07",
+      "name": "SUPERVISOR",
+      "description": "Gestionnaire de site",
+      "scope": "SITE",
+      "createdAt": "2026-03-30T10:55:05.103Z",
+      "updatedAt": "2026-03-30T10:55:05.103Z"
+    },
+    {
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "name": "AGENT_QUAI",
+      "description": "Opérateur de quai",
+      "scope": "SITE",
+      "createdAt": "2026-03-30T10:55:05.104Z",
+      "updatedAt": "2026-03-30T10:55:05.104Z"
+    }
+  ],
+  "rolePermissions": [],
+  "categoryQueues": [],
+  "quaiQueues": [
+    {
+      "id": "a7970495-4578-409b-8aab-8111c38112e8",
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "createdAt": "2026-03-30T11:41:08.919Z",
+      "updatedAt": "2026-03-30T11:41:08.919Z"
+    },
+    {
+      "id": "bff82ebf-8304-4491-a604-3e28930144a2",
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "createdAt": "2026-03-30T11:41:08.919Z",
+      "updatedAt": "2026-03-30T11:41:08.919Z"
+    },
+    {
+      "id": "d2739a62-d6de-4856-a81a-f93ef6cac3ac",
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "createdAt": "2026-03-30T11:41:08.919Z",
+      "updatedAt": "2026-03-30T11:41:08.919Z"
+    },
+    {
+      "id": "6fab7495-0cb2-47a3-82f1-3a4b3194446f",
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "createdAt": "2026-03-30T11:42:11.663Z",
+      "updatedAt": "2026-03-30T11:42:11.663Z"
+    },
+    {
+      "id": "297652a6-868f-4e9f-b9c5-5227c8002819",
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "createdAt": "2026-03-30T11:42:11.663Z",
+      "updatedAt": "2026-03-30T11:42:11.663Z"
+    },
+    {
+      "id": "2df1737d-794a-4132-9ead-be9145a11ad2",
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "createdAt": "2026-03-30T11:42:11.663Z",
+      "updatedAt": "2026-03-30T11:42:11.663Z"
+    },
+    {
+      "id": "a0874e4d-21bb-43fd-a254-ba09c4035601",
+      "quaiId": "60c1dc2d-03b5-48d0-95ab-6e7ba727458b",
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "createdAt": "2026-03-30T11:42:37.624Z",
+      "updatedAt": "2026-03-30T11:42:37.624Z"
+    },
+    {
+      "id": "e85e6738-b28a-484f-b081-47125046039c",
+      "quaiId": "95250fe0-41ac-414a-ae00-a85d86f4aeaf",
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "createdAt": "2026-03-30T11:42:52.470Z",
+      "updatedAt": "2026-03-30T11:42:52.470Z"
+    }
+  ],
+  "workflowStepQueues": [
+    {
+      "id": "39df5913-d22a-4338-a659-6f7502c3a594",
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "createdAt": "2026-03-30T11:15:31.347Z",
+      "updatedAt": "2026-03-30T11:15:31.347Z"
+    },
+    {
+      "id": "d31b0b2e-7ad6-4313-9995-49776d9dd1db",
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "createdAt": "2026-03-30T11:15:31.347Z",
+      "updatedAt": "2026-03-30T11:15:31.347Z"
+    },
+    {
+      "id": "63631491-2d82-40a8-82d9-071af88b340a",
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "createdAt": "2026-03-30T11:15:31.347Z",
+      "updatedAt": "2026-03-30T11:15:31.347Z"
+    },
+    {
+      "id": "2d6f7ff0-991e-4c96-85ce-83cba9bdbbba",
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "createdAt": "2026-03-30T11:16:02.009Z",
+      "updatedAt": "2026-03-30T11:16:02.009Z"
+    },
+    {
+      "id": "cf64f2be-56d1-4a4d-bcbd-0dc2c38d47bf",
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "createdAt": "2026-03-30T11:16:19.265Z",
+      "updatedAt": "2026-03-30T11:16:19.265Z"
+    },
+    {
+      "id": "19e6e125-2f30-48fc-9d8d-39ab38ea32b3",
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "createdAt": "2026-03-30T11:16:19.265Z",
+      "updatedAt": "2026-03-30T11:16:19.265Z"
+    },
+    {
+      "id": "1f1fb6cb-abdc-435a-abaa-fb2254ff0a8b",
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "createdAt": "2026-03-30T11:16:19.265Z",
+      "updatedAt": "2026-03-30T11:16:19.265Z"
+    },
+    {
+      "id": "a3aff5be-6fef-43a0-aeed-500fde0c3515",
+      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "createdAt": "2026-03-30T11:16:37.253Z",
+      "updatedAt": "2026-03-30T11:16:37.253Z"
+    }
+  ],
+  "userSites": [],
+  "userQueues": [],
+  "companies": [
+    {
+      "companyId": "0eb47bd8-1e6e-4aff-839e-6634f48e57f2",
+      "name": "Société Ivoirienne de Béton Manufacturé ",
+      "code": "SIBM",
+      "isActived": true,
+      "createdAt": "2026-03-30T10:59:59.586Z"
+    },
+    {
+      "companyId": "9f919226-89e6-4289-9081-314b861e9f37",
+      "name": "ABC",
+      "code": "abc",
+      "isActived": true,
+      "createdAt": "2026-03-30T12:35:03.540Z"
+    }
+  ],
+  "sites": [
+    {
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "companyId": "0eb47bd8-1e6e-4aff-839e-6634f48e57f2",
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "ABIDJAN",
+      "code": "ABJ01",
+      "address": null,
+      "alertThreshold": 45,
+      "isActived": true,
+      "createdAt": "2026-03-30T11:11:11.642Z"
+    },
+    {
+      "siteId": "0d346e27-17cb-42a9-a69c-54541da3aa4f",
+      "companyId": "9f919226-89e6-4289-9081-314b861e9f37",
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "Site ABC",
+      "code": "ABC",
+      "address": null,
+      "alertThreshold": 45,
+      "isActived": true,
+      "createdAt": "2026-03-30T12:36:50.569Z"
+    }
+  ],
+  "queues": [
+    {
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "name": "Vente INFRA",
+      "description": "Bureau de Vente de Produits Infra",
+      "isActived": true,
+      "categoryId": "e80fa404-a9bf-46e0-ac75-dc5e1bd07d6e",
+      "stepId": null,
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "createdAt": "2026-03-30T11:06:25.567Z",
+      "updatedAt": "2026-03-30T16:25:21.501Z"
+    },
+    {
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "name": "Vente Elec",
+      "description": "Bureau de Vente Produits électricité",
+      "isActived": true,
+      "categoryId": "b50c0b73-66dc-421b-8582-1cc05ccf3a4e",
+      "stepId": null,
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "createdAt": "2026-03-30T11:12:29.313Z",
+      "updatedAt": "2026-03-30T16:25:21.501Z"
+    },
+    {
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "name": "Vente Bat",
+      "description": "Bureau de Vente Bâtiment ",
+      "isActived": true,
+      "categoryId": "5f1c21f8-44e4-4a87-ba66-d50e64cc077c",
+      "stepId": null,
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "createdAt": "2026-03-30T11:13:20.358Z",
+      "updatedAt": "2026-03-30T16:25:21.501Z"
+    },
+    {
+      "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "name": "Parc INFRA",
+      "description": "Parc export infrastructure ",
+      "isActived": true,
+      "categoryId": "e80fa404-a9bf-46e0-ac75-dc5e1bd07d6e",
+      "stepId": null,
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "createdAt": "2026-03-30T11:14:04.302Z",
+      "updatedAt": "2026-03-30T16:25:21.889Z"
+    },
+    {
+      "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "name": "Parc ELEC",
+      "description": "Parc export électricité ",
+      "isActived": true,
+      "categoryId": "b50c0b73-66dc-421b-8582-1cc05ccf3a4e",
+      "stepId": null,
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "createdAt": "2026-03-30T11:14:25.138Z",
+      "updatedAt": "2026-03-30T16:25:21.889Z"
+    },
+    {
+      "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "name": "Parc BAT",
+      "description": "Parc export Bâtiment ",
+      "isActived": true,
+      "categoryId": "5f1c21f8-44e4-4a87-ba66-d50e64cc077c",
+      "stepId": null,
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "createdAt": "2026-03-30T11:14:57.580Z",
+      "updatedAt": "2026-03-30T16:25:21.889Z"
+    },
+    {
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "name": "Pont Bascule ",
+      "description": "Pont de pesage ",
+      "isActived": true,
+      "categoryId": null,
+      "stepId": null,
+      "quaiId": "f7f60396-278c-4707-bc59-907ec0f42322",
+      "createdAt": "2026-03-30T11:07:10.959Z",
+      "updatedAt": "2026-03-30T16:25:21.892Z"
+    }
+  ],
+  "categories": [
+    {
+      "categoryId": "5f1c21f8-44e4-4a87-ba66-d50e64cc077c",
+      "name": "Bâtiment ",
+      "prefix": "BAT",
+      "color": "#3b82f6",
+      "estimatedDuration": 30,
+      "description": "Produits relatif à construction de bâtisse ",
+      "isActive": true,
+      "createdAt": "2026-03-30T11:04:00.777Z",
+      "updatedAt": "2026-03-30T11:04:00.777Z"
+    },
+    {
+      "categoryId": "e80fa404-a9bf-46e0-ac75-dc5e1bd07d6e",
+      "name": "Infrastructure ",
+      "prefix": "INFRA",
+      "color": "#f77d3b",
+      "estimatedDuration": 30,
+      "description": "Produits relatif à la construction d'infrastructure ",
+      "isActive": true,
+      "createdAt": "2026-03-30T11:05:07.126Z",
+      "updatedAt": "2026-03-30T11:08:12.696Z"
+    },
+    {
+      "categoryId": "b50c0b73-66dc-421b-8582-1cc05ccf3a4e",
+      "name": "Electricité ",
+      "prefix": "ELEC",
+      "color": "#903bf7",
+      "estimatedDuration": 30,
+      "description": "Produits relatif à la construction d'infrastructure électrique ",
+      "isActive": true,
+      "createdAt": "2026-03-30T11:09:21.050Z",
+      "updatedAt": "2026-03-30T11:09:21.050Z"
+    }
+  ],
+  "workflows": [
+    {
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "Parcours Client ",
+      "description": "Flux  standard ",
+      "isActived": true,
+      "createdAt": "2026-03-30T11:03:07.868Z"
+    }
+  ],
+  "workflowSteps": [
+    {
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "Enregistrement ",
+      "stepCode": "STP_1_ENREGISTREMENT_",
+      "orderNumber": 1,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:15:31.331Z",
+      "updatedAt": "2026-03-30T11:15:31.331Z"
+    },
+    {
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "Pesée Initiale ",
+      "stepCode": "STP_2_PESÉE_INITIALE_",
+      "orderNumber": 2,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:16:01.995Z",
+      "updatedAt": "2026-03-30T11:16:01.995Z"
+    },
+    {
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "Chargement ",
+      "stepCode": "STP_3_CHARGEMENT_",
+      "orderNumber": 3,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:16:19.251Z",
+      "updatedAt": "2026-03-30T11:16:19.251Z"
+    },
+    {
+      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
+      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
+      "name": "Pesée Sortie ",
+      "stepCode": "STP_4_PESÉE_SORTIE_",
+      "orderNumber": 4,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:16:37.240Z",
+      "updatedAt": "2026-03-30T11:16:37.240Z"
+    }
+  ],
+  "workflowTransitions": [],
+  "quaiParameters": [
+    {
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "label": "Bureau Vente ",
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "categoryId": null,
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [],
+      "createdAt": "2026-03-30T11:41:08.875Z",
+      "updatedAt": "2026-03-30T11:41:08.875Z"
+    },
+    {
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "label": "Parc Export",
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "categoryId": null,
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [],
+      "createdAt": "2026-03-30T11:42:11.645Z",
+      "updatedAt": "2026-03-30T11:42:11.645Z"
+    },
+    {
+      "quaiId": "60c1dc2d-03b5-48d0-95ab-6e7ba727458b",
+      "label": "Pesée Sortie",
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "categoryId": null,
+      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [],
+      "createdAt": "2026-03-30T11:42:37.606Z",
+      "updatedAt": "2026-03-30T11:42:37.606Z"
+    },
+    {
+      "quaiId": "95250fe0-41ac-414a-ae00-a85d86f4aeaf",
+      "label": "Pesée Entrée",
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "categoryId": null,
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [],
+      "createdAt": "2026-03-30T11:42:52.452Z",
+      "updatedAt": "2026-03-30T11:42:52.452Z"
+    },
+    {
+      "quaiId": "f7f60396-278c-4707-bc59-907ec0f42322",
+      "label": "Pont Bascule (Entrée/Sortie)",
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "categoryId": null,
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "expectedStepCode": "STP_2_PESÉE_INITIALE_,STP_4_PESÉE_SORTIE_",
+      "formConfig": [],
+      "allowedUsers": [],
+      "createdAt": "2026-03-30T11:41:44.842Z",
+      "updatedAt": "2026-03-31T16:35:28.673Z"
+    }
+  ],
+  "quaiConfigs": [],
+  "systemSettings": [],
+  "users": [
+    {
+      "userId": "07c87e77-5434-4174-9e03-4e24815954e1",
+      "roleId": "a38bb09b-bb74-48fd-8a51-65fc847f1246",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "Kei Frejuste",
+      "email": "stagiaire.info@sibmci.com",
+      "password": "$2b$10$KFL0DStJ8aBIGj6Bs3TOc.UI4s1Ugc9Hy1uMlZWpc7B.p1V7kFkQm",
+      "firstName": "Kei",
+      "lastName": "Frejuste",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T10:55:05.264Z",
+      "updatedAt": "2026-03-30T10:55:05.264Z"
+    },
+    {
+      "userId": "c2138e7a-1e32-433e-902c-08b7aafdf07d",
+      "roleId": "1572879e-1266-4890-a0ec-cd4ea4014a05",
+      "siteId": null,
+      "companyId": "0eb47bd8-1e6e-4aff-839e-6634f48e57f2",
+      "assignedQueueId": null,
+      "username": "DSC",
+      "email": "directeur.supplychain@sibmci.com",
+      "password": "$2b$10$q/RYkDPh7TQeocnFS.xIyOySWnK.CUOkViwepcZsdNP4rsdnap7z.",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:54:29.633Z",
+      "updatedAt": "2026-03-30T11:54:29.633Z"
+    },
+    {
+      "userId": "07e57a8e-49c9-40a2-9a9c-0a58070fca50",
+      "roleId": "9603ffc2-486f-45a9-8e22-a34b7d8d3c07",
+      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "Responsable Vente",
+      "email": "responsable.vente@sibmci.com",
+      "password": "$2b$10$6PYav4Eag928GhtBV6jDwOFstEP7SEzs4jtm/dpUNsmFaSP6Vyzgi",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:54:56.878Z",
+      "updatedAt": "2026-03-30T11:54:56.878Z"
+    },
+    {
+      "userId": "4979ccc1-8d34-45c0-a521-665da6daa537",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "username": "Assistant Vente Infra",
+      "email": "vente.infra@sibmci.com",
+      "password": "$2b$10$pk2QX0q.hFh2PY0rEyeCL.ZwcoepqeOoo20DNlK4yOYMSBhDnfRTK",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:55:43.099Z",
+      "updatedAt": "2026-03-30T11:55:43.099Z"
+    },
+    {
+      "userId": "0bf73ce4-dda5-4827-abeb-7329d03817a5",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "username": "Assistant Vente Bat",
+      "email": "vente.bat@sibmci.com",
+      "password": "$2b$10$2nfY09.hsbX/v99YkAD81.u4j4VcTHYyU9bxI.t6/DaXMPu3fhwDa",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:56:11.416Z",
+      "updatedAt": "2026-03-30T11:56:11.416Z"
+    },
+    {
+      "userId": "a0efc4e8-123d-4f69-8f8b-4069c85c5866",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "username": "Assistant Vente Elec",
+      "email": "vente.elec@sibmci.com",
+      "password": "$2b$10$Q/P1qvjZjTLIhYakgtCG9.gbgEy0Ez8NowRb9R2LJG2mOOn/z8wOm",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:56:43.376Z",
+      "updatedAt": "2026-03-30T11:56:43.376Z"
+    },
+    {
+      "userId": "8320ca9f-22fd-4d5a-8134-691164bbb4c4",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "username": "Agent Export Infra",
+      "email": "export.infra@sibmci.com",
+      "password": "$2b$10$hT4uK9REWzc/kJ824lTeOuEXXktcInL9WviGFInAZhnVQkTYj8ECi",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:57:55.843Z",
+      "updatedAt": "2026-03-30T11:57:55.843Z"
+    },
+    {
+      "userId": "98d878ef-57a1-4174-ad46-93d3b90d9969",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "username": "Agent Péseur",
+      "email": "pont.bascule@sibmci.com",
+      "password": "$2b$10$ygwUqv3JfTq6QfibiqF2UuNhqeQCEoG6gYjSk7jzf.htcXwv/AW82",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:58:38.126Z",
+      "updatedAt": "2026-03-30T11:58:38.126Z"
+    },
+    {
+      "userId": "3d5dfbaf-f429-44b8-88d2-3602c1c61e12",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "username": "Agent export Bat",
+      "email": "export.bat@sibmci.com",
+      "password": "$2b$10$hfE/65IVkUT3OJO/Cu3GMuBxxgDW5FafTpulZUnRfLd6THrz0/cEK",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T11:59:35.052Z",
+      "updatedAt": "2026-03-30T11:59:35.052Z"
+    },
+    {
+      "userId": "90c10551-fef5-40c3-9fa3-4c3dd7fb42bb",
+      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "username": "Agent export Elec",
+      "email": "export.elec@sibmci.com",
+      "password": "$2b$10$LAlBaU28MPb2tT2gwaij5uiS8JdONA6T8YIb.Zlv3wwORc2hJRkRi",
+      "firstName": null,
+      "lastName": null,
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-03-30T12:00:06.521Z",
+      "updatedAt": "2026-03-30T12:00:06.521Z"
+    }
+  ]
+}

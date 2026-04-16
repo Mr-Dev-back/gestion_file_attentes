@@ -85,20 +85,34 @@ class CompanyController {
             const company = await Company.findByPk(req.params.id);
             if (!company) return res.status(404).json({ error: 'Société non trouvée.' });
 
+            // On vérifie s'il y a des utilisateurs rattachés 
+            // Note: Importé dynamiquement pour éviter les dépendances circulaires si nécessaire 
+            // mais ici on peut utiliser les modèles importés en haut du fichier si User y est.
+            const { User } = await import('../models/index.js');
+            const userCount = await User.count({ where: { companyId: req.params.id } });
+            if (userCount > 0) {
+                return res.status(400).json({ error: `Impossible de supprimer cette société car ${userCount} utilisateur(s) lui sont encore rattachés.` });
+            }
+
             await company.destroy();
 
             // Audit
             await AuditLog.create({
-                userId: req.user.id,
+                userId: req.user.userId || req.user.id,
                 action: 'DELETE_COMPANY',
                 entityId: req.params.id,
                 entityType: 'COMPANY',
-                details: { name: company.name }
+                details: { name: company.name },
+                ipAddress: req.ip
             });
 
-            res.json({ message: 'Société supprimée.' });
+            res.json({ message: 'Société supprimée avec succès.' });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            logger.error(`Erreur suppression société ${req.params.id}:`, error);
+            if (error.name === 'SequelizeForeignKeyConstraintError') {
+                return res.status(400).json({ error: 'Impossible de supprimer cette société car elle possède des ressources liées (Sites, Bornes, etc.).' });
+            }
+            res.status(500).json({ error: 'Une erreur interne est survenue lors de la suppression.' });
         }
     }
 

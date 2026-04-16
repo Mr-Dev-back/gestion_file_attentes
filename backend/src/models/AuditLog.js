@@ -18,11 +18,32 @@ AuditLog.init({
         type: DataTypes.STRING(100),
         allowNull: false
     },
-    details: {
-        type: DataTypes.JSONB
+    resourceType: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+        comment: 'Type de ressource (ex: Ticket, User, Role)'
+    },
+    resourceId: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: 'ID de la ressource concernée'
+    },
+    oldValues: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+        comment: 'État avant modification'
+    },
+    newValues: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+        comment: 'État après modification'
     },
     ipAddress: {
         type: DataTypes.STRING(45)
+    },
+    userAgent: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     },
     occurredAt: {
         type: DataTypes.DATE,

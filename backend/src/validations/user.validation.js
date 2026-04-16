@@ -31,8 +31,9 @@ export const createUserSchema = Joi.object({
     }),
     queueId: Joi.string().uuid().allow(null, '').messages({
         'string.guid': 'L\'ID de la file doit être un UUID valide.'
-    })
-});
+    }),
+    queueIds: Joi.array().items(Joi.string().uuid()).allow(null).default([])
+}).unknown(true);
 
 export const updateUserSchema = Joi.object({
     username: Joi.string().min(3).max(50),

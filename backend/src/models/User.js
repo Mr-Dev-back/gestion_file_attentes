@@ -29,12 +29,16 @@ User.init({
     role: {
         type: DataTypes.VIRTUAL,
         get() {
-            return this.assignedRole?.name || null;
+            // Renvoie le nom du premier rôle trouvé dans la table de jonction
+            return this.roles?.[0]?.name || null;
         }
     },
     roleId: {
-        type: DataTypes.UUID,
-        references: { model: 'Role', key: 'roleId' }
+        type: DataTypes.VIRTUAL,
+        get() {
+            // Renvoie l'ID du premier rôle trouvé dans la table de jonction
+            return this.roles?.[0]?.roleId || null;
+        }
     },
     siteId: {
       type: DataTypes.UUID,

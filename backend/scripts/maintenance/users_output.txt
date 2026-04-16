@@ -1,0 +1,4 @@
+--- List of Users ---
+Email: [admin@sigfa.ci], Username: [admin], Role: [ADMINISTRATOR]
+Email: [sales@sigfa.ci], Username: [agentsales], Role: [AGENT_QUAI]
+Email: [quai@sigfa.ci], Username: [agentquai], Role: [AGENT_QUAI]

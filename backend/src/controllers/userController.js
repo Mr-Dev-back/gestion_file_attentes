@@ -1,4 +1,5 @@
-import { User, Role, Site, Company, Queue, RefreshToken, AuditLog, LoginHistory, UserSite, UserQueue, UserPasswordReset, sequelize } from '../models/index.js';
+import { User, Role, Site, Company, Queue, RefreshToken, RolePermission, LoginHistory, UserSite, UserQueue, UserPasswordReset, sequelize } from '../models/index.js';
+import auditService from '../services/auditService.js';
 import { Op } from 'sequelize';
 import logger from '../config/logger.js';
 import bcrypt from 'bcrypt';
@@ -55,11 +56,10 @@ class UserController {
                 await user.setQueues(targetQueueIds);
             }
 
-            await AuditLog.create({
-                userId: req.user.userId,
-                action: 'CREATE_USER',
-                details: { userId: user.userId, email: user.email, username: user.username, role },
-                ipAddress: req.ip
+            await auditService.logAction(req, 'CREATE_USER', 'User', user.userId, null, { 
+                username: user.username, 
+                email: user.email, 
+                role 
             });
 
             res.status(201).json({
@@ -87,7 +87,7 @@ class UserController {
                 include: [
                     {
                         model: Role,
-                        as: 'assignedRole',
+                        as: 'roles',
                         attributes: ['name']
                     },
                     {
@@ -130,7 +130,7 @@ class UserController {
             const user = await User.findByPk(req.params.id, {
                 attributes: { exclude: ['password'] },
                 include: [
-                    { model: Role, as: 'assignedRole', attributes: ['name'] },
+                    { model: Role, as: 'roles', attributes: ['name'] },
                     { model: Site, as: 'site', attributes: ['name'], include: [{ model: Company, as: 'company', attributes: ['name'] }] },
                     { model: Company, as: 'company', attributes: ['name'] },
                     { model: Queue, as: 'queue', attributes: ['name'] },
@@ -204,6 +204,7 @@ class UserController {
                 updates.password = await bcrypt.hash(password, salt);
             }
 
+            const oldData = { ...user.toJSON() };
             await user.update(updates);
 
             // Sync Multi-queues if provided
@@ -212,12 +213,10 @@ class UserController {
                 await user.setQueues(targetQueueIds);
             }
 
-            await AuditLog.create({
-                userId: req.user.userId,
-                action: 'UPDATE_USER',
-                details: { userId: user.userId, ...updates, password: password ? '********' : undefined },
-                ipAddress: req.ip
-            });
+            const diff = auditService.getDiff(oldData, updates);
+            if (diff) {
+                await auditService.logAction(req, 'UPDATE_USER', 'User', user.userId, diff.old, diff.new);
+            }
 
             res.status(200).json({
                 message: 'Utilisateur mis à jour avec succès.',
@@ -255,12 +254,7 @@ class UserController {
             await LoginHistory.destroy({ where: { userId: user.userId } });
             await UserQueue.destroy({ where: { userId: user.userId } });
 
-            await AuditLog.create({
-                userId: req.user.userId,
-                action: 'DELETE_USER',
-                details: { userId: user.userId, email: user.email },
-                ipAddress: req.ip
-            });
+            await auditService.logAction(req, 'DELETE_USER', 'User', user.userId, { email: user.email, username: user.username });
 
             await user.destroy();
             res.status(200).json({ message: 'Utilisateur supprimé avec succès.' });
@@ -287,12 +281,7 @@ class UserController {
                 lockUntil: null
             });
 
-            await AuditLog.create({
-                userId: req.user.userId,
-                action: 'UNLOCK_USER',
-                details: { targetUserId: id },
-                ipAddress: req.ip
-            });
+            await auditService.logAction(req, 'UNLOCK_USER', 'User', id);
 
             res.status(200).json({ message: 'Utilisateur débloqué avec succès.' });
         } catch (error) {
@@ -380,12 +369,7 @@ class UserController {
                 }
             );
 
-            await AuditLog.create({
-                userId: req.user.userId,
-                action: 'BULK_UPDATE_USER_STATUS',
-                details: { count: ids.length, isActive, userIds: ids },
-                ipAddress: req.ip
-            }, { transaction });
+            await auditService.logAction(req, 'BULK_UPDATE_USER_STATUS', 'User', 'MULTIPLE', null, { count: ids.length, isActive, userIds: ids });
 
             await transaction.commit();
             res.status(200).json({ message: `${ids.length} utilisateurs mis à jour.` });
@@ -418,12 +402,7 @@ class UserController {
 
             await User.destroy({ where, transaction });
 
-            await AuditLog.create({
-                userId: req.user.userId,
-                action: 'BULK_DELETE_USERS',
-                details: { count: ids.length, userIds: ids },
-                ipAddress: req.ip
-            }, { transaction });
+            await auditService.logAction(req, 'BULK_DELETE_USERS', 'User', 'MULTIPLE', null, { count: ids.length, userIds: ids });
 
             await transaction.commit();
             res.status(200).json({ message: `${ids.length} utilisateurs supprimés.` });

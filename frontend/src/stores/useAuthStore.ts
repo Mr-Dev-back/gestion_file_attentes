@@ -19,6 +19,7 @@ interface User {
     };
     department?: string;
     permissions?: string[];
+    rules?: any[];
 }
 
 interface AuthState {

@@ -29,6 +29,8 @@ import kioskRoutes from './routes/kioskRoutes.js';
 import publicDisplayRoutes from './routes/publicDisplayRoutes.js';
 import roleRoutes from './routes/role.routes.js';
 import permissionRoutes from './routes/permission.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
+import auditRoutes from './routes/audit.routes.js';
 import { apiLimiter, authLimiter } from './middlewares/rateLimiter.js';
 import cleanupService from './services/cleanupService.js';
 import authMiddleware from './middlewares/auth.middleware.js';
@@ -106,6 +108,8 @@ app.use('/api/kiosks', kioskRoutes);
 app.use('/api/public/display', publicDisplayRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/audit', auditRoutes);
 
 // Gestion des erreurs 404
 app.use((req, res) => {
@@ -157,6 +161,7 @@ async function startServer() {
     await sequelize.authenticate();
     logger.info('Connexion PostgreSQL établie');
 
+    // Sync des models (en dev uniquement)
     // Sync des models (en dev uniquement)
     if (process.env.NODE_ENV === 'development') {
       await sequelize.sync({ alter: false }); 

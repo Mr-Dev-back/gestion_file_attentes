@@ -10,14 +10,14 @@ interface StatusIndicatorProps {
 
 const StatusIndicator = ({ label, status, icon: Icon }: StatusIndicatorProps) => {
   const statusColors = {
-    healthy: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]',
-    unhealthy: 'text-red-500 bg-red-500/10 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]',
+    healthy: 'text-success bg-success/10 border-success/20 shadow-[0_0_15px_rgba(0,143,57,0.1)]',
+    unhealthy: 'text-danger bg-danger/10 border-danger/20 shadow-[0_0_15px_rgba(227,6,19,0.1)]',
     degraded: 'text-amber-500 bg-amber-500/10 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]',
   };
 
   const ledColors = {
-    healthy: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]',
-    unhealthy: 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]',
+    healthy: 'bg-success shadow-[0_0_8px_rgba(0,143,57,0.6)]',
+    unhealthy: 'bg-danger shadow-[0_0_8px_rgba(227,6,19,0.6)]',
     degraded: 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]',
   };
 
@@ -65,7 +65,7 @@ export const VitalsHeader = ({ vitals, sites, selectedSite, onSiteChange }: Vita
       </div>
 
       <div className="flex items-center gap-4 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 shadow-inner group">
-        <div className="pl-3 text-emerald-500 group-hover:scale-110 transition-transform">
+        <div className="pl-3 text-primary group-hover:scale-110 transition-transform">
           <Globe className="w-4 h-4" />
         </div>
         <select

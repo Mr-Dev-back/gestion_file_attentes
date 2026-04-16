@@ -18,6 +18,18 @@ Permission.init({
         type: DataTypes.STRING,
         allowNull: true
     },
+    action: {
+        type: DataTypes.STRING,
+        allowNull: true // Permet la migration progressive
+    },
+    subject: {
+        type: DataTypes.STRING,
+        allowNull: true // Permet la migration progressive
+    },
+    conditions: {
+        type: DataTypes.JSONB,
+        allowNull: true
+    },
     // Foreign Keys to new tables
     resourceId: {
         type: DataTypes.UUID,

@@ -25,6 +25,10 @@ export const dashboardApi = {
     getControlStats: () => api.get('/dashboard/control/stats'),
     getControlPending: () => api.get('/dashboard/control/pending'),
 
+    // Analytics (New CASL-based)
+    getSummary: () => api.get('/analytics/summary'),
+    getPerformance: () => api.get('/analytics/performance'),
+
     // Sites
     getSites: () => api.get('/sites'),
 };

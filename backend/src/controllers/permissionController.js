@@ -1,4 +1,5 @@
 import { Permission, Resource, Action } from '../models/index.js';
+import auditService from '../services/auditService.js';
 import logger from '../config/logger.js';
 
 class PermissionController {
@@ -67,6 +68,8 @@ class PermissionController {
                 actionId
             });
 
+            await auditService.logAction(req, 'PERMISSION_CREATE', 'Permission', permission.permissionId, null, { description, resourceId, actionId });
+
             // Reload to get associations
             const fullPermission = await Permission.findByPk(permission.permissionId, {
                 include: [
@@ -90,12 +93,13 @@ class PermissionController {
             const { id } = req.params;
             const { description, resourceId, actionId } = req.body;
 
-            const permission = await Permission.findByPk(id);
-            if (!permission) {
-                return res.status(404).json({ error: 'Permission introuvable.' });
-            }
-
+            const oldData = { ...permission.toJSON() };
             await permission.update({ description, resourceId, actionId });
+            
+            const diff = auditService.getDiff(oldData, { description, resourceId, actionId });
+            if (diff) {
+                await auditService.logAction(req, 'PERMISSION_UPDATE', 'Permission', id, diff.old, diff.new);
+            }
             
             const fullPermission = await Permission.findByPk(id, {
                 include: [
@@ -122,6 +126,7 @@ class PermissionController {
                 return res.status(404).json({ error: 'Permission introuvable.' });
             }
 
+            await auditService.logAction(req, 'PERMISSION_DELETE', 'Permission', id, { description: permission.description });
             await permission.destroy();
             res.status(204).send();
         } catch (error) {

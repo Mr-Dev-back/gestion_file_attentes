@@ -22,9 +22,10 @@ import Reporting from './pages/Reporting';
 import Manager from './pages/Manager';
 import SmartQuai from './pages/SmartQuai';
 import { MainLayout } from './layouts/MainLayout';
-import { Toaster } from './components/molecules/ui/toast';
 import { ProtectedRoute } from './components/organisms/auth/ProtectedRoute';
 import { SocketProvider } from './providers/SocketProvider';
+import { AbilityProvider } from './auth/AbilityContext';
+import { updateAbility } from './auth/ability';
 
 function App() {
   const { isAuthenticated, token, setAuth, logout } = useAuthStore();
@@ -39,6 +40,10 @@ function App() {
           
           if (fetchedUser && fetchedUser.userId) {
              setAuth(fetchedUser, token);
+             // Mise à jour des capacités CASL avec les règles réelles (rules)
+             if (fetchedUser.rules) {
+               updateAbility(fetchedUser.rules);
+             }
           }
         } catch (error) {
           const apiError = error as AxiosError;
@@ -54,78 +59,79 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SocketProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Entry />} />
-            <Route path="/tv" element={<PublicTV />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
+      <AbilityProvider>
+        <SocketProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Entry />} />
+              <Route path="/tv" element={<PublicTV />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
 
-            {/* Standalone full-screen routes (no sidebar/topbar) */}
-            <Route path="/quai/:quaiId" element={
-                <ProtectedRoute allowedRoles={['AGENT_QUAI', 'SUPERVISOR', 'ADMINISTRATOR', 'EXPLOITATION']}>
-                  <SmartQuai />
-                </ProtectedRoute>
-            } />
-
-            <Route element={<MainLayout />}>
-              {/* Dashboard Routes */}
-              <Route path="/dashboard/admin" element={
-                <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/supervisor/*" element={
-                <ProtectedRoute allowedRoles={['SUPERVISOR', 'ADMINISTRATOR']}>
-                  <Supervisor />
-                </ProtectedRoute>
+              {/* Standalone full-screen routes (no sidebar/topbar) */}
+              <Route path="/quai/:quaiId" element={
+                  <ProtectedRoute allowedRoles={['AGENT_QUAI', 'SUPERVISOR', 'ADMINISTRATOR', 'EXPLOITATION']}>
+                    <SmartQuai />
+                  </ProtectedRoute>
               } />
 
-              <Route path="/manager/*" element={
-                <ProtectedRoute allowedRoles={['MANAGER', 'ADMINISTRATOR']}>
-                  <Manager />
-                </ProtectedRoute>
-              } />
+              <Route element={<MainLayout />}>
+                {/* Dashboard Routes */}
+                <Route path="/dashboard/admin" element={
+                  <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/supervisor/*" element={
+                  <ProtectedRoute allowedRoles={['SUPERVISOR', 'ADMINISTRATOR']}>
+                    <Supervisor />
+                  </ProtectedRoute>
+                } />
 
-              {/* Operational & Agent Routes */}
-              <Route path="/operational" element={
-                <ProtectedRoute allowedRoles={['AGENT_QUAI', 'SUPERVISOR', 'ADMINISTRATOR', 'EXPLOITATION']}>
-                  <OperationalDashboard
-                    title="Poste Opérationnel"
-                    description="Traitement des tickets selon le workflow"
-                  />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/reporting" element={
-                <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'MANAGER']}>
-                  <Reporting />
-                </ProtectedRoute>
-              } />
+                <Route path="/manager/*" element={
+                  <ProtectedRoute allowedRoles={['MANAGER', 'ADMINISTRATOR']}>
+                    <Manager />
+                  </ProtectedRoute>
+                } />
 
-              {/* Existing Routes */}
-              <Route path="/admin/*" element={
-                <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR']}>
-                  <Admin />
-                </ProtectedRoute>
-              } />
-              <Route path="/queue" element={
-                <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'MANAGER', 'EXPLOITATION', 'AGENT_QUAI']}>
-                  <QueueView />
-                </ProtectedRoute>
-              } />
-            </Route>
+                {/* Operational & Agent Routes */}
+                <Route path="/operational" element={
+                  <ProtectedRoute allowedRoles={['AGENT_QUAI', 'SUPERVISOR', 'ADMINISTRATOR', 'EXPLOITATION']}>
+                    <OperationalDashboard
+                      title="Poste Opérationnel"
+                      description="Traitement des tickets selon le workflow"
+                    />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/reporting" element={
+                  <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'MANAGER']}>
+                    <Reporting />
+                  </ProtectedRoute>
+                } />
 
-            {/* Catch-all route for 404 - Must be outside MainLayout */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Toaster />
-        </BrowserRouter>
-      </SocketProvider>
+                {/* Existing Routes */}
+                <Route path="/admin/*" element={
+                  <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR']}>
+                    <Admin />
+                  </ProtectedRoute>
+                } />
+                <Route path="/queue" element={
+                  <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'MANAGER', 'EXPLOITATION', 'AGENT_QUAI']}>
+                    <QueueView />
+                  </ProtectedRoute>
+                } />
+              </Route>
+
+              {/* Catch-all route for 404 - Must be outside MainLayout */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </SocketProvider>
+      </AbilityProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

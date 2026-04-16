@@ -1,4 +1,5 @@
 import { Role, Permission } from '../models/index.js';
+import auditService from '../services/auditService.js';
 import logger from '../config/logger.js';
 
 class RoleController {
@@ -40,6 +41,8 @@ class RoleController {
                 await role.setPermissions(permissionIds);
             }
 
+            await auditService.logAction(req, 'ROLE_CREATE', 'Role', role.roleId, null, { name, description, permissionIds });
+
             const updatedRole = await Role.findByPk(role.roleId, {
                 include: [{ model: Permission, as: 'permissions', through: { attributes: [] } }]
             });
@@ -66,10 +69,24 @@ class RoleController {
 
             // Prevent renaming system critical roles if necessary? 
             // For now, allow full edit.
+            const oldData = { ...role.toJSON() };
+            // Capture existing permissions to check if they change
+            const oldPermissions = (await role.getPermissions()).map(p => p.permissionId);
+
             await role.update({ name, description, scope });
 
             if (permissionIds && Array.isArray(permissionIds)) {
                 await role.setPermissions(permissionIds);
+            }
+
+            const diff = auditService.getDiff(oldData, { name, description, scope });
+            const permissionsChanged = JSON.stringify(oldPermissions.sort()) !== JSON.stringify((permissionIds || []).sort());
+            
+            if (diff || permissionsChanged) {
+                await auditService.logAction(req, 'ROLE_UPDATE', 'Role', id, 
+                    { ...diff?.old, permissionIds: permissionsChanged ? oldPermissions : undefined }, 
+                    { ...diff?.new, permissionIds: permissionsChanged ? permissionIds : undefined }
+                );
             }
 
             const updatedRole = await Role.findByPk(id, {
@@ -96,6 +113,7 @@ class RoleController {
 
             // check if users use this role? 
             // Sequelize might handle this via foreign key constraints.
+            await auditService.logAction(req, 'ROLE_DELETE', 'Role', id, { name: role.name });
             await role.destroy();
             res.status(204).send();
         } catch (error) {

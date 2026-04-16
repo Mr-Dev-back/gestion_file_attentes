@@ -23,7 +23,7 @@ RolePermission.init({
 }, {
     sequelize,
     modelName: 'RolePermission',
-    tableName: 'RolePermission',
+    tableName: 'RoleHasPermission',
     timestamps: false,
     underscored: false
 });

@@ -71,9 +71,9 @@ export default function Login() {
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary via-primary/90 to-primary/70"></div>
 
-                <div className="relative z-10 text-white max-w-lg animate-slide-up">
-                    <div className="flex items-center justify-center mb-8">
-                        <img src="/gfa-logo.svg" alt="GFA SIBM Logo" className="h-24 w-auto" />
+                <div className="relative z-10 text-white max-w-lg animate-slide-up flex flex-col items-center text-center">
+                    <div className="mb-8 p-4 bg-white rounded-2xl shadow-2xl">
+                        <img src="/sibm.png" alt="SIBM Logo" className="h-24 w-auto object-contain" />
                     </div>
                     <h1 className="text-5xl font-black tracking-tight mb-6">GFA SIBM</h1>
                     <p className="text-xl text-primary-foreground/90 font-medium leading-relaxed mb-8">

@@ -28,6 +28,7 @@ import TicketLogistic from './TicketLogistic.js';
 import TicketActionLog from './TicketActionLog.js';
 import UserSite from './UserSite.js';
 import UserQueue from './UserQueue.js';
+import UserRole from './UserRole.js';
 import AuditLog from './AuditLog.js';
 import RefreshToken from './RefreshToken.js';
 import SystemSetting from './SystemSetting.js';
@@ -39,9 +40,9 @@ import TransitionAllowedRole from './TransitionAllowedRole.js';
 // Organisation & Auth
 // ==========================================
 
-// User <-> Role
-User.belongsTo(Role, { foreignKey: 'roleId', as: 'assignedRole' });
-Role.hasMany(User, { foreignKey: 'roleId', as: 'users' });
+// User <-> Role (Many-to-Many - CASL Migration)
+User.belongsToMany(Role, { through: UserRole, foreignKey: 'userId', as: 'roles' });
+Role.belongsToMany(User, { through: UserRole, foreignKey: 'roleId', as: 'users' });
 
 // User <-> Site (Singular for primary site)
 User.belongsTo(Site, { foreignKey: 'siteId', as: 'site' });
@@ -76,8 +77,8 @@ User.belongsToMany(Queue, { through: UserQueue, foreignKey: 'userId', as: 'queue
 Queue.belongsToMany(User, { through: UserQueue, foreignKey: 'queueId', as: 'agents' });
 
 // Site <-> Company
-Site.belongsTo(Company, { foreignKey: 'companyId', as: 'company' });
-Company.hasMany(Site, { foreignKey: 'companyId', as: 'sites' });
+Site.belongsTo(Company, { foreignKey: 'companyId', as: 'company', onDelete: 'CASCADE' });
+Company.hasMany(Site, { foreignKey: 'companyId', as: 'sites', onDelete: 'CASCADE' });
 
 // ==========================================
 // Workflow & Configuration
@@ -205,7 +206,7 @@ export {
     QuaiConfig, QuaiParameter, QuaiQueue, StepParameter, TicketStep,
     Kiosk, KioskQueue, KioskActivity, Ticket, TicketActionLog,
     TicketVehicleInfo, TicketLogistic,
-    UserSite, UserQueue, AuditLog, RefreshToken,
+    UserSite, UserQueue, UserRole, AuditLog, RefreshToken,
     SystemSetting, UserPasswordReset, LoginHistory,
     TransitionAllowedRole, Resource, Action
 };

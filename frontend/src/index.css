@@ -4,46 +4,39 @@
   --font-sans: "Outfit", "Inter", "Manrope", sans-serif;
 
   /* SIBM Brand Palette */
-  /* Primary: SIBM Green */
-  --color-primary: #1a7f37;
-  /* SIBM Green from logo */
+  /* Primary: Afrique Green */
+  --color-primary: #008F39;
   --color-primary-foreground: #ffffff;
+  
+  /* Accent: SIBM Red (For critical elements) */
+  --color-accent: #E30613;
+  --color-accent-foreground: #ffffff;
 
   /* Backgrounds: Clean, professional */
   --color-background: #f8fafc;
-  /* Slate 50 */
   --color-surface: #ffffff;
 
-  /* Text: High contrast, softer than pure black */
-  --color-text-main: #0f172a;
-  /* Slate 900 */
+  /* Text: SIBM Deep Gray / Slate 800 */
+  --color-text-main: #1e293b;
   --color-text-muted: #64748b;
-  /* Slate 500 */
 
   /* Secondary: Neutral but distinct */
   --color-secondary: #f1f5f9;
-  /* Slate 100 */
-  --color-secondary-foreground: #0f172a;
-  /* Slate 900 */
+  --color-secondary-foreground: #1e293b;
 
   --color-border: #e2e8f0;
-  /* Slate 200 */
 
   /* Semantic Status Colors (SIBM-aligned) */
-  --color-success: #15803d;
-  /* SIBM Green variant (darker) */
+  --color-success: #008F39;
   --color-success-foreground: #ffffff;
   --color-warning: #f59e0b;
-  /* Amber 500 */
   --color-warning-foreground: #ffffff;
-  --color-danger: #dc2626;
-  /* SIBM Red from logo */
+  --color-danger: #E30613;
   --color-danger-foreground: #ffffff;
 
   /* Component Tokens */
   --color-input: #e2e8f0;
-  --color-ring: #1a7f37;
-  /* SIBM Green for focus rings */
+  --color-ring: #008F39;
 
   --radius: 0.75rem;
   /* Slightly more rounded for modern feel */

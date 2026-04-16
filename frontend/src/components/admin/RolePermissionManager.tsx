@@ -80,10 +80,11 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
         register: registerPermission,
         handleSubmit: handleSubmitPermission,
         reset: resetPermission,
+        watch: watchPermission,
         formState: { errors: permErrors, isValid: isPermValid }
     } = useForm({
         resolver: zodResolver(permissionSchema),
-        defaultValues: { resourceId: '', actionId: '', description: '' },
+        defaultValues: { resourceId: '', actionId: '', action: '', subject: '', conditions: '', description: '' },
         mode: 'onChange'
     });
 
@@ -137,22 +138,36 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
             resetPermission({
                 description: perm.description || '',
                 resourceId: perm.resourceId,
-                actionId: perm.actionId
+                actionId: perm.actionId,
+                action: perm.action || '',
+                subject: perm.subject || '',
+                conditions: perm.conditions ? JSON.stringify(perm.conditions, null, 2) : ''
             });
         } else {
             setEditingPermission(null);
-            resetPermission({ description: '', resourceId: '', actionId: '' });
+            resetPermission({ description: '', resourceId: '', actionId: '', action: '', subject: '', conditions: '' });
         }
         setIsPermissionModalOpen(true);
     };
 
     const onSavePermission = async (data: any) => {
         try {
+            const payload = { ...data };
+            // Conversion safely if it's a string
+            if (payload.conditions && typeof payload.conditions === 'string') {
+                try {
+                    payload.conditions = JSON.parse(payload.conditions);
+                } catch (e) {
+                    toast('JSON invalide dans les conditions', 'error');
+                    return;
+                }
+            }
+
             if (editingPermission) {
-                await updatePermission.mutateAsync({ id: editingPermission.permissionId, data });
+                await updatePermission.mutateAsync({ id: editingPermission.permissionId, data: payload });
                 toast('Permission mise à jour', 'success');
             } else {
-                await createPermission.mutateAsync(data);
+                await createPermission.mutateAsync(payload);
                 toast('Permission créée', 'success');
             }
             setIsPermissionModalOpen(false);
@@ -318,9 +333,9 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
                                         />
                                     </TableHead>
                                     <TableHead className="font-bold">RESSOURCE</TableHead>
-                                    <TableHead className="font-bold">ACTION</TableHead>
+                                    <TableHead className="font-bold">DOMAINE (ACTION:SUJET)</TableHead>
+                                    <TableHead className="font-bold">CONDITIONS</TableHead>
                                     <TableHead className="font-bold">CODE</TableHead>
-                                    <TableHead className="font-bold">DESCRIPTION</TableHead>
                                     <TableHead className="text-right pr-8 font-bold">ACTIONS</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -363,12 +378,23 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-                                                {permission.actionObj?.name || 'N/A'}
-                                            </Badge>
+                                            <div className="flex flex-col">
+                                                <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 w-fit">
+                                                    {permission.action || '---'} : {permission.subject || '---'}
+                                                </Badge>
+                                                <span className="text-[10px] text-text-muted mt-1 italic">{permission.actionObj?.name}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            {permission.conditions ? (
+                                                <Badge variant="secondary" className="bg-amber-50 text-amber-600 border-amber-100 font-mono text-[9px]">
+                                                    {JSON.stringify(permission.conditions).slice(0, 30)}...
+                                                </Badge>
+                                            ) : (
+                                                <span className="text-[10px] text-slate-300">Aucune</span>
+                                            )}
                                         </TableCell>
                                         <TableCell><code className="bg-black/5 px-2 py-0.5 rounded text-xs font-mono">{permission.code}</code></TableCell>
-                                        <TableCell className="text-text-muted text-sm">{permission.description}</TableCell>
                                         <TableCell className="text-right pr-6">
                                             <div className="flex justify-end gap-1">
                                                 <Button variant="ghost" size="sm" onClick={() => handleOpenPermissionModal(permission)} className="h-8 w-8"><Edit2 className="w-4 h-4 text-text-muted" /></Button>
@@ -554,14 +580,44 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
                         </div>
                     </div>
                     
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase text-text-muted ml-1">Action CASL</label>
+                            <Input 
+                                placeholder="E.g. manage, read, create" 
+                                {...registerPermission('action')}
+                                className={cn("h-11 rounded-xl", permErrors.action && "border-danger")}
+                            />
+                            <p className="text-[9px] text-slate-400 italic px-1">* Verbe utilisé par le moteur CASL</p>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase text-text-muted ml-1">Sujet CASL</label>
+                            <Input 
+                                placeholder="E.g. Ticket, User, Site" 
+                                {...registerPermission('subject')}
+                                className={cn("h-11 rounded-xl", permErrors.subject && "border-danger")}
+                            />
+                            <p className="text-[9px] text-slate-400 italic px-1">* Nom de l'objet (PascalCase conseillé)</p>
+                        </div>
+                    </div>
+
                     <div className="space-y-2">
-                        <label className="text-xs font-black uppercase text-text-muted ml-1">Description contextuelle</label>
+                        <label className="text-xs font-black uppercase text-text-muted ml-1">Conditions Dynamiques (JSON)</label>
+                        <textarea 
+                            className={cn("w-full h-24 p-3 bg-slate-50 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-mono text-xs", permErrors.conditions && "border-danger")}
+                            placeholder='e.g. { "siteId": "${user.siteId}" }'
+                            {...registerPermission('conditions')}
+                        />
+                        <p className="text-[9px] text-slate-400 italic px-1">* Supporte les placeholders: {"${user.siteId}"}, {"${user.assignedQueueIds}"}</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <label className="text-xs font-black uppercase text-text-muted ml-1">Description</label>
                         <Input 
                             placeholder="Pourquoi cette permission est nécessaire ?" 
                             {...registerPermission('description')}
                             className={cn("h-11 rounded-xl", permErrors.description && "border-danger ring-danger/20")}
                         />
-                        {permErrors.description && <p className="text-danger text-xs mt-1 px-1">{permErrors.description.message as string}</p>}
                     </div>
 
                     <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">

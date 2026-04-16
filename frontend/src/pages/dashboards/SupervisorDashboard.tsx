@@ -4,6 +4,7 @@ import { QuickActionCard } from '../../components/organisms/dashboard/QuickActio
 import { useSupervisorStats, useSupervisorDepartments, useSupervisorQueues } from '../../hooks/useDashboardStats';
 import { useSocket, useSocketEvent } from '../../hooks/useSocketEvent';
 import { ConnectionStatus } from '../../components/atoms/ui/ConnectionStatus';
+import { Skeleton } from '../../components/atoms/ui/skeleton';
 import {
     Truck,
     Activity,
@@ -40,23 +41,8 @@ export default function SupervisorDashboard() {
         refetchDepts();
     });
 
-    useSocketEvent('ticket_priority_updated', () => {
-        refetchQueues();
-        refetchStats();
-    });
-    if (statsLoading || deptLoading || queuesLoading) {
-        return (
-            <div className="p-6 space-y-6">
-                <div className="animate-pulse">
-                    <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[1, 2, 3, 4].map(i => (
-                            <div key={i} className="h-32 bg-gray-200 rounded"></div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
+    if (statsLoading || deptLoading) {
+        return <DashboardSkeleton />;
     }
 
     const departmentStats = deptData?.departments || [];
@@ -88,30 +74,29 @@ export default function SupervisorDashboard() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                    title="Total Tickets"
-                    value={stats?.totalTickets || 0}
+                    title="Tickets Aujourd'hui"
+                    value={stats?.todayTickets || 0}
                     icon={Truck}
-                    trend={{ value: 12, isPositive: true }}
                     iconColor="text-blue-600"
                     iconBgColor="bg-blue-100"
                 />
                 <StatCard
                     title="Tickets Actifs"
-                    value={stats?.activeTickets || 0}
+                    value={stats?.pendingTickets || 0}
                     icon={Activity}
                     iconColor="text-green-600"
                     iconBgColor="bg-green-100"
                 />
                 <StatCard
-                    title="Départements"
-                    value={stats?.departments || 0}
+                    title="Complétés"
+                    value={stats?.completedToday || 0}
                     icon={Building2}
                     iconColor="text-purple-600"
                     iconBgColor="bg-purple-100"
                 />
                 <StatCard
-                    title="Alertes"
-                    value={stats?.alerts || 0}
+                    title="Temps Moyen"
+                    value={`${stats?.avgWaitTime || 0} min`}
                     icon={AlertTriangle}
                     iconColor="text-red-600"
                     iconBgColor="bg-red-100"
@@ -250,22 +235,6 @@ export default function SupervisorDashboard() {
                 </div>
             </div>
 
-            {/* Alerts Section */}
-            {stats?.alerts && stats.alerts > 0 && (
-                <Card className="p-6 border-l-4 border-l-red-500 bg-red-50">
-                    <div className="flex items-start gap-3">
-                        <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
-                        <div>
-                            <h3 className="font-semibold text-red-900 mb-2">Alertes Actives</h3>
-                            <ul className="space-y-2 text-sm text-red-800">
-                                <li>• Temps d'attente élevé pour le département Bâtiment</li>
-                                <li>• 2 tickets en retard de traitement</li>
-                            </ul>
-                        </div>
-                    </div>
-                </Card>
-            )}
-
             <style>{`
                 @keyframes fade-in {
                     from { opacity: 0; transform: translateY(10px); }
@@ -275,6 +244,27 @@ export default function SupervisorDashboard() {
                     animation: fade-in 0.3s ease-out;
                 }
             `}</style>
+        </div>
+    );
+}
+
+function DashboardSkeleton() {
+    return (
+        <div className="p-6 space-y-6 animate-pulse">
+            <div className="h-10 w-64 bg-gray-200 rounded mb-8" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map(i => (
+                    <Skeleton key={i} className="h-32 bg-gray-100 rounded-xl" />
+                ))}
+            </div>
+            <div className="space-y-4 pt-4">
+                <Skeleton className="h-8 w-48" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[1, 2, 3].map(i => (
+                        <Skeleton key={i} className="h-48 bg-gray-100 rounded-xl" />
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

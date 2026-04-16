@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow, differenceInMinutes } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useAbility } from '../auth/AbilityContext';
+import { subject } from '@casl/ability';
 
 import { api } from '../services/api';
 import { useAuthStore } from '../stores/useAuthStore';
@@ -54,6 +56,7 @@ interface QuaiConfig {
 export default function SmartQuai() {
   const params = useParams<{ quaiId: string }>();
   const authStore = useAuthStore();
+  const ability = useAbility();
   const quaiId = params.quaiId || authStore.activeQuaiId || undefined;
 
   const [config, setConfig] = useState<QuaiConfig | null>(null);
@@ -92,6 +95,11 @@ export default function SmartQuai() {
   const waitingTickets = useMemo(() =>
     tickets
       .filter(t => {
+        // [CASL] Vérification de la capacité à gérer ce ticket selon les files assignées
+        // On injecte __typename pour que detectSubjectType fonctionne
+        const ticketWithTypename = { ...t, __typename: 'Ticket' };
+        if (!ability.can('manage', subject('Ticket', ticketWithTypename))) return false;
+
         // Filtrage par stepCode en priorité si défini (Supporte le multi-étapes via virgules)
         if (config?.expectedStepCode && t.currentStep?.stepCode) {
            const allowedCodes = config.expectedStepCode.split(',').map(s => s.trim());
@@ -108,30 +116,37 @@ export default function SmartQuai() {
         if (b.priority !== a.priority) return (b.priority || 0) - (a.priority || 0);
         return new Date(a.arrivedAt).getTime() - new Date(b.arrivedAt).getTime();
       }),
-    // [AMÉLIORATION 1] Toutes les dépendances présentes
-    [tickets, quaiId, config?.expectedStepCode]
+    [tickets, quaiId, config?.expectedStepCode, ability]
   );
 
   // Ticket en cours de traitement
   const activeTicket = useMemo(() =>
     tickets.find(t => {
       if (t.status !== 'PROCESSING' || t.quaiId !== quaiId) return false;
+      
+      const ticketWithTypename = { ...t, __typename: 'Ticket' };
+      if (!ability.can('manage', subject('Ticket', ticketWithTypename))) return false;
+
       if (!config?.expectedStepCode) return true;
       const allowedCodes = config.expectedStepCode.split(',').map(s => s.trim());
       return t.currentStep?.stepCode && allowedCodes.includes(t.currentStep.stepCode);
     }),
-    [tickets, quaiId, config?.expectedStepCode]
+    [tickets, quaiId, config?.expectedStepCode, ability]
   );
 
   // Ticket appelé
   const callingTicket = useMemo(() =>
     tickets.find(t => {
       if (t.status !== 'CALLING' || t.quaiId !== quaiId) return false;
+
+      const ticketWithTypename = { ...t, __typename: 'Ticket' };
+      if (!ability.can('manage', subject('Ticket', ticketWithTypename))) return false;
+
       if (!config?.expectedStepCode) return true;
       const allowedCodes = config.expectedStepCode.split(',').map(s => s.trim());
       return t.currentStep?.stepCode && allowedCodes.includes(t.currentStep.stepCode);
     }),
-    [tickets, quaiId, config?.expectedStepCode]
+    [tickets, quaiId, config?.expectedStepCode, ability]
   );
 
   // [AMÉLIORATION 2] Synchronisation du selectedTicket avec les mises à jour temps-réel

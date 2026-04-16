@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:18-slim AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
@@ -7,13 +7,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies for potential builds)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
 
 # Stage 2: Production
-FROM node:18-slim
+FROM node:20-slim
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ COPY --from=builder /app/.sequelizerc ./
 # Only copy necessary source files
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/migrations ./migrations
-COPY --from=builder /app/seeders ./seeders
+COPY --from=builder /app/src/seeders ./seeders
 
 # Install sequelize-cli globally in production image for migrations if needed
 # Alternatively, we keep it in devDependencies and use npx
@@ -37,4 +37,4 @@ RUN npm install -g sequelize-cli
 EXPOSE 3000
 
 # Script to run migrations then start the server
-CMD ["sh", "-c", "sequelize-cli db:migrate && npm run start:prod"]
+CMD ["npm", "run", "start:prod"]

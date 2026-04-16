@@ -1,4 +1,5 @@
 import { Ticket, Queue, WorkflowStep, Category, User, TicketActionLog, TicketVehicleInfo, TicketLogistic, TicketStep, StepParameter } from '../models/index.js';
+import auditService from '../services/auditService.js';
 import Site from '../models/Site.js';
 import QuaiParameter from '../models/QuaiParameter.js';
 import { Op } from 'sequelize';
@@ -423,14 +424,7 @@ class TicketController {
                 recallCount: ticket.status === 'ISOLE' ? 0 : ticket.recallCount
             }, { transaction });
 
-            await TicketActionLog.create({
-                ticketId,
-                stepId: ticket.currentStepId,
-                actionType: 'APPEL',
-                agentId: userId,
-                quaiId,
-                occurredAt: new Date()
-            }, { transaction });
+            await auditService.logAction(req, 'TICKET_CALL', 'Ticket', ticketId, { status: 'EN_ATTENTE' }, { status: 'CALLING', quaiId });
 
             await transaction.commit();
 
@@ -518,13 +512,7 @@ class TicketController {
 
             await ticket.update(updateData, { transaction });
 
-            await TicketActionLog.create({
-                ticketId: ticket.ticketId,
-                stepId: ticket.currentStepId,
-                actionType: 'COMMENCER',
-                agentId: userId,
-                occurredAt: new Date()
-            }, { transaction });
+            await auditService.logAction(req, 'TICKET_START', 'Ticket', ticket.ticketId, { status: ticket.status }, { status: 'PROCESSING' });
 
             await transaction.commit();
 
@@ -781,15 +769,7 @@ class TicketController {
             }
 
             // Enregistrer l'action avec les données du formulaire
-            await TicketActionLog.create({
-                ticketId: ticket.ticketId,
-                stepId: ticket.currentStepId,
-                actionType: 'TERMINER',
-                agentId: userId,
-                quaiId,
-                formData: formData || {},
-                occurredAt: new Date()
-            }, { transaction });
+            await auditService.logAction(req, 'TICKET_FINISH', 'Ticket', ticket.ticketId, { status: ticket.status }, { status: 'COMPLETED', formData });
 
             // Passer à l'étape suivante
             const result = await workflowService.moveToNextStep(ticket.ticketId, userId, transaction);

@@ -5,6 +5,8 @@ import { RecentActivityList } from '../../components/organisms/dashboard/RecentA
 import { useManagerStats, useManagerPerformance, useSupervisorQueues } from '../../hooks/useDashboardStats';
 import { ConnectionStatus } from '../../components/atoms/ui/ConnectionStatus';
 import { useSocket, useSocketEvent } from '../../hooks/useSocketEvent';
+import { Can } from '../../auth/AbilityContext';
+import { Skeleton } from '../../components/atoms/ui/skeleton';
 import {
     Truck,
     Activity,
@@ -26,9 +28,9 @@ export default function ManagerDashboard() {
     const { user } = useAuthStore();
     const navigate = useNavigate();
     const { state: socketState } = useSocket();
-    const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useManagerStats(user?.department);
-    const { data: performance, isLoading: perfLoading } = useManagerPerformance(user?.department);
-    const { data: siteQueues, isLoading: queuesLoading, refetch: refetchQueues } = useSupervisorQueues(''); // Empty for ALL sites
+    const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useManagerStats();
+    const { data: performance, isLoading: perfLoading } = useManagerPerformance();
+    const { data: siteQueues, isLoading: queuesLoading, refetch: refetchQueues } = useSupervisorQueues('');
 
     useSocketEvent('ticket_updated', () => { refetchStats(); refetchQueues(); });
     useSocketEvent('ticket_created', () => { refetchStats(); refetchQueues(); });
@@ -37,15 +39,8 @@ export default function ManagerDashboard() {
         user?.department === 'BATIMENT' ? 'Bâtiment' :
             user?.department === 'ELECT' ? 'Électricité' : 'Tous';
 
-    if (statsLoading || perfLoading || queuesLoading) {
-        return (
-            <div className="p-8 flex items-center justify-center min-h-[60vh]">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary opacity-20" />
-                    <p className="text-text-muted font-black uppercase tracking-widest text-xs animate-pulse">Initialisation Dashboard...</p>
-                </div>
-            </div>
-        );
+    if (statsLoading || perfLoading) {
+        return <DashboardSkeleton />;
     }
 
     const recentActivities = [
@@ -110,8 +105,8 @@ export default function ManagerDashboard() {
                     value={stats?.completedToday || 0}
                     icon={TrendingUp}
                     trend={{ value: 8, isPositive: true }}
-                    iconColor="text-green-600"
-                    iconBgColor="bg-green-100"
+                    iconColor="text-success"
+                    iconBgColor="bg-success/10"
                 />
                 <StatCard
                     title="Temps Moyen"
@@ -122,64 +117,66 @@ export default function ManagerDashboard() {
                 />
             </div>
 
-                    {/* État des Sites (NEW) */}
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-black text-text-main uppercase tracking-tighter flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-primary" />
-                        Disponibilité par Site
-                    </h2>
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => navigate('/queue')}
-                        className="text-primary font-black uppercase tracking-widest text-[10px]"
-                    >
-                        Détails complets <ArrowRight className="ml-2 h-3 w-3" />
-                    </Button>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {siteQueues && Object.values(
-                        siteQueues.reduce((acc, q) => {
-                            const sId = q.siteId || 'unknown';
-                            const sName = q.siteName || 'Site Inconnu';
-                            if (!acc[sId]) acc[sId] = { name: sName, trucks: 0, critical: 0 };
-                            acc[sId].trucks += q.truckCount;
-                            if (q.tickets.some(t => t.priority === 'CRITIQUE')) acc[sId].critical++;
-                            return acc;
-                        }, {} as Record<string, {name: string, trucks: number, critical: number}>)
-                    ).map((site, idx) => (
-                        <Card 
-                            key={idx} 
-                            onClick={() => navigate(`/queue`)}
-                            className="p-5 border-0 bg-white/60 backdrop-blur-md rounded-3xl shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group"
+            <Can I="read" a="GlobalStats">
+                {/* État des Sites (NEW) */}
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-black text-text-main uppercase tracking-tighter flex items-center gap-2">
+                            <MapPin className="h-5 w-5 text-primary" />
+                            Disponibilité par Site
+                        </h2>
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => navigate('/queue')}
+                            className="text-primary font-black uppercase tracking-widest text-[10px]"
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <MapPin className="h-5 w-5" />
-                                </div>
-                                {site.critical > 0 && (
-                                    <div className="px-2 py-1 bg-red-100 text-red-600 rounded-lg text-[10px] font-black items-center flex gap-1 animate-pulse">
-                                        <Activity className="h-3 w-3 " /> ALERT
+                            Détails complets <ArrowRight className="ml-2 h-3 w-3" />
+                        </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {siteQueues && Object.values(
+                            siteQueues.reduce((acc, q) => {
+                                const sId = q.siteId || 'unknown';
+                                const sName = q.siteName || 'Site Inconnu';
+                                if (!acc[sId]) acc[sId] = { name: sName, trucks: 0, critical: 0 };
+                                acc[sId].trucks += q.truckCount;
+                                if (q.tickets.some(t => t.priority === 'CRITIQUE')) acc[sId].critical++;
+                                return acc;
+                            }, {} as Record<string, {name: string, trucks: number, critical: number}>)
+                        ).map((site, idx) => (
+                            <Card 
+                                key={idx} 
+                                onClick={() => navigate(`/queue`)}
+                                className="p-5 border-0 bg-white/60 backdrop-blur-md rounded-3xl shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group"
+                            >
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                        <MapPin className="h-5 w-5" />
                                     </div>
-                                )}
-                            </div>
-                            <h4 className="font-black text-text-main tracking-tight text-lg mb-1">{site.name}</h4>
-                            <div className="flex items-center justify-between">
-                                <span className="text-text-muted text-[10px] font-black uppercase tracking-widest">Occupation</span>
-                                <span className="text-primary font-black text-lg">{site.trucks} camions</span>
-                            </div>
-                            <div className="mt-3 w-full bg-primary/5 rounded-full h-1.5 overflow-hidden">
-                                <div 
-                                    className={`h-full transition-all duration-1000 ${site.trucks > 10 ? 'bg-orange-500' : 'bg-primary'}`} 
-                                    style={{ width: `${Math.min(100, (site.trucks / 20) * 100)}%` }} 
-                                />
-                            </div>
-                        </Card>
-                    ))}
+                                    {site.critical > 0 && (
+                                        <div className="px-2 py-1 bg-red-100 text-red-600 rounded-lg text-[10px] font-black items-center flex gap-1 animate-pulse">
+                                            <Activity className="h-3 w-3 " /> ALERT
+                                        </div>
+                                    )}
+                                </div>
+                                <h4 className="font-black text-text-main tracking-tight text-lg mb-1">{site.name}</h4>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-text-muted text-[10px] font-black uppercase tracking-widest">Occupation</span>
+                                    <span className="text-primary font-black text-lg">{site.trucks} camions</span>
+                                </div>
+                                <div className="mt-3 w-full bg-primary/5 rounded-full h-1.5 overflow-hidden">
+                                    <div 
+                                        className={`h-full transition-all duration-1000 ${site.trucks > 10 ? 'bg-orange-500' : 'bg-primary'}`} 
+                                        style={{ width: `${Math.min(100, (site.trucks / 20) * 100)}%` }} 
+                                    />
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </Can>
 
             {/* Quick Actions */}
             <div className="space-y-4">
@@ -265,6 +262,31 @@ export default function ManagerDashboard() {
                     animation: fade-in 0.3s ease-out;
                 }
             `}</style>
+        </div>
+    );
+}
+
+function DashboardSkeleton() {
+    return (
+        <div className="p-6 space-y-8 animate-pulse pb-20">
+            <div className="h-24 bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-white/20" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map(i => (
+                    <Skeleton key={i} className="h-32 bg-white/60 rounded-3xl" />
+                ))}
+            </div>
+            <div className="space-y-4">
+                <Skeleton className="h-8 w-48" />
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map(i => (
+                        <Skeleton key={i} className="h-40 bg-white/60 rounded-3xl" />
+                    ))}
+                </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <Skeleton className="lg:col-span-2 h-64 bg-white/60 rounded-[2.5rem]" />
+                <Skeleton className="h-64 bg-white/60 rounded-[2.5rem]" />
+            </div>
         </div>
     );
 }

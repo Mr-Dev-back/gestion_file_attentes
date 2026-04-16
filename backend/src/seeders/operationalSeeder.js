@@ -40,18 +40,22 @@ export const seedOperations = async () => {
 
     // 3. Create Workflow
     const [workflow, workflowCreated] = await Workflow.findOrCreate({
-        where: { name: 'Standard SIBM' },
+        where: { name: 'Parcourt Client' },
         defaults: {
             description: 'Workflow principal des camions SIBM'
         }
     });
-    if (workflowCreated) logger.info('Created workflow: Standard SIBM');
+    if (workflowCreated) logger.info('Created workflow: Parcourt Client');
 
     // 4. Create Queues
     const queuesData = [
-        { name: 'Bureau des Ventes', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Ventes Bâtiment', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Ventes Infrastructure', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Ventes Electricité', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
         { name: 'Pont Bascule', type: 'WEIGHING', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Zone de Chargement', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId }
+        { name: 'Parc Bâtiment', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Parc Infrastructure', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Parc Electricité', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId }
     ];
 
     const queueMap = {};

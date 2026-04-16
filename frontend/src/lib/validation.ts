@@ -106,5 +106,8 @@ export const roleSchema = z.object({
 export const permissionSchema = z.object({
   resourceId: z.string().uuid("La ressource cible est requise"),
   actionId: z.string().uuid("L'action autorisée est requise"),
+  action: z.string().optional().nullable(),
+  subject: z.string().optional().nullable(),
+  conditions: z.any().optional().nullable(),
   description: z.string().optional().or(z.literal(''))
 });

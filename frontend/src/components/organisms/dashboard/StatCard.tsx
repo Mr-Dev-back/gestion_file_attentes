@@ -29,7 +29,7 @@ export const StatCard = ({
                     <h3 className="text-3xl font-bold text-gray-900">{value}</h3>
                     {trend && (
                         <div className="flex items-center mt-2">
-                            <span className={`text-sm font-medium ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className={`text-sm font-medium ${trend.isPositive ? 'text-success' : 'text-danger'}`}>
                                 {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
                             </span>
                             <span className="text-xs text-muted-foreground ml-2">vs hier</span>

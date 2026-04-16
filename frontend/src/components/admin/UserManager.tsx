@@ -3,9 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '../molecules/ui/card';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Badge } from '../atoms/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/ui/table';
 import { Modal, ConfirmModal } from '../molecules/ui/modal';
-import { toast } from '../molecules/ui/toast';
+import { toast } from 'sonner';
 import { 
     UserPlus, 
     Search, 
@@ -19,8 +18,11 @@ import {
     Loader2, 
     LogOut,
     Check,
-    Layers
+    Layers,
+    Clock
 } from 'lucide-react';
+import { format } from 'date-fns';
+import { Can, useAbility } from '../../auth/AbilityContext';
 import { useUsers } from '../../hooks/useUsers';
 import { useRoles } from '../../hooks/useRoles';
 import { useCompanies } from '../../hooks/useCompanies';
@@ -31,13 +33,15 @@ import { BulkActionsToolbar } from '../molecules/BulkActionsToolbar';
 import { AdminSkeleton } from '../molecules/ui/admin-skeleton';
 import { EmptyState } from '../molecules/ui/empty-state';
 import { cn } from '../../lib/utils';
-import { useAuthStore } from '../../stores/useAuthStore';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userSchema } from '../../lib/validation';
+import { SearchableSelect } from '../atoms/ui/SearchableSelect';
+
+import { DataTable } from '../molecules/DataTable/DataTable';
 
 export const UserManager = () => {
-    const isAdmin = useAuthStore(state => state.isAdmin());
+    const ability = useAbility();
     const { 
         users, 
         isLoading: isLoadingUsers, 
@@ -62,6 +66,7 @@ export const UserManager = () => {
         reset,
         watch,
         setValue,
+        control,
         formState: { errors, isValid, isDirty }
     } = useForm({
         resolver: zodResolver(userSchema),
@@ -73,7 +78,10 @@ export const UserManager = () => {
             siteId: '',
             companyId: '',
             queueId: '',
-            queueIds: [] as string[]
+            queueIds: [] as string[],
+            firstName: '',
+            lastName: '',
+            isActive: true
         },
         mode: 'onChange'
     });
@@ -84,10 +92,14 @@ export const UserManager = () => {
     const [editingUser, setEditingUser] = useState<any>(null);
     
     const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
+    const [isQueueModalOpen, setIsQueueModalOpen] = useState(false);
+    const [queueSearch, setQueueSearch] = useState('');
     const [sessionsUser, setSessionsUser] = useState<any>(null);
     const [activeSessions, setActiveSessions] = useState<any[]>([]);
     
     const [userSearch, setUserSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     
     const [confirmState, setConfirmState] = useState<{
         isOpen: boolean;
@@ -107,10 +119,17 @@ export const UserManager = () => {
     const filteredUsers = useMemo(() => 
         users.filter(user =>
             (user.username || '').toLowerCase().includes(userSearch.toLowerCase()) ||
-            (user.email || '').toLowerCase().includes(userSearch.toLowerCase())
+            (user.email || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+            (user.firstName || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+            (user.lastName || '').toLowerCase().includes(userSearch.toLowerCase())
         ),
         [users, userSearch]
     );
+
+    const paginatedUsers = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return filteredUsers.slice(start, start + pageSize);
+    }, [filteredUsers, currentPage, pageSize]);
 
     const {
         selectedIds,
@@ -121,6 +140,125 @@ export const UserManager = () => {
         clearSelection,
         isSelected
     } = useBulkSelection(filteredUsers.map(u => u.userId));
+
+    const columns = [
+        {
+            header: (
+                <div className="flex items-center gap-2">
+                    <input 
+                        type="checkbox" 
+                        checked={isAllSelected} 
+                        onChange={toggleSelectAll} 
+                        className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
+                    />
+                </div>
+            ),
+            width: '60px',
+            className: 'pl-6',
+            cell: (user: any) => (
+                <input 
+                    type="checkbox" 
+                    checked={isSelected(user.userId)}
+                    onChange={() => toggleSelect(user.userId)}
+                    className="h-5 w-5 rounded border-primary/30 text-primary focus:ring-primary cursor-pointer transition-all hover:scale-110"
+                />
+            )
+        },
+        {
+            header: 'Collaborateur',
+            cell: (user: any) => (
+                <div className="flex flex-col">
+                    <span className="font-bold text-slate-900 text-base">
+                        {user.firstName || user.lastName 
+                            ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
+                            : user.username}
+                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter opacity-70">@{user.username}</span>
+                        <span className="text-[10px] text-primary/40">•</span>
+                        <span className="text-xs text-slate-500 font-medium">{user.email}</span>
+                    </div>
+                </div>
+            )
+        },
+        {
+            header: 'Rôle & Structure',
+            cell: (user: any) => (
+                <div className="flex flex-col gap-1.5">
+                    <Badge variant="outline" className="w-fit text-[10px] font-black uppercase tracking-widest border-slate-200 bg-white shadow-sm py-0.5 px-2">
+                        <Shield className="h-3 w-3 mr-1.5 text-primary opacity-70" />
+                        {roles.find(r => r.name === user.role)?.name || user.role}
+                    </Badge>
+                    <div className="flex flex-wrap gap-1 max-w-[250px]">
+                        {user.role === 'ADMINISTRATOR' && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter italic">Accès global au système</span>}
+                        {user.role === 'MANAGER' && <Badge className="bg-primary/10 text-primary border-primary/10 text-[9px] font-bold">{user.company?.name || 'Société Inconnue'}</Badge>}
+                        {(user.role === 'SUPERVISOR' || user.role === 'AGENT_GUERITE') && <Badge className="bg-blue-50 text-blue-600 border-blue-100 text-[9px] font-bold">{user.site?.name || 'Site Inconnu'}</Badge>}
+                        {user.role === 'AGENT_QUAI' && (
+                            (user.queues && user.queues.length > 0) ? (
+                                user.queues.map(q => <Badge key={q.queueId} className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-bold">{q.name}</Badge>)
+                            ) : (
+                                <span className="text-[10px] text-slate-300 font-bold uppercase tracking-tighter">Aucune file affectée</span>
+                            )
+                        )}
+                    </div>
+                </div>
+            )
+        },
+        {
+            header: 'Statut',
+            cell: (user: any) => (
+                <Badge variant={user.isActive ? 'success' : 'secondary'} className="text-[10px] font-black uppercase tracking-widest px-3">
+                    {user.isActive ? 'Actif' : 'Inactif'}
+                </Badge>
+            )
+        },
+        {
+            header: 'Dernière Connexion',
+            cell: (user: any) => (
+                <div className="flex items-center gap-2 text-slate-400">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="text-[11px] font-bold">
+                        {user.lastLoginAt ? format(new Date(user.lastLoginAt), 'dd/MM HH:mm') : 'Jamais'}
+                    </span>
+                </div>
+            )
+        },
+        {
+            header: 'Actions',
+            className: 'text-right pr-6',
+            cell: (user: any) => (
+                <div className="flex items-center justify-end gap-1">
+                    <Can I="update" a="User">
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={(e) => { e.stopPropagation(); toggleActive.mutate({ id: user.userId, isActive: !user.isActive }); }} 
+                            className="h-9 w-9"
+                            title={user.isActive ? "Désactiver" : "Activer"}
+                        >
+                            {user.isActive ? <ToggleRight className="h-5 w-5 text-success" /> : <ToggleLeft className="h-5 w-5 text-slate-300" />}
+                        </Button>
+                        {user.lockUntil && new Date(user.lockUntil) > new Date() && (
+                            <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleUnlockUser(user); }} className="h-9 w-9 text-warning" title="Débloquer le compte">
+                                <Lock className="h-4.5 w-4.5" />
+                            </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleOpenSessions(user); }} className="h-9 w-9 text-blue-500" title="Sessions actives">
+                            <Smartphone className="h-4.5 w-4.5" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleOpenUserModal(user); }} className="h-9 w-9 text-slate-500" title="Modifier">
+                            <Edit2 className="h-4.5 w-4.5" />
+                        </Button>
+                    </Can>
+                    <Can I="delete" a="User">
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleDelete(user.userId, deleteUser, 'Voulez-vous vraiment supprimer cet utilisateur ?'); }} className="h-9 w-9 text-danger" title="Supprimer">
+                            <Trash2 className="h-4.5 w-4.5" />
+                        </Button>
+                    </Can>
+                </div>
+            )
+        }
+    ];
 
     const handleBulkDeleteUsers = () => {
         setConfirmState({
@@ -210,7 +348,10 @@ export const UserManager = () => {
                 siteId: user.siteId || '',
                 companyId: user.companyId || '',
                 queueId: user.queueId || '',
-                queueIds: user.queues?.map((q: any) => q.queueId) || []
+                queueIds: user.queues?.map((q: any) => q.queueId) || [],
+                firstName: user.firstName || '',
+                lastName: user.lastName || '',
+                isActive: user.isActive ?? true
             });
         } else {
             setEditingUser(null);
@@ -222,7 +363,10 @@ export const UserManager = () => {
                 siteId: '', 
                 companyId: '', 
                 queueId: '',
-                queueIds: []
+                queueIds: [],
+                firstName: '',
+                lastName: '',
+                isActive: true
             });
         }
         setIsUserModalOpen(true);
@@ -286,9 +430,9 @@ export const UserManager = () => {
                         <CardTitle className="text-2xl font-black flex items-center gap-3"><span className="w-2 h-8 bg-primary rounded-full"></span>Gestion des Comptes</CardTitle>
                         <p className="text-sm text-text-muted font-medium ml-5">Gérez les accès et les rôles des utilisateurs</p>
                     </div>
-                    {isAdmin && (
+                    <Can I="create" a="User">
                         <Button onClick={() => handleOpenUserModal()} className="gap-2 rounded-xl shadow-lg shadow-primary/20"><UserPlus className="h-4 w-4" />Nouvel Utilisateur</Button>
-                    )}
+                    </Can>
                 </CardHeader>
                 <CardContent className="p-0">
                     <div className="p-6 border-b border-white/10 bg-white/20">
@@ -298,106 +442,46 @@ export const UserManager = () => {
                         </div>
                     </div>
                     {isLoadingUsers ? <div className="p-6"><AdminSkeleton variant="table" count={10} /></div> : (
-                        <Table stickyHeader maxHeight="65vh">
-                            <TableHeader sticky>
-                                <TableRow className="border-b border-white/10 hover:bg-transparent bg-white/10">
-                                    <TableHead className="w-[50px] pl-6">
-                                        <div className="flex items-center gap-2">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={isAllSelected} 
-                                                onChange={toggleSelectAll} 
-                                                className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
-                                            />
-                                        </div>
-                                    </TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">UTILISATEUR</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">CONTEXTE (SITE/SOCIÉTÉ/FILE)</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">RÔLE</TableHead>
-                                    <TableHead className="text-[10px] font-black uppercase text-slate-400 tracking-widest">STATUT</TableHead>
-                                    <TableHead className="text-right pr-8 text-[10px] font-black uppercase text-slate-400 tracking-widest">ACTIONS</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredUsers.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={6} className="p-0 border-0 hover:bg-transparent">
-                                            <EmptyState
-                                                icon={Search}
-                                                title="Aucun utilisateur trouvé"
-                                                description={userSearch ? "Aucun utilisateur ne correspond à votre recherche." : "Vous n'avez pas encore d'utilisateurs. Ajoutez-en un pour commencer."}
-                                                actionLabel={!userSearch ? "Nouvel Utilisateur" : undefined}
-                                                onAction={!userSearch ? () => handleOpenUserModal() : undefined}
-                                                className="py-16"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ) : filteredUsers.map(user => (
-                                    <TableRow 
-                                        key={user.userId} 
-                                        className={cn(
-                                            "transition-all duration-200 border-white/5", 
-                                            isSelected(user.userId) 
-                                                ? "bg-primary/10 border-l-4 border-l-primary shadow-sm" 
-                                                : "hover:bg-white/40 border-l-4 border-l-transparent"
-                                        )}
-                                    >
-                                        <TableCell className="pl-6">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={isSelected(user.userId)} 
-                                                onChange={() => toggleSelect(user.userId)} 
-                                                className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110" 
-                                            />
-                                        </TableCell>
-                                        <TableCell><div className="flex flex-col"><span className="font-bold text-text-main text-base">{user.username}</span><span className="text-xs text-text-muted font-medium">{user.email}</span></div></TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-wrap gap-1.5 max-w-[300px]">
-                                                {user.role === 'ADMINISTRATOR' && <Badge variant="outline" className="bg-slate-50 border-slate-200 text-slate-500">ACCÈS GLOBAL</Badge>}
-                                                {user.role === 'MANAGER' && <Badge className="bg-primary/10 text-primary border-primary/10">{user.company?.name || 'Inconnu'}</Badge>}
-                                                {(user.role === 'SUPERVISOR' || user.role === 'AGENT_GUERITE') && <Badge className="bg-blue-50 text-blue-600 border-blue-100">{user.site?.name || 'Inconnu'}</Badge>}
-                                                {user.role === 'AGENT_QUAI' && (
-                                                    (user.queues && user.queues.length > 0) ? (
-                                                        user.queues.map(q => <Badge key={q.queueId} className="bg-emerald-50 text-emerald-600 border-emerald-100">{q.name}</Badge>)
-                                                    ) : (
-                                                        <Badge variant="secondary" className="opacity-50">Aucune file</Badge>
-                                                    )
-                                                )}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell><Badge variant="outline" className="bg-white/50 border-white/40"><Shield className="h-3 w-3 mr-1.5 opacity-70" />{roles.find(r => r.name === user.role)?.name || user.role}</Badge></TableCell>
-                                        <TableCell><Badge variant={user.isActive ? "success" : "secondary"}>{user.isActive ? "Actif" : "Inactif"}</Badge></TableCell>
-                                        <TableCell className="text-right pr-6">
-                                            <div className="flex justify-end gap-1">
-                                                {isAdmin && (
-                                                    <>
-                                                        <Button variant="ghost" size="sm" onClick={() => toggleActive.mutate({ id: user.userId, isActive: !user.isActive })} className="h-8 w-8">{user.isActive ? <ToggleRight className="h-5 w-5 text-success" /> : <ToggleLeft className="h-5 w-5 text-text-muted" />}</Button>
-                                                        {user.lockUntil && new Date(user.lockUntil) > new Date() && <Button variant="ghost" size="sm" onClick={() => handleUnlockUser(user)} className="h-8 w-8 text-warning" title="Débloquer"><Lock className="h-4 w-4" /></Button>}
-                                                        <Button variant="ghost" size="sm" onClick={() => handleOpenSessions(user)} className="h-8 w-8 text-info" title="Sessions Actives"><Smartphone className="h-4 w-4" /></Button>
-                                                        <Button variant="ghost" size="sm" onClick={() => handleOpenUserModal(user)} className="h-8 w-8" title="Modifier"><Edit2 className="h-4 w-4" /></Button>
-                                                        <Button variant="ghost" size="sm" onClick={() => handleDelete(user.userId, deleteUser, 'Supprimer ?')} className="h-8 w-8 text-danger" title="Supprimer"><Trash2 className="h-4 w-4" /></Button>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                        <div className="p-6">
+                            <DataTable
+                                columns={columns}
+                                data={paginatedUsers}
+                                isLoading={isLoadingUsers}
+                                totalItems={filteredUsers.length}
+                                currentPage={currentPage}
+                                pageSize={pageSize}
+                                onPageChange={setCurrentPage}
+                                onPageSizeChange={setPageSize}
+                                emptyMessage={userSearch ? "Aucun utilisateur ne correspond à votre recherche." : "Vous n'avez pas encore d'utilisateurs."}
+                            />
+                        </div>
                     )}
                 </CardContent>
             </Card>
 
             <Modal size="lg" isOpen={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} title={editingUser ? `Modifier: ${editingUser.username}` : "Nouveau Collaborateur"} isDirty={isDirty}>
                 <form onSubmit={handleSubmit(onSaveUser)} className="space-y-4 py-4">
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Nom d'utilisateur</label>
-                        <Input placeholder="Nom d'utilisateur" {...register('username')} error={errors.username?.message} />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Prénom</label>
+                            <Input placeholder="Prénom" {...register('firstName')} error={errors.firstName?.message} />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Nom</label>
+                            <Input placeholder="Nom" {...register('lastName')} error={errors.lastName?.message} />
+                        </div>
                     </div>
-                    
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Email professionnel</label>
-                        <Input placeholder="Email" type="email" {...register('email')} error={errors.email?.message} />
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Nom d'utilisateur</label>
+                            <Input placeholder="Identifiant" {...register('username')} error={errors.username?.message} />
+                        </div>
+                        
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Email professionnel</label>
+                            <Input placeholder="Email" type="email" {...register('email')} error={errors.email?.message} />
+                        </div>
                     </div>
 
                     <div className="space-y-1">
@@ -406,70 +490,101 @@ export const UserManager = () => {
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Rôle Système</label>
-                        <select className={cn("w-full h-10 px-3 border border-slate-200 rounded-xl outline-none font-bold text-sm bg-white transition-all focus:border-primary focus:ring-2 focus:ring-primary/20", errors.role && "border-danger focus:border-danger focus:ring-danger/20")} {...register('role')}>
-                            <option value="">-- Sélectionner un Rôle --</option>
-                            {roles.map((r: any) => <option key={r.roleId} value={r.name}>{r.name}</option>)}
-                        </select>
+                        <Controller
+                            name="role"
+                            control={control}
+                            render={({ field }) => (
+                                <SearchableSelect
+                                    label="Rôle Système"
+                                    placeholder="Choisir un rôle"
+                                    options={roles.map(r => ({ value: r.name, label: r.name }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                />
+                            )}
+                        />
                         {errors.role && <p className="text-[10px] font-bold text-danger ml-1">{errors.role.message}</p>}
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex-1">
+                            <p className="text-xs font-bold text-slate-700">Compte Actif</p>
+                            <p className="text-[10px] text-slate-400 font-medium">L'utilisateur peut se connecter au système</p>
+                        </div>
+                        <button 
+                            type="button" 
+                            onClick={() => setValue('isActive', !watch('isActive'), { shouldDirty: true })}
+                            className={cn(
+                                "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ring-2 ring-primary/5 shadow-inner",
+                                watch('isActive') ? "bg-primary" : "bg-slate-200"
+                            )}
+                        >
+                            <span className={cn(
+                                "inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-md",
+                                watch('isActive') ? "translate-x-6" : "translate-x-1"
+                            )} />
+                        </button>
                     </div>
 
                     {watchedRole === 'MANAGER' && (
                         <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
-                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Société de rattachement</label>
-                            <select className={cn("w-full h-10 px-3 border border-slate-200 rounded-xl outline-none font-bold text-sm bg-white transition-all focus:border-primary focus:ring-2 focus:ring-primary/20", errors.companyId && "border-danger focus:border-danger focus:ring-danger/20")} {...register('companyId')}>
-                                <option value="">-- Sélectionner une Société --</option>
-                                {companies.map(c => <option key={c.companyId} value={c.companyId}>{c.name}</option>)}
-                            </select>
+                            <Controller
+                                name="companyId"
+                                control={control}
+                                render={({ field }) => (
+                                    <SearchableSelect
+                                        label="Société de rattachement"
+                                        placeholder="Choisir une société"
+                                        options={companies.map(c => ({ value: c.companyId, label: c.name }))}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                )}
+                            />
                             {errors.companyId && <p className="text-[10px] font-bold text-danger ml-1">{errors.companyId.message}</p>}
                         </div>
                     )}
 
                     {(watchedRole === 'SUPERVISOR' || watchedRole === 'AGENT_GUERITE') && (
                         <div className="space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
-                            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Site de rattachement</label>
-                            <select className={cn("w-full h-10 px-3 border border-slate-200 rounded-xl outline-none font-bold text-sm bg-white transition-all focus:border-primary focus:ring-2 focus:ring-primary/20", errors.siteId && "border-danger focus:border-danger focus:ring-danger/20")} {...register('siteId')}>
-                                <option value="">-- Sélectionner un Site --</option>
-                                {companies.map(c => (
-                                    <optgroup key={c.companyId} label={c.name}>
-                                        {sites.filter(s => s.companyId === c.companyId).map(s => <option key={s.siteId} value={s.siteId}>{s.name}</option>)}
-                                    </optgroup>
-                                ))}
-                            </select>
+                             <Controller
+                                name="siteId"
+                                control={control}
+                                render={({ field }) => (
+                                    <SearchableSelect
+                                        label="Site de rattachement"
+                                        placeholder="Choisir un site"
+                                        options={sites.map(s => ({ value: s.siteId, label: s.name }))}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                )}
+                            />
                             {errors.siteId && <p className="text-[10px] font-bold text-danger ml-1">{errors.siteId.message}</p>}
                         </div>
                     )}
 
                     {watchedRole === 'AGENT_QUAI' && (
-                        <div className="space-y-3 animate-in slide-in-from-top-2 border-t pt-4 border-slate-50">
-                            <div className="flex items-center justify-between">
-                                <label className="text-[10px] font-black uppercase text-slate-400 ml-1 flex items-center gap-2">
-                                    <Layers className="h-3 w-3" /> Files d'attente assignées
-                                </label>
-                                <span className="text-[10px] font-black text-primary px-2 py-0.5 bg-primary/10 rounded-full">{watchedQueueIds.length} file(s)</span>
-                            </div>
-                            <div className="flex flex-wrap gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-100 max-h-[200px] overflow-y-auto">
-                                {queues.map(q => {
-                                    const isSelectedRow = watchedQueueIds.includes(q.queueId);
-                                    return (
-                                        <button
-                                            key={q.queueId}
-                                            type="button"
-                                            onClick={() => toggleQueue(q.queueId)}
-                                            className={cn(
-                                                "flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-200 text-xs font-bold",
-                                                isSelectedRow 
-                                                    ? "bg-white border-primary text-primary shadow-sm ring-2 ring-primary/5" 
-                                                    : "bg-transparent border-slate-200 text-slate-400 hover:border-slate-300"
-                                            )}
-                                        >
-                                            <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center transition-colors", isSelectedRow ? "bg-primary border-primary" : "border-slate-300")}>
-                                                {isSelectedRow && <Check className="h-2.5 w-2.5 text-white stroke-[4]" />}
-                                            </div>
-                                            {q.name}
-                                        </button>
-                                    );
-                                })}
+                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2 border-t pt-4 border-slate-50">
+                            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-primary/20 transition-all cursor-pointer" onClick={() => setIsQueueModalOpen(true)}>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                        <Layers className="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700">Affectation des Files</p>
+                                        <p className="text-[10px] text-slate-400 font-medium">Définissez les files gérées par l'agent</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-[10px] font-black text-primary px-2 py-0.5 bg-primary/10 rounded-full">{watchedQueueIds.length} file(s)</span>
+                                        <span className="text-[9px] text-slate-300 font-bold uppercase mt-0.5">Assignée(s)</span>
+                                    </div>
+                                    <Button type="button" variant="ghost" size="sm" className="h-8 px-2 text-primary font-bold text-[10px] uppercase tracking-wider bg-white shadow-sm border border-slate-200">
+                                        Gérer
+                                    </Button>
+                                </div>
                             </div>
                             {errors.queueIds && <p className="text-[10px] font-bold text-danger ml-1">{errors.queueIds.message}</p>}
                         </div>
@@ -514,6 +629,63 @@ export const UserManager = () => {
                                 </Button>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal isOpen={isQueueModalOpen} onClose={() => setIsQueueModalOpen(false)} title="Affectation des Files d'Attente" size="md">
+                <div className="space-y-4 py-2">
+                    <div className="relative group">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-muted" />
+                        <Input 
+                            placeholder="Rechercher une file..." 
+                            value={queueSearch} 
+                            onChange={(e) => setQueueSearch(e.target.value)} 
+                            className="pl-10 h-9 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-xl" 
+                        />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-1.5 max-h-[40vh] overflow-y-auto pr-1 custom-scrollbar">
+                        {queues
+                            .filter(q => q.name.toLowerCase().includes(queueSearch.toLowerCase()))
+                            .map(q => {
+                                const isSelectedRow = watchedQueueIds.includes(q.queueId);
+                                return (
+                                    <button
+                                        key={q.queueId}
+                                        type="button"
+                                        onClick={() => toggleQueue(q.queueId)}
+                                        className={cn(
+                                            "flex items-center justify-between p-3 rounded-xl border transition-all duration-200 text-sm font-bold",
+                                            isSelectedRow 
+                                                ? "bg-primary/5 border-primary/20 text-text-main shadow-sm" 
+                                                : "bg-transparent border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={cn(
+                                                "w-5 h-5 rounded-lg border flex items-center justify-center transition-all", 
+                                                isSelectedRow ? "bg-primary border-primary rotate-0" : "border-slate-300 -rotate-90 opacity-40"
+                                            )}>
+                                                {isSelectedRow && <Check className="h-3 w-3 text-white stroke-[4]" />}
+                                            </div>
+                                            <span>{q.name}</span>
+                                        </div>
+                                        {isSelectedRow && (
+                                            <Badge variant="success" className="text-[8px] h-4 font-black uppercase tracking-tighter">Assignée</Badge>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                    </div>
+                    
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {watchedQueueIds.length} file(s) sélectionnée(s)
+                        </p>
+                        <Button type="button" onClick={() => setIsQueueModalOpen(false)} className="rounded-xl px-8 shadow-md">
+                            Valider l'Affectation
+                        </Button>
                     </div>
                 </div>
             </Modal>

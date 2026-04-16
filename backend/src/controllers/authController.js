@@ -4,6 +4,8 @@ import { Op } from 'sequelize';
 import { User, RefreshToken, Role, Permission, AuditLog, UserPasswordReset, Site, Company, Queue } from '../models/index.js';
 import logger from '../config/logger.js';
 import bcrypt from 'bcrypt';
+import { defineAbilitiesFor } from '../config/ability.js';
+import auditService from '../services/auditService.js';
 
 class AuthController {
 
@@ -38,8 +40,14 @@ class AuthController {
                 password: hashedPassword,
                 firstName,
                 lastName,
-                roleId: roleObj.roleId,
                 isActive: true
+            });
+
+            // Association du rôle via la table de jonction UserRole
+            const { UserRole } = await import('../models/index.js');
+            await UserRole.create({
+                userId: user.userId,
+                roleId: roleObj.roleId
             });
 
             const userWithoutPassword = user.toJSON();
@@ -73,7 +81,7 @@ class AuthController {
                 include: [
                     {
                         model: Role,
-                        as: 'assignedRole',
+                        as: 'roles',
                         include: [{ model: Permission, as: 'permissions' }]
                     },
                     {
@@ -83,13 +91,14 @@ class AuthController {
                     },
                     {
                         model: Queue,
-                        as: 'queue',
-                        attributes: ['name', 'quaiId']
+                        as: 'queues',
+                        attributes: ['queueId', 'name', 'quaiId']
                     }
                 ]
             });
 
             if (!user) {
+                await auditService.logAction(req, 'LOGIN_FAILED', 'User', 'UNKNOWN', { email: normalizedEmail }, { reason: 'USER_NOT_FOUND' });
                 return res.status(401).json({ error: 'Identifiants invalides' });
             }
 
@@ -125,12 +134,7 @@ class AuthController {
 
                 await user.update({ failedAttempts: attempts, lockUntil });
                 
-                await AuditLog.create({ 
-                    userId: user.userId, 
-                    action: 'LOGIN_FAILED', 
-                    details: { attempts, ipAddress },
-                    ipAddress 
-                });
+                await auditService.logAction(req, 'LOGIN_FAILED', 'User', user.userId, { email: normalizedEmail }, { attempts });
 
                 if (attempts >= 5) return res.status(403).json({
                     error: 'Compte bloqué suite à trop de tentatives. Réessayez dans 15min.',
@@ -149,7 +153,7 @@ class AuthController {
                 code: 'ACCOUNT_DISABLED'
             });
 
-            if (!user.assignedRole) {
+            if (!user.roles || user.roles.length === 0) {
                 logger.warn(`Login attempt for user ${user.userId} failed: No role assigned.`);
                 return res.status(403).json({
                     error: "Votre compte n'a aucun rôle assigné. Contactez un administrateur.",
@@ -160,18 +164,13 @@ class AuthController {
             // Reset des tentatives en cas de succès
             await user.update({ failedAttempts: 0, lockUntil: null });
             
-            await AuditLog.create({ 
-                userId: user.userId, 
-                action: 'LOGIN_SUCCESS', 
-                details: { ipAddress },
-                ipAddress 
-            });
+            await auditService.logAction(req, 'LOGIN_SUCCESS', 'User', user.userId);
 
             // --- Génération JWT ---
             const accessToken = jwt.sign(
                 { 
                     id: user.userId, 
-                    role: user.assignedRole?.name,
+                    role: user.roles?.[0]?.name, // On garde le premier rôle pour compatibilité JWT
                     siteId: user.siteId,
                     assignedQueueId: user.assignedQueueId
                 },
@@ -193,21 +192,22 @@ class AuthController {
             // Set Cookies
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                secure: false,
+                sameSite: 'lax',
                 maxAge: 60 * 60 * 1000 // 1h
             });
 
             res.cookie('refreshToken', refreshTokenStr, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                secure: false,
+                sameSite: 'lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
             });
 
-            // Fetch site details for complete response
-            const userSite = user.siteId ? await Site.findByPk(user.siteId) : null;
-            const permissionCodes = user.assignedRole?.permissions?.map(p => p.code) || [];
+            // Préparation des permissions pour CASL
+            const allPermissions = user.roles.reduce((acc, role) => {
+                return acc.concat(role.permissions || []);
+            }, []);
 
             res.status(200).json({
                 message: 'Connexion réussie.',
@@ -217,14 +217,14 @@ class AuthController {
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    role: user.assignedRole?.name,
+                    role: user.roles?.[0]?.name,
+                    roles: user.roles,
                     siteId: user.siteId,
                     assignedQueueId: user.assignedQueueId,
-                    quaiId: user.queue?.quaiId, // Envoi direct du quaiId
-                    queue: user.queue,
-                    site: userSite,
-                    assignedRole: user.assignedRole,
-                    permissions: permissionCodes
+                    quaiId: user.queues?.[0]?.quaiId,
+                    queues: user.queues,
+                    site: user.site,
+                    rules: defineAbilitiesFor(user).rules
                 }
             });
 
@@ -247,7 +247,7 @@ class AuthController {
 
             const storedToken = await RefreshToken.findOne({
                 where: { token: tokenStr, isRevoked: false, expiresAt: { [Op.gt]: new Date() } },
-                include: [{ model: User, as: 'user', include: [{ model: Role, as: 'assignedRole' }] }]
+                include: [{ model: User, as: 'user', include: [{ model: Role, as: 'roles' }] }]
             });
 
             if (!storedToken) {
@@ -260,7 +260,7 @@ class AuthController {
             const newAccessToken = jwt.sign(
                 { 
                     id: user.userId, 
-                    role: user.assignedRole?.name,
+                    role: user.roles?.[0]?.name,
                     siteId: user.siteId,
                     assignedQueueId: user.assignedQueueId
                 },
@@ -270,8 +270,8 @@ class AuthController {
 
             res.cookie('accessToken', newAccessToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                secure: false,
+                sameSite: 'lax',
                 maxAge: 60 * 60 * 1000
             });
 
@@ -306,7 +306,7 @@ class AuthController {
                 include: [
                     {
                         model: Role,
-                        as: 'assignedRole',
+                        as: 'roles',
                         include: [{ model: Permission, as: 'permissions' }]
                     },
                     {
@@ -316,8 +316,8 @@ class AuthController {
                     },
                     {
                         model: Queue,
-                        as: 'queue',
-                        attributes: ['name', 'quaiId']
+                        as: 'queues',
+                        attributes: ['queueId', 'name', 'quaiId']
                     }
                 ]
             });
@@ -325,8 +325,13 @@ class AuthController {
             if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
 
             const userResponse = user.toJSON();
-            userResponse.permissions = user.assignedRole?.permissions?.map(p => p.code) || [];
+            const allPermissions = user.roles?.reduce((acc, role) => {
+                return acc.concat(role.permissions || []);
+            }, []) || [];
+            
+            userResponse.role = user.roles?.[0]?.name;
             userResponse.siteId = user.siteId;
+            userResponse.rules = defineAbilitiesFor(user).rules;
 
             res.status(200).json(userResponse);
         } catch (error) {

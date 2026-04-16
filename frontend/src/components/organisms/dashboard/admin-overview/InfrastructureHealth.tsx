@@ -33,10 +33,10 @@ const KIOSK_TYPES = new Set(['ENTRANCE', 'EXIT', 'KIOSK']);
 const DISPLAY_TYPES = new Set(['DISPLAY', 'LED']);
 
 const STATUS_CONFIG: Record<DeviceStatus, { text: string; bg: string; led: string; label: string }> = {
-  ONLINE:      { text: 'text-success',   bg: 'bg-success/10 border-success/20',      led: 'bg-success shadow-[0_0_8px_rgba(16,185,129,0.6)]',  label: 'Online' },
+  ONLINE:      { text: 'text-success',   bg: 'bg-success/10 border-success/20',      led: 'bg-success shadow-[0_0_8px_rgba(0,143,57,0.6)]',  label: 'Online' },
   OFFLINE:     { text: 'text-text-muted', bg: 'bg-surface/50 border-border/50',       led: 'bg-text-muted/40',                                  label: 'Offline' },
   MAINTENANCE: { text: 'text-warning',   bg: 'bg-warning/10 border-warning/20',      led: 'bg-warning shadow-[0_0_8px_rgba(245,158,11,0.5)]',  label: 'Maint.' },
-  ERROR:       { text: 'text-danger',    bg: 'bg-danger/10 border-danger/20',        led: 'bg-danger shadow-[0_0_8px_rgba(239,68,68,0.6)]',    label: 'Erreur' },
+  ERROR:       { text: 'text-danger',    bg: 'bg-danger/10 border-danger/20',        led: 'bg-danger shadow-[0_0_8px_rgba(227,6,19,0.6)]',    label: 'Erreur' },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

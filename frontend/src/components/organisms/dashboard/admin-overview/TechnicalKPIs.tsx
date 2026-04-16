@@ -13,16 +13,16 @@ interface KPICardProps {
 const KPICard = ({ title, value, subtext, icon: Icon, variant }: KPICardProps) => {
   const variants = {
     blue: 'border-blue-100 bg-white text-blue-700 shadow-sm shadow-blue-500/5',
-    green: 'border-emerald-100 bg-white text-emerald-700 shadow-sm shadow-emerald-500/5',
+    green: 'border-primary/20 bg-white text-primary shadow-sm shadow-primary/5',
     amber: 'border-amber-100 bg-white text-amber-700 shadow-sm shadow-amber-500/5',
-    red: 'border-rose-100 bg-white text-rose-700 shadow-sm shadow-rose-500/5',
+    red: 'border-danger/20 bg-white text-danger shadow-sm shadow-danger/5',
   };
 
   const iconVariants = {
     blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-emerald-50 text-emerald-600',
+    green: 'bg-primary/10 text-primary',
     amber: 'bg-amber-50 text-amber-600',
-    red: 'bg-rose-50 text-rose-600',
+    red: 'bg-danger/10 text-danger',
   };
 
   return (

@@ -1,35 +1,50 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../molecules/ui/card';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Badge } from '../atoms/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/ui/table';
 import { Modal, ConfirmModal } from '../molecules/ui/modal';
-import { toast } from '../molecules/ui/toast';
-import { MapPinned, Plus, Search, Trash2, Edit2, Building2, GitBranch } from 'lucide-react';
+import { toast } from 'sonner';
+import { 
+    Building2, 
+    GitBranch, 
+    MapPinned, 
+    Plus, 
+    Search, 
+    Trash2, 
+    Edit2,
+    ToggleRight, 
+    ToggleLeft 
+} from 'lucide-react';
 import { useCompanies } from '../../hooks/useCompanies';
 import { useSites } from '../../hooks/useSites';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import { cn } from '../../lib/utils';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import { SearchableSelect } from '../atoms/ui/SearchableSelect';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { siteSchema } from '../../lib/validation';
 import { useBulkSelection } from '../../hooks/useBulkSelection';
 import { BulkActionsToolbar } from '../molecules/BulkActionsToolbar';
-import { EmptyState } from '../molecules/ui/empty-state';
+import { DataTable } from '../molecules/DataTable/DataTable';
 
 export const SiteManager = () => {
     const { companies } = useCompanies();
-    const { sites, createSite, updateSite, deleteSite, bulkDeleteSites } = useSites();
+    const { sites, createSite, updateSite, deleteSite, bulkDeleteSites, isLoading: isLoadingSites } = useSites();
     const { workflows } = useWorkflows();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSite, setEditingSite] = useState<any>(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [search, setSearch] = useState('');
+
     const {
         register,
         handleSubmit,
         reset,
+        control,
         formState: { errors, isValid, isDirty }
     } = useForm({
         resolver: zodResolver(siteSchema),
@@ -44,7 +59,29 @@ export const SiteManager = () => {
         mode: 'onChange'
     });
 
-    const [search, setSearch] = useState('');
+    const filteredSites = useMemo(() => 
+        sites.filter(site =>
+            (site.name || '').toLowerCase().includes(search.toLowerCase()) ||
+            (site.code || '').toLowerCase().includes(search.toLowerCase()) ||
+            (site.company?.name || '').toLowerCase().includes(search.toLowerCase())
+        ),
+        [sites, search]
+    );
+
+    const paginatedSites = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return filteredSites.slice(start, start + pageSize);
+    }, [filteredSites, currentPage, pageSize]);
+
+    const {
+        selectedIds,
+        selectedCount,
+        isAllSelected,
+        toggleSelect,
+        toggleSelectAll,
+        clearSelection,
+        isSelected
+    } = useBulkSelection(filteredSites.map(s => s.siteId));
 
     const [confirmState, setConfirmState] = useState<{
         isOpen: boolean;
@@ -61,27 +98,11 @@ export const SiteManager = () => {
 
     const closeConfirm = () => setConfirmState(prev => ({ ...prev, isOpen: false }));
 
-    const filteredSites = sites.filter(site =>
-        site.name.toLowerCase().includes(search.toLowerCase()) ||
-        site.code?.toLowerCase().includes(search.toLowerCase()) ||
-        site.company?.name?.toLowerCase().includes(search.toLowerCase())
-    );
-
-    const {
-        selectedIds,
-        selectedCount,
-        isAllSelected,
-        toggleSelect,
-        toggleSelectAll,
-        clearSelection,
-        isSelected
-    } = useBulkSelection(filteredSites.map(s => s.siteId));
-
     const handleBulkDelete = () => {
         setConfirmState({
             isOpen: true,
             title: 'Suppression groupée',
-            message: `Voulez-vous vraiment supprimer les ${selectedCount} sites sélectionnés ? Cette opération est irréversible.🎉`,
+            message: `Voulez-vous vraiment supprimer les ${selectedCount} sites sélectionnés ? Cette opération est irréversible.`,
             variant: 'danger',
             onConfirm: async () => {
                 try {
@@ -97,13 +118,13 @@ export const SiteManager = () => {
     const handleDelete = (id: string) => {
         setConfirmState({
             isOpen: true,
-            title: 'Confirmation',
-            message: 'Supprimer ce site définitivement ?',
+            title: 'Confirmation de suppression',
+            message: 'Voulez-vous vraiment supprimer ce site définitivement ? Toutes les données liées seront impactées.',
             variant: 'danger',
             onConfirm: () => {
                 deleteSite.mutate(id, {
-                    onSuccess: () => toast('Site supprimé', 'success'),
-                    onError: () => toast('Erreur lors de la suppression', 'error')
+                    onSuccess: () => toast.success('Site supprimé'),
+                    onError: () => toast.error('Erreur lors de la suppression')
                 });
             }
         });
@@ -144,12 +165,107 @@ export const SiteManager = () => {
         mutation.mutate(payload as any, {
             onSuccess: () => {
                 setIsModalOpen(false);
-                toast(editingSite ? 'Site mis à jour' : 'Site créé avec succès', 'success');
+                toast.success(editingSite ? 'Site mis à jour' : 'Site créé avec succès');
                 setEditingSite(null);
             },
-            onError: () => toast('Erreur lors de l\'opération', 'error')
+            onError: () => toast.error('Erreur lors de l\'opération')
         });
     };
+
+    const columns = [
+        {
+            header: (
+                <div className="flex items-center gap-2">
+                    <input 
+                        type="checkbox" 
+                        checked={isAllSelected} 
+                        onChange={toggleSelectAll} 
+                        className="rounded border-white/20 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
+                    />
+                </div>
+            ),
+            width: '60px',
+            className: 'pl-6',
+            cell: (site: any) => (
+                <input 
+                    type="checkbox" 
+                    checked={isSelected(site.siteId)} 
+                    onChange={() => toggleSelect(site.siteId)} 
+                    className="rounded border-slate-300 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110" 
+                />
+            )
+        },
+        {
+            header: 'Nom du site',
+            cell: (site: any) => (
+                <div className="flex flex-col">
+                    <span className="font-bold text-slate-700">{site.name}</span>
+                </div>
+            )
+        },
+        {
+            header: 'Code',
+            cell: (site: any) => (
+                <Badge variant="outline" className="text-[10px] font-black border-slate-200 bg-slate-50 text-slate-500 tracking-wider">
+                    {site.code}
+                </Badge>
+            )
+        },
+        {
+            header: 'Société',
+            cell: (site: any) => (
+                <div className="flex items-center gap-1.5">
+                    <Building2 className="h-3.5 w-3.5 text-primary opacity-60" />
+                    <span className="text-xs text-slate-700 font-bold uppercase tracking-tight">{site.company?.name || '---'}</span>
+                </div>
+            )
+        },
+        {
+            header: 'Workflow',
+            cell: (site: any) => (
+                <div className="flex items-center gap-1.5">
+                    <GitBranch className="h-3.5 w-3.5 text-slate-400" />
+                    <span className="text-xs text-slate-500 font-medium">{site.workflow?.name || '---'}</span>
+                </div>
+            )
+        },
+        {
+            header: 'Statut',
+            cell: (site: any) => (
+                site.isActive ? (
+                    <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-black uppercase tracking-widest px-3">Actif</Badge>
+                ) : (
+                    <Badge className="bg-slate-100 text-slate-500 border-slate-200 text-[9px] font-bold uppercase tracking-widest px-3">Inactif</Badge>
+                )
+            )
+        },
+        {
+            header: 'Actions',
+            className: 'text-right pr-6',
+            cell: (site: any) => (
+                <div className="flex justify-end gap-1">
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => { e.stopPropagation(); handleOpenModal(site); }} 
+                        className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-all"
+                        title="Modifier le site"
+                    >
+                        <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => { e.stopPropagation(); handleDelete(site.siteId); }} 
+                        className="h-8 w-8 rounded-lg text-danger hover:bg-danger/10 transition-all"
+                        title="Supprimer le site"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            )
+        }
+    ];
 
     return (
         <div className="space-y-6 animate-slide-up">
@@ -180,107 +296,20 @@ export const SiteManager = () => {
                             />
                         </div>
                     </div>
-                    <div className="overflow-x-auto">
-                        <Table stickyHeader maxHeight="60vh">
-                            <TableHeader sticky>
-                                <TableRow className="bg-slate-50/50 hover:bg-transparent">
-                                    <TableHead className="w-[50px] pl-6">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={isAllSelected} 
-                                            onChange={toggleSelectAll} 
-                                            className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
-                                        />
-                                    </TableHead>
-                                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Site</TableHead>
-                                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Code</TableHead>
-                                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Société</TableHead>
-                                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Workflow</TableHead>
-                                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Statut</TableHead>
-                                    <TableHead className="text-right pr-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredSites.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={7} className="p-0 border-0 hover:bg-transparent">
-                                            <EmptyState 
-                                                icon={MapPinned} 
-                                                title="Aucun site trouvé" 
-                                                description={search ? "Aucun site ne correspond à votre recherche." : "Vous n'avez pas encore configuré de sites rattachés à vos sociétés."} 
-                                                actionLabel={!search ? "Nouveau Site" : undefined} 
-                                                onAction={!search ? () => handleOpenModal() : undefined} 
-                                                className="py-16"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ) : filteredSites.map(site => (
-                                    <TableRow 
-                                        key={site.siteId} 
-                                        className={cn(
-                                            "group transition-all duration-200 border-white/5", 
-                                            isSelected(site.siteId) 
-                                                ? "bg-primary/10 border-l-4 border-l-primary shadow-sm" 
-                                                : "hover:bg-slate-50/80 border-l-4 border-l-transparent"
-                                        )}
-                                    >
-                                        <TableCell className="pl-6">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={isSelected(site.siteId)} 
-                                                onChange={() => toggleSelect(site.siteId)} 
-                                                className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110" 
-                                            />
-                                        </TableCell>
-                                        <TableCell className="font-bold text-slate-700">{site.name}</TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline" className="text-[10px] font-bold border-slate-200 bg-slate-50 text-slate-600">
-                                                {site.code}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-1.5">
-                                                <Building2 className="h-3.5 w-3.5 text-primary opacity-60" />
-                                                <span className="text-xs text-text-muted font-bold uppercase tracking-tight">{site.company?.name || '---'}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-1.5">
-                                                <GitBranch className="h-3.5 w-3.5 text-slate-400" />
-                                                <span className="text-xs text-text-muted font-medium">{site.workflow?.name || '---'}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            {site.isActive ? (
-                                                <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[10px] font-black uppercase">Actif</Badge>
-                                            ) : (
-                                                <Badge className="bg-slate-100 text-slate-500 border-slate-200 text-[10px] font-bold uppercase">Inactif</Badge>
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="text-right pr-6">
-                                            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button 
-                                                    variant="ghost" 
-                                                    size="sm" 
-                                                    onClick={() => handleOpenModal(site)} 
-                                                    className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
-                                                >
-                                                    <Edit2 className="h-4 w-4" />
-                                                </Button>
-                                                <Button 
-                                                    variant="ghost" 
-                                                    size="sm" 
-                                                    onClick={() => handleDelete(site.siteId)} 
-                                                    className="h-8 w-8 rounded-lg text-danger hover:bg-danger/10"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                    <div className="p-6">
+                        <DataTable 
+                            columns={columns}
+                            data={paginatedSites}
+                            isLoading={isLoadingSites}
+                            totalItems={filteredSites.length}
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            onPageChange={setCurrentPage}
+                            onPageSizeChange={setPageSize}
+                            emptyMessage={search ? "Aucun site ne correspond à votre recherche." : "Vous n'avez pas encore de sites."}
+                            zebra={true}
+                            stickyHeader={true}
+                        />
                     </div>
                 </CardContent>
             </Card>
@@ -288,28 +317,35 @@ export const SiteManager = () => {
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingSite ? "Modifier le Site" : "Nouveau Site"} isDirty={isDirty}>
                 <form onSubmit={handleSubmit(onSave)} className="space-y-4 py-4">
                     <div>
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Société de rattachement</label>
-                        <select 
-                            className={cn(
-                                "w-full p-2.5 border rounded-xl text-sm outline-none bg-white transition-all",
-                                errors.companyId ? "border-danger focus:ring-danger/20" : "focus:border-primary/50"
+                        <Controller
+                            name="companyId"
+                            control={control}
+                            render={({ field }) => (
+                                <SearchableSelect
+                                    label="Société de rattachement"
+                                    placeholder="Choisir une société"
+                                    options={companies.map(c => ({ value: c.companyId, label: c.name }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                />
                             )}
-                            {...register('companyId')}
-                        >
-                            <option value="">-- Sélectionner une Société --</option>
-                            {companies.map(c => <option key={c.companyId} value={c.companyId}>{c.name}</option>)}
-                        </select>
+                        />
                         {errors.companyId && <p className="text-[10px] font-bold text-danger ml-1 mt-1">{errors.companyId.message}</p>}
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Workflow opérationnel</label>
-                        <select 
-                            className="w-full p-2.5 border rounded-xl text-sm outline-none bg-white focus:border-primary/50"
-                            {...register('workflowId')}
-                        >
-                            <option value="">-- Sélectionner un Workflow --</option>
-                            {workflows.map(wf => <option key={wf.workflowId} value={wf.workflowId}>{wf.name}</option>)}
-                        </select>
+                         <Controller
+                            name="workflowId"
+                            control={control}
+                            render={({ field }) => (
+                                <SearchableSelect
+                                    label="Workflow opérationnel"
+                                    placeholder="Choisir un workflow"
+                                    options={workflows.map(wf => ({ value: wf.workflowId, label: wf.name }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                />
+                            )}
+                        />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -318,7 +354,7 @@ export const SiteManager = () => {
                         </div>
                         <div>
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Code unique</label>
-                            <Input placeholder="ex: ABJ-01" {...register('code')} error={errors.code?.message} />
+                            <Input placeholder="ex: ABJ01" {...register('code')} error={errors.code?.message} />
                         </div>
                     </div>
                     <div className="flex items-center gap-4 pt-2 px-1">
@@ -328,8 +364,8 @@ export const SiteManager = () => {
                         </label>
                     </div>
                     <div className="flex justify-end gap-2 pt-4 border-t border-slate-100">
-                        <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} className="rounded-xl">Annuler</Button>
-                        <Button type="submit" isLoading={createSite.isPending || updateSite.isPending} disabled={!isValid} className="rounded-xl font-bold px-6">
+                        <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} className="rounded-xl font-bold">Annuler</Button>
+                        <Button type="submit" isLoading={createSite.isPending || updateSite.isPending} disabled={!isValid} className="rounded-xl font-bold px-6 shadow-lg shadow-primary/20">
                             {editingSite ? 'Mettre à jour' : 'Créer le site'}
                         </Button>
                     </div>

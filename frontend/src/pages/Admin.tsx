@@ -10,6 +10,7 @@ import { QuaiParameterManager } from '../components/admin/QuaiParameterManager';
 import { UserManager } from '../components/admin/UserManager';
 import { CompanySiteManager } from '../components/admin/CompanySiteManager';
 import { SiteManager } from '../components/admin/SiteManager';
+import { AuditLogs } from '../components/admin/AuditLogs';
 
 // Header section for Admin
 const AdminHeader = () => {
@@ -101,13 +102,7 @@ export default function Admin() {
                 <p className="text-slate-500">Module en cours de développement.</p>
               </div>
             } />
-            <Route path="audit" element={
-              <div className="py-20 text-center space-y-4">
-                <ShieldCheck className="w-16 h-16 mx-auto text-primary/30" />
-                <h2 className="text-2xl font-bold text-slate-700">Audit Système</h2>
-                <p className="text-slate-500">Consultez l'historique de toutes les actions critiques.</p>
-              </div>
-            } />
+            <Route path="audit" element={<AuditLogs />} />
 
             {/* Exploitation */}
             <Route path="workflows" element={<WorkflowManager />} />

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { User, Role, Permission, Site, Company, Queue } from '../models/index.js';
 import logger from '../config/logger.js';
+import { defineAbilitiesFor } from '../config/ability.js';
 
 class AuthMiddleware {
     constructor() {
@@ -38,7 +39,7 @@ class AuthMiddleware {
                 include: [
                     {
                         model: Role,
-                        as: 'assignedRole',
+                        as: 'roles',
                         include: [{
                             model: Permission,
                             as: 'permissions'
@@ -54,8 +55,8 @@ class AuthMiddleware {
                     },
                     {
                         model: Queue,
-                        as: 'queue',
-                        attributes: ['name']
+                        as: 'queues', // Utilisation de queues pour multi-assignation
+                        attributes: ['queueId', 'name']
                     }
                 ]
             });
@@ -65,9 +66,9 @@ class AuthMiddleware {
                 return res.status(401).json({ error: 'Utilisateur non trouvé.' });
             }
             
-            if (!user.assignedRole) {
-                logger.warn(`User ${user.userId} has no assigned role. roleId in DB: ${user.roleId}. token role: ${decoded.role}`);
-                return res.status(403).json({ error: 'Accès refusé. Aucun rôle assigné.', userId: user.userId, roleId: user.roleId });
+            if (!user.roles || user.roles.length === 0) {
+                logger.warn(`User ${user.userId} has no roles assigned.`);
+                return res.status(403).json({ error: 'Accès refusé. Aucun rôle assigné.', userId: user.userId });
             }
 
             if (!user.isActive) {
@@ -76,12 +77,14 @@ class AuthMiddleware {
 
             req.user = user;
 
-            // Map permissions to a simple array of codes
-            if (user.assignedRole && user.assignedRole.permissions) {
-                req.user.permissionCodes = user.assignedRole.permissions.map(p => p.code);
-            } else {
-                req.user.permissionCodes = [];
-            }
+            // Définition des capacités CASL
+            req.user.ability = defineAbilitiesFor(user);
+
+            // Backward Compatibility: Map permissions to a simple array of codes
+            const allPermissions = user.roles?.reduce((acc, role) => {
+                return acc.concat(role.permissions || []);
+            }, []) || [];
+            req.user.permissionCodes = [...new Set(allPermissions.map(p => p.code))];
 
             next();
         } catch (error) {
@@ -94,7 +97,29 @@ class AuthMiddleware {
     }
 
     /**
-     * Check if user has a specific permission
+     * Middleware de vérification des capacités CASL
+     * @param {string} action - manage, read, create, update, delete
+     * @param {string} subject - User, Ticket, Site, etc.
+     */
+    checkAbility(action, subject) {
+        return (req, res, next) => {
+            if (!req.user || !req.user.ability) {
+                return res.status(401).json({ error: 'Utilisateur non authentifié ou capacités non définies.' });
+            }
+
+            if (req.user.ability.can(action, subject)) {
+                return next();
+            }
+
+            return res.status(403).json({
+                error: `Accès refusé. Vous n'avez pas la capacité de : ${action} sur ${subject}`,
+                required: { action, subject }
+            });
+        };
+    }
+
+    /**
+     * Check if user has a specific permission (Legacy)
      * @param {string} requiredPermission e.g. 'ticket:create'
      */
     hasPermission(requiredPermission) {
@@ -103,7 +128,8 @@ class AuthMiddleware {
                 return res.status(401).json({ error: 'Utilisateur non authentifié.' });
             }
 
-            if (req.user.role === 'ADMINISTRATOR') {
+            // Admin bypasses checks
+            if (req.user.roles?.some(r => r.name === 'ADMINISTRATOR')) {
                 return next();
             }
 
@@ -210,7 +236,7 @@ class AuthMiddleware {
                 include: [
                     {
                         model: Role,
-                        as: 'assignedRole',
+                        as: 'roles',
                         include: [{
                             model: Permission,
                             as: 'permissions'
@@ -226,7 +252,7 @@ class AuthMiddleware {
                     },
                     {
                         model: Queue,
-                        as: 'queue',
+                        as: 'queues',
                         attributes: ['name']
                     }
                 ]
@@ -234,15 +260,21 @@ class AuthMiddleware {
 
             if (!user) return next(new Error('Utilisateur non trouvé.'));
             
-            if (!user.assignedRole) {
-                logger.warn(`User ${user.userId} has no assigned role (Socket). roleId in DB: ${user.roleId}. token role: ${decoded.role}`);
+            if (!user.roles || user.roles.length === 0) {
+                logger.warn(`User ${user.userId} has no roles assigned (Socket). roles length: 0.`);
                 return next(new Error('Accès refusé. Aucun rôle assigné.'));
             }
 
             if (!user.isActive) return next(new Error('Compte désactivé.'));
 
             socket.user = user;
-            socket.user.permissionCodes = user.assignedRole?.permissions.map(p => p.code) || [];
+            
+            // Map permissions from multiple roles
+            const allPermissions = user.roles.reduce((acc, role) => {
+                const codes = role.permissions?.map(p => p.code) || [];
+                return acc.concat(codes);
+            }, []);
+            socket.user.permissionCodes = [...new Set(allPermissions)];
             next();
         } catch (error) {
             logger.error('SOCKET AUTH ERROR:', error);
@@ -252,4 +284,10 @@ class AuthMiddleware {
     }
 }
 
-export default new AuthMiddleware();
+const authMiddleware = new AuthMiddleware();
+export const authenticate = authMiddleware.authenticate.bind(authMiddleware);
+export const checkAbility = authMiddleware.checkAbility.bind(authMiddleware);
+export const authorize = authMiddleware.authorize.bind(authMiddleware);
+export const hasPermission = authMiddleware.hasPermission.bind(authMiddleware);
+
+export default authMiddleware;

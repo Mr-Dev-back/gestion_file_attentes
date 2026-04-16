@@ -36,7 +36,7 @@ const DEFAULT_KPIS = {
 const LoadingScreen = () => (
   <div className="flex flex-col items-center justify-center h-[80vh] gap-5 bg-slate-50">
     <div className="p-5 bg-white rounded-3xl border border-slate-100 shadow-sm">
-      <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      <Loader2 className="w-8 h-8 text-primary animate-spin" />
     </div>
     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">
       Initialisation du cockpit SIGFA...
@@ -46,7 +46,7 @@ const LoadingScreen = () => (
 
 const FetchingIndicator = () => (
   <div className="absolute top-4 right-4 p-2 bg-white rounded-xl border border-slate-100 shadow-sm">
-    <RefreshCw className="w-3 h-3 text-emerald-500 animate-spin" />
+    <RefreshCw className="w-3 h-3 text-primary animate-spin" />
   </div>
 );
 
@@ -55,7 +55,7 @@ const DashboardFooter = ({ cluster = 'Abidjan Main', version = '3.2.0-stable' }:
     <span>SIGFA © 2026 — Système Industriel de Gestion de File d'Attente</span>
     <div className="flex items-center gap-5">
       <span className="flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]" />
+        <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,143,57,0.7)]" />
         Cluster: {cluster}
       </span>
       <span className="px-2.5 py-1 bg-slate-100 rounded-lg">v{version}</span>
