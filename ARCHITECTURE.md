@@ -1,4 +1,4 @@
-# GFA SIBM - Architecture des Services
+# GesParc SIBM - Architecture des Services
 
 ## Ports Utilisés
 
@@ -140,11 +140,11 @@ socket.on('ticket:called', (data) => {
 ```bash
 # Backend Node.js
 cd /home/ftuser/gfa-sibm/backend
-pm2 start src/server.js --name gfa-backend
+pm2 start src/server.js --name gesparc-backend
 
 # FastAPI
 cd /home/ftuser/gfa-sibm/fastapi
-pm2 start "uvicorn main:app --host 0.0.0.0 --port 8082" --name gfa-fastapi
+pm2 start "uvicorn main:app --host 0.0.0.0 --port 8082" --name gesparc-fastapi
 
 # Frontend - Servi par Nginx (pas de PM2 nécessaire)
 # Les fichiers statiques dans frontend/dist/ sont servis directement par Nginx sur le port 80
@@ -167,8 +167,8 @@ pm2 status
 ┌─────┬──────────────┬─────────┬─────────┬──────┐
 │ id  │ name         │ status  │ cpu     │ mem  │
 ├─────┼──────────────┼─────────┼─────────┼──────┤
-│ 0   │ gfa-backend  │ online  │ 0%      │ 50MB │
-│ 1   │ gfa-fastapi  │ online  │ 0%      │ 80MB │
+│ 0   │ gesparc-backend  │ online  │ 0%      │ 50MB │
+│ 1   │ gesparc-fastapi  │ online  │ 0%      │ 80MB │
 └─────┴──────────────┴─────────┴─────────┴──────┘
 ```
 
@@ -214,8 +214,8 @@ sudo tail -f /var/log/nginx/gfa-sibm-error.log
 
 ### Logs PM2
 ```bash
-pm2 logs gfa-backend
-pm2 logs gfa-fastapi
+pm2 logs gesparc-backend
+pm2 logs gesparc-fastapi
 ```
 
 ### Métriques
@@ -227,4 +227,4 @@ pm2 monit
 
 **Date**: 2026-02-16  
 **Serveur**: 192.168.11.189  
-**Projet**: GFA SIBM
+**Projet**: GesParc SIBM

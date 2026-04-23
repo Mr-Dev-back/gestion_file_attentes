@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Resource, Action, Permission, sequelize } from '../models/index.js';
 import logger from '../config/logger.js';
 

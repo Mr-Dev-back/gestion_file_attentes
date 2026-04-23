@@ -1,11 +1,31 @@
+import React, { createContext, useState, useContext, useMemo } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Globe, GitBranch, BarChart3, ClipboardCheck, LayoutDashboard, Truck, History, FileText, Activity } from 'lucide-react';
 import ManagerDashboard from './dashboards/ManagerDashboard';
+import SiteMap from '../components/analytics/SiteMap';
+import CategoryDistribution from '../components/analytics/CategoryDistribution';
+import WorkflowMonitor from '../components/analytics/WorkflowMonitor';
+import ArchiveSearch from './ArchiveSearch';
+
+// 1. GLOBAL CONTEXT
+interface ManagerContextType {
+  activeSiteId: string | null;
+  setActiveSiteId: (id: string | null) => void;
+}
+
+const ManagerContext = createContext<ManagerContextType | undefined>(undefined);
+
+export const useManagerContext = () => {
+  const context = useContext(ManagerContext);
+  if (!context) throw new Error('useManagerContext must be used within a ManagerProvider');
+  return context;
+};
 
 // Header section for Manager
 const ManagerHeader = () => {
   const location = useLocation();
   const path = location.pathname;
+  const { activeSiteId } = useManagerContext();
 
   let title = "Espace Manager";
   let description = "Vue d'ensemble et pilotage de l'activité";
@@ -14,7 +34,7 @@ const ManagerHeader = () => {
 
   // Match the paths with the 4 poles
   if (path.includes('/map') || path.includes('/dashboard') || path.includes('/benchmark')) {
-    title = "Pilotage Société";
+    title = activeSiteId ? `Pilotage • Site ${activeSiteId.slice(0, 8)}` : "Pilotage Société";
     description = "Vision stratégique et état de santé global des différents sites.";
     Icon = Globe;
     bgGradient = "from-blue-500/20 via-blue-500/5 to-transparent";
@@ -47,7 +67,7 @@ const ManagerHeader = () => {
           <Icon className="w-10 h-10 text-primary" />
         </div>
         <div>
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-text-main to-primary filter drop-shadow-sm tracking-tight mb-2">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-text-main to-primary filter drop-shadow-sm tracking-tight mb-2 uppercase">
             {title}
           </h1>
           <p className="text-text-muted font-medium text-lg max-w-2xl">
@@ -82,77 +102,62 @@ const ViewPlaceholder = ({ title, description, icon: Icon }: { title: string, de
 );
 
 export default function Manager() {
+  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
+
+  const contextValue = useMemo(() => ({
+    activeSiteId,
+    setActiveSiteId
+  }), [activeSiteId]);
+
   return (
-    <div className="flex-1 w-full bg-slate-50/50 relative min-h-screen">
-      {/* Decorative global background dots */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
+    <ManagerContext.Provider value={contextValue}>
+      <div className="flex-1 w-full bg-slate-50/50 relative min-h-screen">
+        {/* Decorative global background dots */}
+        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
 
-      <ManagerHeader />
+        <ManagerHeader />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 -mt-8">
-        <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl p-6 md:p-8 border border-white/60 min-h-[500px]">
-          <Routes>
-            <Route index element={<Navigate to="dashboard" replace />} />
-            
-            {/* 1. Pilotage Société */}
-            <Route path="map" element={<ViewPlaceholder 
-              title="Cartographie Interactive" 
-              description="Vue visuelle de tous les sites (Abidjan, San Pedro, etc.) avec indicateurs d'état en temps réel." 
-              icon={Globe} />} 
-            />
-            <Route path="dashboard" element={<ManagerDashboard />} />
-            <Route path="benchmark" element={<ViewPlaceholder 
-              title="Comparatif Inter-Sites" 
-              description="Graphiques dynamiques comparant la performance, les volumes et la fluidité de chaque site." 
-              icon={BarChart3} />} 
-            />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 -mt-8">
+          <div className="bg-white/60 backdrop-blur-2xl rounded-[3rem] shadow-2xl p-6 md:p-8 border border-white/60 min-h-[600px]">
+            <Routes>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              
+              {/* 1. Pilotage Société */}
+              <Route path="map" element={<SiteMap />} />
+              <Route path="dashboard" element={<ManagerDashboard />} />
+              <Route path="benchmark" element={<CategoryDistribution />} />
 
-            {/* 2. Flux & Workflows */}
-            <Route path="workflows/monitor" element={<ViewPlaceholder 
-              title="Supervision des Workflows" 
-              description="Vue en direct de la répartition des camions par étape (flux physiques et numériques)." 
-              icon={Truck} />} 
-            />
-            <Route path="alerts" element={<ViewPlaceholder 
-              title="Goulots & Alertes Live" 
-              description="Liste centralisée des points de blocages critiques et temps d'attentes anormaux signalés." 
-              icon={Activity} />} 
-            />
+              {/* 2. Flux & Workflows */}
+              <Route path="workflows/monitor" element={<WorkflowMonitor />} />
+              <Route path="alerts" element={<ViewPlaceholder 
+                title="Goulots & Alertes Live" 
+                description="Liste centralisée des points de blocages critiques et temps d'attentes anormaux signalés." 
+                icon={Activity} />} 
+              />
 
-            {/* 3. Analyses & Rapports */}
-            <Route path="reports" element={<ViewPlaceholder 
-              title="Rapports Décisionnels" 
-              description="Génération et planification d'exports PDF/Excel consolidés pour la direction générale." 
-              icon={FileText} />} 
-            />
-            <Route path="stats/categories" element={<ViewPlaceholder 
-              title="Volume par Catégorie" 
-              description="Répartition des volumes et des tickets de type INFRA, BATIMENT, ELECTRICITE, etc." 
-              icon={BarChart3} />} 
-            />
-            <Route path="stats/timing" element={<ViewPlaceholder 
-              title="Analyse du Temps de Cadencement" 
-              description="Étude détaillée des temps de cycle (Time-in-Site) de l'entrée à la sortie des transporteurs." 
-              icon={Activity} />} 
-            />
+              {/* 3. Analyses & Rapports */}
+              <Route path="reports" element={<ArchiveSearch />} />
+              <Route path="stats/categories" element={<CategoryDistribution />} />
+              <Route path="stats/timing" element={<ViewPlaceholder 
+                title="Analyse du Temps de Cadencement" 
+                description="Étude détaillée des temps de cycle (Time-in-Site) de l'entrée à la sortie des transporteurs." 
+                icon={Activity} />} 
+              />
 
-            {/* 4. Contrôle */}
-            <Route path="history" element={<ViewPlaceholder 
-              title="Historique Global" 
-              description="Recherche multi-critères poussée sur tous les tickets archivés de la société." 
-              icon={History} />} 
-            />
-            <Route path="audit" element={<ViewPlaceholder 
-              title="Journaux d'Opérations" 
-              description="Traçabilité totale et consultation des logs métiers (Pesée entrées/sorties, affectations)." 
-              icon={ClipboardCheck} />} 
-            />
+              {/* 4. Contrôle */}
+              <Route path="history" element={<ArchiveSearch />} />
+              <Route path="audit" element={<ViewPlaceholder 
+                title="Journaux d'Opérations" 
+                description="Traçabilité totale et consultation des logs métiers (Pesée entrées/sorties, affectations)." 
+                icon={ClipboardCheck} />} 
+              />
 
-            {/* Catch-all */}
-            <Route path="*" element={<Navigate to="dashboard" replace />} />
-          </Routes>
-        </div>
-      </main>
-    </div>
+              {/* Catch-all */}
+              <Route path="*" element={<Navigate to="dashboard" replace />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </ManagerContext.Provider>
   );
 }

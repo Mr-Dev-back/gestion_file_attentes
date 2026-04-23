@@ -2,7 +2,7 @@ import { api } from './api';
 
 export interface AuditFilters {
   page?: number;
-  limit?: number;
+  limit?: number | 'all';
   userId?: string;
   action?: string;
   resourceType?: string;

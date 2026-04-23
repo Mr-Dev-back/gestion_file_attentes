@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '../molecules/ui/card';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Badge } from '../atoms/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../molecules/ui/tabs';
 import { Modal, ConfirmModal } from '../molecules/ui/modal';
 import { toast } from '../molecules/ui/toast';
@@ -31,6 +30,7 @@ import { BulkActionsToolbar } from '../molecules/BulkActionsToolbar';
 import { ResourceManager } from './ResourceManager';
 import { AdminSkeleton } from '../molecules/ui/admin-skeleton';
 import { EmptyState } from '../molecules/ui/empty-state';
+import { DataTable } from '../molecules/DataTable/DataTable';
 
 export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: 'roles' | 'permissions' | 'resources' }) => {
     const { roles, createRole, updateRole, deleteRole } = useRoles();
@@ -181,8 +181,17 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
     );
 
     const filteredPermissions = permissions.filter(p => 
-        p.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.name || p.code).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.resourceObj?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const [permPage, setPermPage] = useState(1);
+    const [permPageSize, setPermPageSize] = useState(10);
+
+    const paginatedPermissions = filteredPermissions.slice(
+        (permPage - 1) * permPageSize,
+        permPage * permPageSize
     );
 
     const {
@@ -320,91 +329,96 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
                 </TabsContent>
 
                 <TabsContent value="permissions" className="animate-in fade-in slide-in-from-bottom-2">
-                    <Card className="border border-slate-200/60 shadow-lg bg-white rounded-2xl overflow-hidden">
-                        <Table stickyHeader maxHeight="60vh">
-                            <TableHeader sticky>
-                                <TableRow className="bg-white/40 border-b border-white/20">
-                                    <TableHead className="w-[50px] pl-6">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={isAllSelected} 
-                                            onChange={toggleSelectAll} 
-                                            className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
-                                        />
-                                    </TableHead>
-                                    <TableHead className="font-bold">RESSOURCE</TableHead>
-                                    <TableHead className="font-bold">DOMAINE (ACTION:SUJET)</TableHead>
-                                    <TableHead className="font-bold">CONDITIONS</TableHead>
-                                    <TableHead className="font-bold">CODE</TableHead>
-                                    <TableHead className="text-right pr-8 font-bold">ACTIONS</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredPermissions.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={6} className="p-0 border-0 hover:bg-transparent">
-                                            <EmptyState 
-                                                icon={Key} 
-                                                title="Aucune permission" 
-                                                description="Aucune combinaison d'accès trouvée. Configurez vos ressources pour en générer de nouvelles." 
-                                                actionLabel="Ajouter une Permission" 
-                                                onAction={() => handleOpenPermissionModal()} 
-                                                className="py-16"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ) : filteredPermissions.map(permission => (
-                                    <TableRow 
-                                        key={permission.permissionId} 
-                                        className={cn(
-                                            "border-b border-white/10 transition-all duration-200 border-white/5", 
-                                            isSelected(permission.permissionId) 
-                                                ? "bg-primary/10 border-l-4 border-l-primary shadow-sm" 
-                                                : "hover:bg-white/40 border-l-4 border-l-transparent"
-                                        )}
-                                    >
-                                        <TableCell className="pl-6">
+                    <Card className="border border-slate-200/60 shadow-lg bg-white rounded-2xl overflow-hidden p-6">
+                        <DataTable 
+                            columns={[
+                                {
+                                    header: (
+                                        <div className="flex items-center gap-2">
                                             <input 
                                                 type="checkbox" 
-                                                checked={isSelected(permission.permissionId)} 
-                                                onChange={() => toggleSelect(permission.permissionId)} 
-                                                className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110" 
+                                                checked={isAllSelected} 
+                                                onChange={toggleSelectAll} 
+                                                className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110" 
                                             />
-                                        </TableCell>
-                                        <TableCell>
+                                        </div>
+                                    ),
+                                    width: '60px',
+                                    className: 'pl-6',
+                                    cell: (permission: any) => (
+                                        <input 
+                                            type="checkbox" 
+                                            checked={isSelected(permission.permissionId)} 
+                                            onChange={() => toggleSelect(permission.permissionId)} 
+                                            className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110" 
+                                        />
+                                    )
+                                },
+                                {
+                                    header: 'RESSOURCE',
+                                    cell: (permission: any) => (
+                                        <div className="flex flex-col">
+                                            <span className="font-black text-xs uppercase tracking-tight">{permission.resourceObj?.name || 'N/A'}</span>
+                                            <span className="text-[10px] text-text-muted font-mono">{permission.resourceObj?.slug}</span>
+                                        </div>
+                                    )
+                                },
+                                {
+                                    header: 'DOMAINE (ACTION:SUJET)',
+                                    cell: (permission: any) => (
+                                        <div className="flex flex-col">
+                                            <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 w-fit">
+                                                {permission.action || '---'} : {permission.subject || '---'}
+                                            </Badge>
+                                            <span className="text-[10px] text-text-muted mt-1 italic">{permission.actionObj?.name}</span>
+                                        </div>
+                                    )
+                                },
+                                {
+                                    header: 'CONDITIONS',
+                                    cell: (permission: any) => (
+                                        permission.conditions ? (
+                                            <Badge variant="secondary" className="bg-amber-50 text-amber-600 border-amber-100 font-mono text-[9px]">
+                                                {JSON.stringify(permission.conditions).slice(0, 30)}...
+                                            </Badge>
+                                        ) : (
+                                            <span className="text-[10px] text-slate-300">Aucune</span>
+                                        )
+                                    )
+                                },
+                                {
+                                    header: 'CODE',
+                                    cell: (permission: any) => (
                                             <div className="flex flex-col">
-                                                <span className="font-black text-xs uppercase tracking-tight">{permission.resourceObj?.name || 'N/A'}</span>
-                                                <span className="text-[10px] text-text-muted font-mono">{permission.resourceObj?.slug}</span>
+                                                <code className="bg-black/5 px-2 py-0.5 rounded text-xs font-mono w-fit">
+                                                    {permission.name || permission.code}
+                                                </code>
+                                                <span className="text-[10px] text-text-muted mt-1">{permission.guardName || 'api'}</span>
                                             </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-col">
-                                                <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 w-fit">
-                                                    {permission.action || '---'} : {permission.subject || '---'}
-                                                </Badge>
-                                                <span className="text-[10px] text-text-muted mt-1 italic">{permission.actionObj?.name}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            {permission.conditions ? (
-                                                <Badge variant="secondary" className="bg-amber-50 text-amber-600 border-amber-100 font-mono text-[9px]">
-                                                    {JSON.stringify(permission.conditions).slice(0, 30)}...
-                                                </Badge>
-                                            ) : (
-                                                <span className="text-[10px] text-slate-300">Aucune</span>
-                                            )}
-                                        </TableCell>
-                                        <TableCell><code className="bg-black/5 px-2 py-0.5 rounded text-xs font-mono">{permission.code}</code></TableCell>
-                                        <TableCell className="text-right pr-6">
-                                            <div className="flex justify-end gap-1">
-                                                <Button variant="ghost" size="sm" onClick={() => handleOpenPermissionModal(permission)} className="h-8 w-8"><Edit2 className="w-4 h-4 text-text-muted" /></Button>
-                                                <Button variant="ghost" size="sm" onClick={() => deletePermission.mutate(permission.permissionId)} className="h-8 w-8 text-danger hover:bg-danger/10"><Trash2 className="w-4 h-4" /></Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                    )
+                                },
+                                {
+                                    header: 'ACTIONS',
+                                    className: 'text-right pr-6',
+                                    cell: (permission: any) => (
+                                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleOpenPermissionModal(permission); }} className="h-8 w-8"><Edit2 className="w-4 h-4 text-text-muted" /></Button>
+                                            <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); deletePermission.mutate(permission.permissionId); }} className="h-8 w-8 text-danger hover:bg-danger/10"><Trash2 className="w-4 h-4" /></Button>
+                                        </div>
+                                    )
+                                }
+                            ]}
+                            data={paginatedPermissions}
+                            isLoading={false}
+                            totalItems={filteredPermissions.length}
+                            currentPage={permPage}
+                            pageSize={permPageSize}
+                            onPageChange={setPermPage}
+                            onPageSizeChange={setPermPageSize}
+                            emptyMessage={searchTerm ? "Aucune permission trouvée pour cette recherche." : "Aucune combinaison d'accès trouvée. Configurez vos ressources pour en générer de nouvelles."}
+                            zebra={true}
+                            stickyHeader={true}
+                        />
                     </Card>
                 </TabsContent>
 
@@ -547,7 +561,7 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
             <Modal
                 isOpen={isPermissionModalOpen}
                 onClose={() => setIsPermissionModalOpen(false)}
-                title={editingPermission ? `Modifier le droit: ${editingPermission.code}` : "Nouveau Droit Système"}
+                title={editingPermission ? `Modifier le droit: ${editingPermission.name || editingPermission.code}` : "Nouveau Droit Système"}
                 size="lg"
             >
                 <form onSubmit={handleSubmitPermission(onSavePermission)} className="space-y-6 pt-4 pb-2">
@@ -654,4 +668,3 @@ export const RolePermissionManager = ({ defaultTab = 'roles' }: { defaultTab?: '
         </div>
     );
 };
-

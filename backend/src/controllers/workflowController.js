@@ -173,3 +173,17 @@ export const deleteStep = async (req, res) => {
         error: 'La suppression physique n\'est pas autorisée. Veuillez désactiver l\'étape à la place.' 
     });
 };
+
+export const getWorkflowSteps = async (req, res) => {
+    try {
+        const { workflowId } = req.params;
+        const steps = await WorkflowStep.findAll({
+            where: { workflowId },
+            include: [{ model: Queue, as: 'queues' }],
+            order: [['orderNumber', 'ASC']]
+        });
+        res.json(steps);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

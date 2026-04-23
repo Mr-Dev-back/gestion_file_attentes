@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../molecules/ui/card';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
@@ -17,7 +17,7 @@ import {
     ToggleLeft 
 } from 'lucide-react';
 import { useCompanies } from '../../hooks/useCompanies';
-import { useSites } from '../../hooks/useSites';
+import { useSites, type Site } from '../../hooks/useSites';
 import { useWorkflows } from '../../hooks/useWorkflows';
 import { cn } from '../../lib/utils';
 import { useForm, Controller } from 'react-hook-form';
@@ -27,18 +27,21 @@ import { siteSchema } from '../../lib/validation';
 import { useBulkSelection } from '../../hooks/useBulkSelection';
 import { BulkActionsToolbar } from '../molecules/BulkActionsToolbar';
 import { DataTable } from '../molecules/DataTable/DataTable';
+import type { z } from 'zod';
+
+type SiteFormValues = z.input<typeof siteSchema>;
 
 export const SiteManager = () => {
     const { companies } = useCompanies();
-    const { sites, createSite, updateSite, deleteSite, bulkDeleteSites, isLoading: isLoadingSites } = useSites();
-    const { workflows } = useWorkflows();
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingSite, setEditingSite] = useState<any>(null);
-
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [search, setSearch] = useState('');
+
+    const { sites, total, createSite, updateSite, deleteSite, bulkDeleteSites, isLoading: isLoadingSites } = useSites({ page: currentPage, limit: pageSize, search });
+    const { workflows } = useWorkflows();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingSite, setEditingSite] = useState<Site | null>(null);
 
     const {
         register,
@@ -46,7 +49,7 @@ export const SiteManager = () => {
         reset,
         control,
         formState: { errors, isValid, isDirty }
-    } = useForm({
+    } = useForm<SiteFormValues>({
         resolver: zodResolver(siteSchema),
         defaultValues: {
             name: '',
@@ -59,20 +62,6 @@ export const SiteManager = () => {
         mode: 'onChange'
     });
 
-    const filteredSites = useMemo(() => 
-        sites.filter(site =>
-            (site.name || '').toLowerCase().includes(search.toLowerCase()) ||
-            (site.code || '').toLowerCase().includes(search.toLowerCase()) ||
-            (site.company?.name || '').toLowerCase().includes(search.toLowerCase())
-        ),
-        [sites, search]
-    );
-
-    const paginatedSites = useMemo(() => {
-        const start = (currentPage - 1) * pageSize;
-        return filteredSites.slice(start, start + pageSize);
-    }, [filteredSites, currentPage, pageSize]);
-
     const {
         selectedIds,
         selectedCount,
@@ -81,7 +70,7 @@ export const SiteManager = () => {
         toggleSelectAll,
         clearSelection,
         isSelected
-    } = useBulkSelection(filteredSites.map(s => s.siteId));
+    } = useBulkSelection(sites.map((site: Site) => site.siteId));
 
     const [confirmState, setConfirmState] = useState<{
         isOpen: boolean;
@@ -130,7 +119,7 @@ export const SiteManager = () => {
         });
     };
 
-    const handleOpenModal = (site: any = null) => {
+    const handleOpenModal = (site: Site | null = null) => {
         setEditingSite(site);
         if (site) {
             reset({
@@ -154,7 +143,7 @@ export const SiteManager = () => {
         setIsModalOpen(true);
     };
 
-    const onSave = (data: any) => {
+    const onSave = (data: SiteFormValues) => {
         const cleanedData = {
             ...data,
             workflowId: data.workflowId === '' ? null : data.workflowId
@@ -299,9 +288,9 @@ export const SiteManager = () => {
                     <div className="p-6">
                         <DataTable 
                             columns={columns}
-                            data={paginatedSites}
+                            data={sites}
                             isLoading={isLoadingSites}
-                            totalItems={filteredSites.length}
+                            totalItems={total}
                             currentPage={currentPage}
                             pageSize={pageSize}
                             onPageChange={setCurrentPage}
@@ -325,7 +314,7 @@ export const SiteManager = () => {
                                     label="Société de rattachement"
                                     placeholder="Choisir une société"
                                     options={companies.map(c => ({ value: c.companyId, label: c.name }))}
-                                    value={field.value}
+                                    value={field.value ?? ''}
                                     onChange={field.onChange}
                                 />
                             )}
@@ -341,7 +330,7 @@ export const SiteManager = () => {
                                     label="Workflow opérationnel"
                                     placeholder="Choisir un workflow"
                                     options={workflows.map(wf => ({ value: wf.workflowId, label: wf.name }))}
-                                    value={field.value}
+                                    value={field.value ?? ''}
                                     onChange={field.onChange}
                                 />
                             )}

@@ -4,9 +4,9 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'SIGFA API Documentation',
+            title: 'GesParc API Documentation',
             version: '1.0.0',
-            description: 'Documentation de l\'API pour le Système Intégré de Gestion de File d\'Attente (SIGFA)',
+            description: 'Documentation de l\'API pour le Système Intégré de Gestion de File d\'Attente (GesParc)',
             contact: {
                 name: 'Equipe SIBM',
             },

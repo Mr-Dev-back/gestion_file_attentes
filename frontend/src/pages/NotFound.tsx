@@ -66,7 +66,7 @@ export default function NotFound() {
             {/* Footer Branding */}
             <div className="absolute bottom-8 text-center">
                 <p className="text-xs font-bold text-text-muted/50 tracking-widest uppercase">
-                    GFA SIBM • Système de Gestion
+                    GesParc • Système de Gestion
                 </p>
             </div>
         </div>

@@ -6,7 +6,7 @@ dotenv.config();
 class Database {
   constructor() {
     const {
-      DB_NAME = 'gfa',
+      DB_NAME = 'gesparc',
       DB_USER = 'postgres',
       DB_PASSWORD = '',
       DB_HOST = 'localhost',

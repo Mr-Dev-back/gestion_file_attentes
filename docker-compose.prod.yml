@@ -1,32 +1,31 @@
-version: '3.8'
 
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: sigfa-prod-db
+    container_name: gesparc-prod-db
     restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME:-sigfa}
+      POSTGRES_DB: ${DB_NAME:-gesparc}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_pd_data:/var/lib/postgresql/data
     networks:
-      - sigfa-prod-net
+      - gesparc-prod-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-sigfa}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-gesparc}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: sigfa-prod-redis
+    container_name: gesparc-prod-redis
     restart: always
     volumes:
       - redis_pd_data:/data
     networks:
-      - sigfa-prod-net
+      - gesparc-prod-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -37,16 +36,16 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    container_name: sigfa-prod-backend
+    container_name: gesparc-prod-backend
     restart: always
     ports:
-      - "3001:3000"
+      - "3003:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-sigfa}
+      DB_NAME: ${DB_NAME:-gesparc}
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD}
       REDIS_HOST: redis
@@ -61,18 +60,18 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - sigfa-prod-net
+      - gesparc-prod-net
 
   fastapi:
     build:
       context: ./fastapi
       dockerfile: Dockerfile
-    container_name: sigfa-prod-fastapi
+    container_name: gesparc-prod-fastapi
     restart: always
     expose:
       - "8082"
     networks:
-      - sigfa-prod-net
+      - gesparc-prod-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
       interval: 30s
@@ -86,19 +85,19 @@ services:
       args:
         - VITE_API_URL=${VITE_API_URL}
         - VITE_WS_URL=${VITE_WS_URL}
-    container_name: sigfa-prod-frontend
+    container_name: gesparc-prod-frontend
     restart: always
     ports:
-      - "8080:80"
+      - "3006:80"
     depends_on:
       - backend
     networks:
-      - sigfa-prod-net
+      - gesparc-prod-net
 
 volumes:
   postgres_pd_data:
   redis_pd_data:
 
 networks:
-  sigfa-prod-net:
+  gesparc-prod-net:
     driver: bridge

@@ -40,21 +40,26 @@ class AuditController {
                 ];
             }
 
-            const { count, rows: logs } = await AuditLog.findAndCountAll({
+            const queryOptions = {
                 where,
                 include: [{
                     model: User,
                     as: 'user',
                     attributes: ['userId', 'username', 'email', 'firstName', 'lastName']
                 }],
-                order: [['occurredAt', 'DESC']],
-                limit: parseInt(limit),
-                offset: parseInt(offset)
-            });
+                order: [['occurredAt', 'DESC']]
+            };
+
+            if (limit !== 'all') {
+                queryOptions.limit = parseInt(limit);
+                queryOptions.offset = parseInt(offset);
+            }
+
+            const { count, rows: logs } = await AuditLog.findAndCountAll(queryOptions);
 
             res.json({
                 total: count,
-                pages: Math.ceil(count / limit),
+                pages: limit === 'all' ? 1 : Math.ceil(count / limit),
                 currentPage: parseInt(page),
                 logs
             });

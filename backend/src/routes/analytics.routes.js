@@ -4,26 +4,19 @@ import authMiddleware from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-// Toutes les routes analytiques nécessitent d'avoir la capacité de lire les Analytics
 router.use(authMiddleware.authenticate);
-router.use(authMiddleware.checkAbility('read', 'Analytics'));
+router.use(authMiddleware.authorize(['ADMINISTRATOR', 'MANAGER', 'SUPERVISOR']));
 
 /**
  * @swagger
- * /api/analytics/summary:
+ * /api/analytics/stats:
  *   get:
- *     summary: Résumé des statistiques (Aujourd'hui, En attente, Temps moyen)
+ *     summary: KPIs opérationnels avec filtre de site
  *     tags: [Analytics]
  */
-router.get('/summary', AnalyticsController.getSummary);
-
-/**
- * @swagger
- * /api/analytics/performance:
- *   get:
- *     summary: Indicateurs de performance (Efficacité, SLA, Complétion)
- *     tags: [Analytics]
- */
-router.get('/performance', AnalyticsController.getPerformance);
+router.get('/stats', AnalyticsController.getStats);
+router.get('/summary', AnalyticsController.getStats);
+router.get('/performance', AnalyticsController.getStats);
+router.get('/site-details', AnalyticsController.getSiteDetails);
 
 export default router;

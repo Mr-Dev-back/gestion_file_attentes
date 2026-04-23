@@ -3,6 +3,7 @@ import authController from '../controllers/authController.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import validate from '../middlewares/validate.middleware.js';
 import { loginSchema } from '../validations/auth.validation.js';
+import { loginLimiter, refreshTokenLimiter, authLimiter } from '../middlewares/rateLimiter.js';
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ const router = express.Router();
  *       401:
  *         description: Identifiants invalides
  */
-router.post('/login', validate(loginSchema), authController.login);
+router.post('/login', loginLimiter, validate(loginSchema), authController.login);
 
 // La route d'inscription publique est désactivée pour sécurité stricte.
 // Les utilisateurs sont créés uniquement par les administrateurs via /api/users (user.routes.js)
@@ -67,7 +68,7 @@ router.post('/login', validate(loginSchema), authController.login);
  *       200:
  *         description: Email envoyé si le compte existe
  */
-router.post('/forgot-password', authController.forgotPassword);
+router.post('/forgot-password', authLimiter, authController.forgotPassword);
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ router.post('/forgot-password', authController.forgotPassword);
  *       400:
  *         description: Token invalide ou expiré
  */
-router.post('/reset-password', authController.resetPassword);
+router.post('/reset-password', authLimiter, authController.resetPassword);
 
 /**
  * @swagger
@@ -110,7 +111,7 @@ router.post('/reset-password', authController.resetPassword);
  *       403:
  *         description: Refresh token invalide
  */
-router.post('/refresh-token', authController.refreshToken);
+router.post('/refresh-token', refreshTokenLimiter, authController.refreshToken);
 
 /**
  * @swagger

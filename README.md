@@ -1,6 +1,6 @@
-# GFA SIBM - Gestion de Flotte Automobile
+# GesParc - Gestion de Flotte Automobile
 
-[![CI/CD](https://github.com/YOUR_USERNAME/PROJET-GFA/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/PROJET-GFA/actions/workflows/ci-cd.yml)
+[![CI/CD](https://github.com/YOUR_USERNAME/GesParc/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/GesParc/actions/workflows/ci-cd.yml)
 
 Application de gestion de file d'attente pour la gestion de flotte automobile SIBM.
 
@@ -34,8 +34,8 @@ Application de gestion de file d'attente pour la gestion de flotte automobile SI
 
 ### 1. Cloner le projet
 ```bash
-git clone https://github.com/YOUR_USERNAME/PROJET-GFA.git
-cd PROJET-GFA
+git clone https://github.com/YOUR_USERNAME/GesParc.git
+cd GesParc
 ```
 
 ### 2. Configuration Backend
@@ -91,7 +91,7 @@ npm run preview
 ## 📁 Structure du Projet
 
 ```
-PROJET-GFA/
+GesParc/
 ├── backend/                # API Express
 │   ├── src/
 │   │   ├── config/        # Configuration (DB, Redis, etc.)
@@ -125,7 +125,7 @@ PROJET-GFA/
 NODE_ENV=development
 BACKEND_PORT=3000
 DB_HOST=localhost
-DB_NAME=gfa_sibm_dev
+DB_NAME=gesparc_dev
 DB_USER=your_user
 DB_PASSWORD=your_password
 REDIS_HOST=localhost

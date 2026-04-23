@@ -68,7 +68,7 @@ export function exportToPDF(data: any[], filename: string) {
     // Logo (if available) - skipping for simplicity or using text
     doc.setFontSize(20);
     doc.setTextColor(40, 44, 52);
-    doc.text('GFA SIBM - Rapport d\'Activité', 14, 22);
+    doc.text('GesParc - Rapport d\'Activité', 14, 22);
 
     doc.setFontSize(10);
     doc.setTextColor(100);

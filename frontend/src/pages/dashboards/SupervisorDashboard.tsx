@@ -15,6 +15,13 @@ import {
 } from 'lucide-react';
 import { Card } from '../../components/molecules/ui/card';
 
+type SupervisorSummaryStats = {
+    todayTickets?: number;
+    pendingTickets?: number;
+    completedToday?: number;
+    avgWaitTime?: number;
+};
+
 export default function SupervisorDashboard() {
     const { user } = useAuthStore();
     const { state: socketState } = useSocket();
@@ -47,6 +54,7 @@ export default function SupervisorDashboard() {
 
     const departmentStats = deptData?.departments || [];
     const queues = queuesData || [];
+    const summaryStats = (stats ?? {}) as SupervisorSummaryStats;
 
     const priorityColors: Record<string, string> = {
         'CRITIQUE': 'bg-red-100 text-red-600 border-red-200',
@@ -75,28 +83,28 @@ export default function SupervisorDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
                     title="Tickets Aujourd'hui"
-                    value={stats?.todayTickets || 0}
+                    value={summaryStats.todayTickets || 0}
                     icon={Truck}
                     iconColor="text-blue-600"
                     iconBgColor="bg-blue-100"
                 />
                 <StatCard
                     title="Tickets Actifs"
-                    value={stats?.pendingTickets || 0}
+                    value={summaryStats.pendingTickets || 0}
                     icon={Activity}
                     iconColor="text-green-600"
                     iconBgColor="bg-green-100"
                 />
                 <StatCard
                     title="Complétés"
-                    value={stats?.completedToday || 0}
+                    value={summaryStats.completedToday || 0}
                     icon={Building2}
                     iconColor="text-purple-600"
                     iconBgColor="bg-purple-100"
                 />
                 <StatCard
                     title="Temps Moyen"
-                    value={`${stats?.avgWaitTime || 0} min`}
+                    value={`${summaryStats.avgWaitTime || 0} min`}
                     icon={AlertTriangle}
                     iconColor="text-red-600"
                     iconBgColor="bg-red-100"

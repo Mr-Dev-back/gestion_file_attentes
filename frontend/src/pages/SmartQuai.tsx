@@ -212,7 +212,7 @@ export default function SmartQuai() {
 
   useEffect(() => {
     fetchQuaiConfig();
-    return () => { document.title = 'SIBM GFA'; };
+    return () => { document.title = 'GesParc'; };
   }, [fetchQuaiConfig]);
 
   // Tick every minute for wait times

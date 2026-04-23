@@ -2,7 +2,7 @@
 
 # Configuration
 REPO_URL="https://github.com/Frejus-dev/.git"
-PROJECT_DIR="PROJET-GFA"
+PROJECT_DIR="GesParc"
 ENV_FILE=".env.prod"
 
 echo "Starting Deployment..."

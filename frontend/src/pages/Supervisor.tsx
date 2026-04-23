@@ -1,37 +1,34 @@
+import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Building2, TrendingUp, Zap, MapPinned, Search, History, Activity, Truck } from 'lucide-react';
-import { useAuthStore } from '../stores/useAuthStore';
-import InteractiveWorkflowView from './supervisor/InteractiveWorkflowView';
+import { Building2, Activity, Truck, History, LayoutDashboard, Search, Zap, MapPinned } from 'lucide-react';
+import SupervisorTactical from './supervisor/SupervisorTactical';
 import SupervisorDashboard from './dashboards/SupervisorDashboard';
 
-// Header section for Supervisor
+// Header section for Supervisor (Harmonized with Manager)
 const SupervisorHeader = () => {
   const location = useLocation();
   const path = location.pathname;
-  const { user } = useAuthStore();
-  const userSiteName = (user as any)?.site?.name || "Site Actuel";
 
-  let title = `Espace Opérationnel`;
-  let description = `Supervision tactique du ${userSiteName}`;
+  let title = "Espace Superviseur";
+  let description = "Pilotage opérationnel et régulation du site";
   let Icon = Building2;
-  let bgGradient = "from-primary/20 via-primary/5 to-transparent";
+  let bgGradient = "from-emerald-500/20 via-emerald-500/5 to-transparent";
 
-  // Match the paths with the 3 poles
-  if (path.includes('/workflow-view') || path.includes('/live-tracking') || path.includes('/search')) {
-    title = `Gestion du ${userSiteName}`;
-    description = "Vue d'ensemble en temps réel et localisation des camions sur le site.";
+  if (path.includes('/workflow-view')) {
+    title = "Régulation Temps Réel";
+    description = "Gestion synoptique des flux et optimisation des cadencements.";
+    Icon = Zap;
+    bgGradient = "from-amber-500/20 via-amber-500/5 to-transparent";
+  } else if (path.includes('/live-tracking')) {
+    title = "Tracking Véhicules";
+    description = "Suivi précis de la position de chaque transporteur sur site.";
     Icon = MapPinned;
     bgGradient = "from-blue-500/20 via-blue-500/5 to-transparent";
-  } else if (path.includes('/priorities') || path.includes('/manual-dispatch')) {
-    title = "Régulation & Interventions";
-    description = "Gestion des urgences, fast-pass et réaffectations manuelles.";
-    Icon = Zap;
-    bgGradient = "from-red-500/20 via-orange-500/5 to-transparent";
-  } else if (path.includes('/history') || path.includes('/dashboard')) {
-    title = "Analyse Locale";
-    description = "Statistiques de performance du site et historique des opérations.";
-    Icon = TrendingUp;
-    bgGradient = "from-emerald-500/20 via-emerald-500/5 to-transparent";
+  } else if (path.includes('/dashboard')) {
+    title = "Performance Site";
+    description = "Statistiques consolidées et KPIs de productivité.";
+    Icon = LayoutDashboard;
+    bgGradient = "from-indigo-500/20 via-indigo-500/5 to-transparent";
   }
 
   return (
@@ -43,13 +40,13 @@ const SupervisorHeader = () => {
 
       <div className="max-w-7xl mx-auto relative z-10 flex items-center gap-6">
         <div className="p-4 bg-white/40 backdrop-blur-md rounded-2xl shadow-xl shadow-black/5 border border-white/50">
-          <Icon className="w-10 h-10 text-primary" />
+          <Icon className="w-10 h-10 text-emerald-600" />
         </div>
         <div>
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-text-main to-primary filter drop-shadow-sm tracking-tight mb-2">
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-emerald-600 filter drop-shadow-sm tracking-tight mb-2 uppercase">
             {title}
           </h1>
-          <p className="text-text-muted font-medium text-lg max-w-2xl">
+          <p className="text-slate-500 font-medium text-lg max-w-2xl leading-tight">
             {description}
           </p>
         </div>
@@ -58,22 +55,21 @@ const SupervisorHeader = () => {
   );
 };
 
-// Generic Placeholder Component for Views in construction
 const ViewPlaceholder = ({ title, description, icon: Icon }: { title: string, description: string, icon: any }) => (
   <div className="flex flex-col items-center justify-center py-24 px-4 text-center space-y-6">
-    <div className="p-6 bg-primary/5 rounded-full ring-8 ring-primary/5 shadow-inner">
-      <Icon className="w-16 h-16 text-primary/40" />
+    <div className="p-6 bg-emerald-500/5 rounded-full ring-8 ring-emerald-500/5 shadow-inner">
+      <Icon className="w-16 h-16 text-emerald-500/40" />
     </div>
     <div className="max-w-md space-y-2">
-      <h2 className="text-2xl font-black text-slate-700 tracking-tight">{title}</h2>
+      <h2 className="text-2xl font-black text-slate-700 tracking-tight uppercase">{title}</h2>
       <p className="text-slate-500 font-medium leading-relaxed">
         {description}
       </p>
     </div>
-    <div className="pt-4 flex items-center gap-3 text-sm text-primary/60 font-bold bg-white px-4 py-2 rounded-xl shadow-sm border border-black/5">
+    <div className="pt-4 flex items-center gap-3 text-sm text-emerald-600 font-bold bg-white px-4 py-2 rounded-xl shadow-sm border border-black/5">
       <span className="relative flex h-3 w-3">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20"></span>
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary/40"></span>
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-20"></span>
+        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500/40"></span>
       </span>
       En cours de développement
     </div>
@@ -89,45 +85,36 @@ export default function Supervisor() {
       <SupervisorHeader />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 -mt-8">
-        <div className="bg-white/60 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl p-6 md:p-8 border border-white/60 min-h-[500px]">
+        <div className="bg-white/60 backdrop-blur-2xl rounded-[3rem] shadow-2xl p-6 md:p-8 border border-white/60 min-h-[700px]">
           <Routes>
-            <Route index element={<Navigate to="workflow-view" replace />} />
+            <Route index element={<Navigate to="/supervisor/workflow-view" replace />} />
             
-            {/* 1. Gestion du Site */}
-            <Route path="workflow-view" element={<InteractiveWorkflowView />} />
+            <Route path="workflow-view" element={<SupervisorTactical />} />
+            
             <Route path="live-tracking" element={<ViewPlaceholder 
               title="Tracking Temps Réel" 
               description="Suivi minute par minute des déplacements, statuts des tickets et alertes immédiates du site." 
-              icon={Activity} />} 
+              icon={MapPinned} />} 
             />
+
+            <Route path="priorities" element={<Navigate to="/supervisor/workflow-view" replace />} />
+            <Route path="manual-dispatch" element={<Navigate to="/supervisor/workflow-view" replace />} />
+            
+            <Route path="dashboard" element={<SupervisorDashboard />} />
+            
             <Route path="search" element={<ViewPlaceholder 
-              title="Recherche Véhicule" 
-              description="Localisation immédiate sur le site via la saisie d'un numéro d'immatriculation ou de ticket." 
+              title="Recherche & Archives" 
+              description="Consultez l'historique complet des tickets du site et exportez les rapports de pesée." 
               icon={Search} />} 
             />
 
-            {/* 2. Régulation */}
-            <Route path="priorities" element={<ViewPlaceholder 
-              title="Urgences & Fast-Pass" 
-              description="Modification de l'ordre de passage et attribution du statut VIP/Urgent surchargé aux transporteurs critiques." 
-              icon={Zap} />} 
-            />
-            <Route path="manual-dispatch" element={<ViewPlaceholder 
-              title="Dispatch & Transferts" 
-              description="Réaffectation manuelle et forcée de files d'attente lors de pannes ou anomalies matérielles." 
-              icon={Truck} />} 
-            />
-
-            {/* 3. Analyse Locale */}
-            <Route path="dashboard" element={<SupervisorDashboard />} />
             <Route path="history" element={<ViewPlaceholder 
-              title="Audit & Historique Local" 
-              description="Journaux archivés pour vérifier les opérations passées et gérer les litiges spécifiques au site." 
+              title="Historique du Site" 
+              description="Consultez la liste chronologique des entrées et sorties traitées sur votre site." 
               icon={History} />} 
             />
 
-            {/* Catch-all */}
-            <Route path="*" element={<Navigate to="workflow-view" replace />} />
+            <Route path="*" element={<Navigate to="/supervisor/workflow-view" replace />} />
           </Routes>
         </div>
       </main>

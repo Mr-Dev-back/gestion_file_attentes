@@ -4,6 +4,7 @@ import type { Permission } from './permissionApi';
 export interface Role {
     roleId: string;
     name: string;
+    guardName: string;
     description: string;
     scope: 'GLOBAL' | 'COMPANY' | 'SITE';
     permissions?: Permission[];
@@ -11,6 +12,7 @@ export interface Role {
 
 export interface CreateRoleDTO {
     name: string;
+    guardName?: string;
     description?: string;
     scope: 'GLOBAL' | 'COMPANY' | 'SITE';
     permissionIds?: string[];

@@ -1,7 +1,7 @@
 {
-  "name": "gfa-sibm-backend",
+  "name": "gesparc-backend",
   "version": "1.0.0",
-  "description": "Backend Express pour GFA SIBM (Gestion de Flotte Automobile)",
+  "description": "Backend Express pour GesParc (Gestion de Flotte Automobile)",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
@@ -13,10 +13,12 @@
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:seed": "sequelize-cli db:seed:all",
+    "seed:prod": "node src/scripts/seedProduction.js",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix"
   },
   "dependencies": {
+    "@casl/ability": "^6.8.0",
     "@socket.io/redis-adapter": "^8.3.0",
     "axios": "^1.13.6",
     "bcrypt": "^5.1.1",

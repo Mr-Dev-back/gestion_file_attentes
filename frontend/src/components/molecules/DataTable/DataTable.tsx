@@ -10,7 +10,7 @@ import {
 import { Pagination } from './Pagination';
 import { EmptyState } from '../ui/empty-state';
 import { cn } from '../../../lib/utils';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Database, Maximize2, Minimize2 } from 'lucide-react';
 
 interface Column<T> {
   header: React.ReactNode;
@@ -110,9 +110,13 @@ export function DataTable<T>({
                 </TableRow>
               ))
             ) : data.length === 0 ? (
-              <TableRow>
+                <TableRow>
                 <TableCell colSpan={columns.length} className="h-64 text-center">
-                  <EmptyState message={emptyMessage} />
+                  <EmptyState
+                    icon={Database}
+                    title="Aucun resultat"
+                    description={emptyMessage}
+                  />
                 </TableCell>
               </TableRow>
             ) : (

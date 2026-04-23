@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { useAdminOverview, useSites } from '../../hooks/useDashboardStats';
 import { VitalsHeader } from '../../components/organisms/dashboard/admin-overview/VitalsHeader';
@@ -39,7 +40,7 @@ const LoadingScreen = () => (
       <Loader2 className="w-8 h-8 text-primary animate-spin" />
     </div>
     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">
-      Initialisation du cockpit SIGFA...
+      Initialisation du cockpit GesParc...
     </p>
   </div>
 );
@@ -52,7 +53,7 @@ const FetchingIndicator = () => (
 
 const DashboardFooter = ({ cluster = 'Abidjan Main', version = '3.2.0-stable' }: FooterProps) => (
   <div className="flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest pt-6 border-t border-slate-100">
-    <span>SIGFA © 2026 — Système Industriel de Gestion de File d'Attente</span>
+    <span>GesParc © 2026 — Système Industriel de Gestion de File d'Attente</span>
     <div className="flex items-center gap-5">
       <span className="flex items-center gap-2">
         <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,143,57,0.7)]" />
@@ -75,6 +76,7 @@ const CustomScrollbarStyle = () => (
 // ─── AdminDashboard ───────────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [selectedSite, setSelectedSite] = useState('');
 
   const {
@@ -118,7 +120,10 @@ export default function AdminDashboard() {
 
         {/* Right (40%) */}
         <div className="xl:col-span-4 h-full">
-          <LiveAuditStream logs={overview?.auditStream ?? []} />
+          <LiveAuditStream 
+            logs={overview?.auditStream ?? []} 
+            onViewAll={() => navigate('/audit')} 
+          />
         </div>
       </div>
 

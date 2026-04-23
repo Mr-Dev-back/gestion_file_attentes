@@ -79,7 +79,7 @@ export const useAuthStore = create<AuthState>()(
             isManager: () => get().user?.role === 'MANAGER',
         }),
         {
-            name: 'sigfa-auth-storage',
+            name: 'gesparc-auth-storage',
             partialize: (state) => ({ 
                 user: state.user, 
                 token: state.token, 

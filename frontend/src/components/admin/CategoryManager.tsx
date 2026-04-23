@@ -5,7 +5,7 @@ import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Card, CardContent } from '../molecules/ui/card';
 import { Badge } from '../atoms/ui/badge';
-import { Plus, Edit2, Trash2, Tag, Truck } from 'lucide-react';
+import { Plus, Edit2, Trash2, Tag, Truck, Loader2 } from 'lucide-react';
 import { Modal, ConfirmModal } from '../molecules/ui/modal';
 import { toast } from '../molecules/ui/toast';
 import { useForm } from 'react-hook-form';

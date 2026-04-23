@@ -1,6 +1,8 @@
 import io
 import logging
 import os
+import asyncio
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,39 +12,58 @@ from pydantic import BaseModel, Field
 
 # ─────────────────────────────────────────────
 # Logging structuré
-# [AMÉLIORATION 7] Remplace les print() par logging standard
 # ─────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
-)
-logger = logging.getLogger("gfa-sibm-tts")
+logger = logging.getLogger("gesparc-tts")
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s - %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
 
 # ─────────────────────────────────────────────
 # Configuration via variables d'environnement
-# [AMÉLIORATION 6] CORS origins piloté par env, pas hardcodé
 # ─────────────────────────────────────────────
 ALLOWED_ORIGINS: list[str] = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 TTS_MAX_TEXT_LENGTH: int = int(os.getenv("TTS_MAX_TEXT_LENGTH", "500"))
+SUPPORTED_LANGS = {"fr", "en", "ar", "es", "de", "it", "pt"}
 
 # ─────────────────────────────────────────────
-# Langues supportées par gTTS
+# Lifespan
 # ─────────────────────────────────────────────
-SUPPORTED_LANGS = {"fr", "en", "ar", "es", "de", "it", "pt"}
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Service FastAPI démarré et prêt à recevoir des requêtes.")
+    try:
+        yield
+    except asyncio.CancelledError:
+        logger.warning("Lifespan reçu CancelledError (arrêt normal).")
+        raise
+    except Exception as e:
+        logger.error("Erreur inattendue dans le lifespan : %s", str(e))
+        raise
+    finally:
+        logger.info("Arrêt du service FastAPI...")
 
 # ─────────────────────────────────────────────
 # Application
 # ─────────────────────────────────────────────
 app = FastAPI(
-    title="GFA SIBM - FastAPI Service",
+    title="GesParc FastAPI Service",
     version="1.0.0",
     description="Service Python pour gTTS et traitement avancé",
+    lifespan=lifespan
 )
+
+# [SÉCURITÉ] Si allow_origins contient '*', allow_credentials doit être False (contrainte Starlette)
+allow_credentials = True
+if "*" in ALLOWED_ORIGINS:
+    allow_credentials = False
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -74,7 +95,7 @@ class AnnounceRequest(BaseModel):
 @app.get("/")
 async def root():
     return {
-        "service": "GFA SIBM FastAPI Service",
+        "service": "GesParc FastAPI Service",
         "status": "running",
         "version": "1.0.0",
     }

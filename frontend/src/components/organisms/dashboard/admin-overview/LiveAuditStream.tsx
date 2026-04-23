@@ -87,7 +87,7 @@ export const LiveAuditStream = ({ logs, onViewAll }: LiveAuditStreamProps) => (
     {/* Logs */}
     <div className="flex-1 overflow-y-auto px-6 py-5 custom-scrollbar">
       {logs.length > 0
-        ? <div>{logs.map((log) => <AuditItem key={log.id} {...log} />)}</div>
+        ? <div>{logs.slice(0, 10).map((log) => <AuditItem key={log.id} {...log} />)}</div>
         : <EmptyState />
       }
     </div>

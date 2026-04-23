@@ -23,6 +23,7 @@ import { BulkActionsToolbar } from '../molecules/BulkActionsToolbar';
 import { ResourceModal } from './ResourceModal';
 import { AdminSkeleton } from '../molecules/ui/admin-skeleton';
 import { EmptyState } from '../molecules/ui/empty-state';
+import { DataTable } from '../molecules/DataTable/DataTable';
 import { cn } from '../../lib/utils';
 
 interface ResourceManagerProps {
@@ -42,9 +43,17 @@ export const ResourceManager = ({ onBack }: ResourceManagerProps) => {
         name: ''
     });
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
     const filteredResources = resources.filter(res => 
         res.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         res.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const paginatedResources = filteredResources.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
     );
 
     const {
@@ -145,107 +154,108 @@ export const ResourceManager = ({ onBack }: ResourceManagerProps) => {
 
             <Card className="border border-slate-200/60 shadow-lg bg-white rounded-2xl overflow-hidden">
                 <div className="p-4 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-                    <div className="relative flex-1 max-w-md">
+                    <div className="relative flex-1 max-w-md ml-auto">
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                         <Input 
                             placeholder="Rechercher par nom ou slug..." 
                             value={searchTerm} 
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                             className="h-10 pl-10 rounded-xl bg-white border-slate-200"
                         />
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <Table stickyHeader maxHeight="60vh">
-                        <TableHeader sticky>
-                            <TableRow className="bg-slate-50/50 hover:bg-transparent">
-                                <TableHead className="w-[50px] pl-6">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={isAllSelected} 
-                                        onChange={toggleSelectAll}
-                                        className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110"
-                                    />
-                                </TableHead>
-                                <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Ressource</TableHead>
-                                <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Identifiant (Slug)</TableHead>
-                                <TableHead className="font-black text-[10px] uppercase tracking-widest text-center text-slate-400">Permissions</TableHead>
-                                <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Description</TableHead>
-                                <TableHead className="text-right pr-6 font-black text-[10px] uppercase tracking-widest text-slate-400">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredResources.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={6} className="p-0 border-0 hover:bg-transparent">
-                                        <EmptyState 
-                                            icon={Layers} 
-                                            title="Aucune ressource" 
-                                            description={searchTerm ? "Aucune ressource ne correspond à votre recherche." : "Vous n'avez pas encore défini de ressources système (objets)."} 
-                                            actionLabel={!searchTerm ? "Nouvelle Ressource" : undefined} 
-                                            onAction={!searchTerm ? () => handleOpenModal() : undefined} 
-                                            className="py-16"
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ) : filteredResources.map(res => (
-                                <TableRow 
-                                    key={res.resourceId} 
-                                    className={cn(
-                                        "group transition-all duration-200 border-white/5", 
-                                        isSelected(res.resourceId) 
-                                            ? "bg-primary/10 border-l-4 border-l-primary shadow-sm" 
-                                            : "hover:bg-slate-50/80 border-l-4 border-l-transparent"
-                                    )}
-                                >
-                                    <TableCell className="pl-6">
+                <div className="p-6">
+                    <DataTable 
+                        columns={[
+                            {
+                                header: (
+                                    <div className="flex items-center gap-2">
                                         <input 
                                             type="checkbox" 
-                                            checked={isSelected(res.resourceId)} 
-                                            onChange={() => toggleSelect(res.resourceId)}
-                                            className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110"
+                                            checked={isAllSelected} 
+                                            onChange={toggleSelectAll}
+                                            className="rounded border-primary/40 h-5 w-5 accent-primary cursor-pointer shadow-sm transition-all hover:scale-110"
                                         />
-                                    </TableCell>
-                                    <TableCell className="font-black text-slate-700">{res.name}</TableCell>
-                                    <TableCell>
-                                        <code className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[11px] font-mono font-bold tracking-tight">
-                                            {res.slug}
-                                        </code>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-black">
-                                            <ShieldCheck className="w-3 h-3 mr-1.5 opacity-70" />
-                                            {res.permissionCount || 0}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="max-w-xs">
+                                    </div>
+                                ),
+                                width: '60px',
+                                className: 'pl-6',
+                                cell: (res: any) => (
+                                    <input 
+                                        type="checkbox" 
+                                        checked={isSelected(res.resourceId)} 
+                                        onChange={() => toggleSelect(res.resourceId)}
+                                        className="rounded border-primary/30 h-5 w-5 accent-primary cursor-pointer transition-all hover:scale-110"
+                                    />
+                                )
+                            },
+                            {
+                                header: 'Ressource',
+                                cell: (res: any) => <span className="font-black text-slate-700">{res.name}</span>
+                            },
+                            {
+                                header: 'Identifiant (Slug)',
+                                cell: (res: any) => (
+                                    <code className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[11px] font-mono font-bold tracking-tight">
+                                        {res.slug}
+                                    </code>
+                                )
+                            },
+                            {
+                                header: 'Permissions',
+                                className: 'text-center',
+                                cell: (res: any) => (
+                                    <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-black">
+                                        <ShieldCheck className="w-3 h-3 mr-1.5 opacity-70" />
+                                        {res.permissionCount || 0}
+                                    </Badge>
+                                )
+                            },
+                            {
+                                header: 'Description',
+                                cell: (res: any) => (
+                                    <div className="max-w-xs">
                                         <p className="text-xs text-text-muted line-clamp-1 italic">{res.description || 'N/A'}</p>
-                                    </TableCell>
-                                    <TableCell className="text-right pr-6">
-                                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button 
-                                                variant="ghost" 
-                                                size="sm" 
-                                                onClick={() => handleOpenModal(res)}
-                                                className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
-                                            >
-                                                <Edit2 className="w-4 h-4" />
-                                            </Button>
-                                            <Button 
-                                                variant="ghost" 
-                                                size="sm" 
-                                                onClick={() => setConfirmDelete({ isOpen: true, id: res.resourceId, name: res.name })}
-                                                className="h-8 w-8 rounded-lg text-danger hover:bg-danger/10"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                    </div>
+                                )
+                            },
+                            {
+                                header: 'Actions',
+                                className: 'text-right pr-6',
+                                cell: (res: any) => (
+                                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            onClick={(e) => { e.stopPropagation(); handleOpenModal(res); }}
+                                            className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
+                                        >
+                                            <Edit2 className="w-4 h-4" />
+                                        </Button>
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            onClick={(e) => { e.stopPropagation(); setConfirmDelete({ isOpen: true, id: res.resourceId, name: res.name }); }}
+                                            className="h-8 w-8 rounded-lg text-danger hover:bg-danger/10"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                )
+                            }
+                        ]}
+                        data={paginatedResources}
+                        isLoading={false}
+                        totalItems={filteredResources.length}
+                        currentPage={currentPage}
+                        pageSize={pageSize}
+                        onPageChange={setCurrentPage}
+                        onPageSizeChange={setPageSize}
+                        emptyMessage={searchTerm ? "Aucune ressource ne correspond à votre recherche." : "Vous n'avez pas encore défini de ressources système (objets)."}
+                        zebra={true}
+                        stickyHeader={true}
+                    />
                 </div>
             </Card>
 

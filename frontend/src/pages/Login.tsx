@@ -75,7 +75,7 @@ export default function Login() {
                     <div className="mb-8 p-4 bg-white rounded-2xl shadow-2xl">
                         <img src="/sibm.png" alt="SIBM Logo" className="h-24 w-auto object-contain" />
                     </div>
-                    <h1 className="text-5xl font-black tracking-tight mb-6">GFA SIBM</h1>
+                    <h1 className="text-5xl font-black tracking-tight mb-6">GesParc</h1>
                     <p className="text-xl text-primary-foreground/90 font-medium leading-relaxed mb-8">
                         Gestion des files d'attentes - SIBM.
                         Optimisez vos flux logistiques, sécurisez vos accès et améliorez l'efficacité de votre site.

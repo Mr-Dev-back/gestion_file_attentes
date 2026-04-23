@@ -60,7 +60,7 @@ class TicketController {
                 transaction
             });
 
-            const siteCode = site.code || 'GFA';
+            const siteCode = site.code || 'GP';
             const categoryObj = await Category.findByPk(categoryId, { transaction });
             const catCode = categoryObj?.code || categoryObj?.prefix || 'GEN';
 
@@ -1145,6 +1145,71 @@ class TicketController {
         if (transaction) await transaction.rollback();
         logger.error('Error transferring ticket:', error);
         res.status(500).json({ error: 'Erreur lors du transfert du ticket.' });
+      }
+    }
+    /**
+     * Force le passage d'un ticket à une étape spécifique (Surcharge Superviseur)
+     */
+    jumpToStep = async (req, res) => {
+      const transaction = await sequelize.transaction();
+      try {
+        const { ticketId } = req.params;
+        const { stepId } = req.body;
+        const userId = req.user.userId;
+
+        const ticket = await Ticket.findByPk(ticketId, { transaction });
+        if (!ticket) {
+          await transaction.rollback();
+          return res.status(404).json({ error: 'Ticket non trouvé.' });
+        }
+
+        const targetStep = await WorkflowStep.findByPk(stepId, { transaction });
+        if (!targetStep) {
+          await transaction.rollback();
+          return res.status(404).json({ error: 'Étape cible non trouvée.' });
+        }
+
+        const oldStepId = ticket.currentStepId;
+
+        // Mettre à jour le ticket
+        await ticket.update({
+          currentStepId: stepId,
+          status: 'EN_ATTENTE', // On repasse en attente à la nouvelle étape
+          quaiId: null, // On libère le quai actuel
+          isTransferred: true // Marqueur pour affichage "Manuel"
+        }, { transaction });
+
+        // Log de l'action de saut
+        await TicketActionLog.create({
+          ticketId,
+          stepId,
+          actionType: 'TRANSFERE',
+          agentId: userId,
+          formData: { 
+            note: 'Saut d\'étape forcé par le superviseur',
+            fromStepId: oldStepId,
+            toStepId: stepId
+          },
+          occurredAt: new Date()
+        }, { transaction });
+
+        await transaction.commit();
+
+        const updatedTicket = await Ticket.findByPk(ticketId, {
+          include: [
+            { model: Category, as: 'category' },
+            { model: TicketVehicleInfo, as: 'vehicleInfo' },
+            { model: TicketLogistic, as: 'logistic' },
+            { model: WorkflowStep, as: 'currentStep', include: ['queues'] }
+          ]
+        });
+
+        res.json({ success: true, ticket: updatedTicket });
+        notificationService.emitTicketUpdate(req.app, updatedTicket, 'ticket_transferred');
+      } catch (error) {
+        if (transaction) await transaction.rollback();
+        logger.error('Error jumping step:', error);
+        res.status(500).json({ error: 'Erreur lors du changement d\'étape.' });
       }
     }
 }

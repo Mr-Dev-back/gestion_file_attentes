@@ -1,121 +1,96 @@
-import { Ticket, Queue, Site, Category } from '../models/index.js';
-import { sequelize } from '../config/database.js';
-import { Op } from 'sequelize';
-import { getSequelizeWhere } from '../utils/caslHelper.js';
+import { Op, fn, col, literal } from 'sequelize';
+import { Ticket, Site, QuaiParameter } from '../models/index.js';
 import logger from '../config/logger.js';
 
-class AnalyticsController {
+const AnalyticsController = {
     /**
-     * Résumé des statistiques globales ou filtrées par site
+     * KPIs opérationnels avec filtre de site (US-035)
      */
-    getSummary = async (req, res) => {
+    getStats: async (req, res) => {
         try {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const { siteId } = req.query;
+            const { user } = req; // Injecté par authMiddleware
 
-            // Filtrage automatique via CASL
-            const ability = req.user.ability;
-            const caslWhere = getSequelizeWhere(ability, 'read', 'Analytics');
+            // RBAC & Site Filtering
+            let whereClause = { arrivedAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) } };
             
-            // On mappe les conditions Analytics vers les champs réels de Ticket
-            // Typiquement siteId, companyId, etc.
-            const baseWhere = { ...caslWhere };
-
-            const [todayTickets, pendingTickets, completedToday, avgWaitData] = await Promise.all([
-                // Tickets créés aujourd'hui
-                Ticket.count({ where: { ...baseWhere, arrivedAt: { [Op.gte]: today } } }),
-                
-                // Tickets en attente (actifs)
-                Ticket.count({ where: { ...baseWhere, status: { [Op.in]: ['EN_ATTENTE', 'APPELE', 'EN_TRAITEMENT', 'ISOLE'] } } }),
-                
-                // Tickets complétés aujourd'hui
-                Ticket.count({ where: { ...baseWhere, status: 'COMPLETE', completedAt: { [Op.gte]: today } } }),
-
-                // Temps moyen d'attente (en minutes)
-                Ticket.findOne({
-                    where: { 
-                        ...baseWhere, 
-                        status: 'COMPLETE', 
-                        startedAt: { [Op.ne]: null },
-                        arrivedAt: { [Op.ne]: null }
-                    },
-                    attributes: [
-                        [sequelize.fn('AVG', sequelize.literal('EXTRACT(EPOCH FROM ("startedAt" - "arrivedAt")) / 60')), 'avgWait']
-                    ],
-                    raw: true
-                })
-            ]);
-
-            res.json({
-                todayTickets,
-                pendingTickets,
-                completedToday,
-                avgWaitTime: Math.round(parseFloat(avgWaitData?.avgWait || 0))
-            });
-        } catch (error) {
-            logger.error('Analytics Summary Error:', error);
-            res.status(500).json({ error: 'Erreur lors de la récupération du résumé statistique' });
-        }
-    }
-
-    /**
-     * Calcul des KPIs de performance
-     */
-    getPerformance = async (req, res) => {
-        try {
-            const ability = req.user.ability;
-            const caslWhere = getSequelizeWhere(ability, 'read', 'Analytics');
-
-            // Calcul sur les tickets complétés des 7 derniers jours par défaut pour avoir du volume
-            const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-            const tickets = await Ticket.findAll({
-                where: {
-                    ...caslWhere,
-                    status: 'COMPLETE',
-                    completedAt: { [Op.gte]: lastWeek },
-                    startedAt: { [Op.ne]: null },
-                    arrivedAt: { [Op.ne]: null }
-                },
-                attributes: ['completedAt', 'startedAt', 'arrivedAt', 'priority'],
-                raw: true
-            });
-
-            if (tickets.length === 0) {
-                return res.json({ completionRate: 0, efficiency: 0, satisfaction: 0 });
+            if (user.role !== 'ADMINISTRATOR' && siteId !== 'global') {
+                whereClause.siteId = user.siteId;
+            } else if (siteId && siteId !== 'global') {
+                whereClause.siteId = siteId;
             }
 
-            let totalProcessingTime = 0;
-            let totalWaitTime = 0;
-            let metSLA = 0;
+            const [today, pending, processing, times, totalQuais, occupiedQuais] = await Promise.all([
+                Ticket.count({ where: whereClause }),
+                Ticket.count({ where: { ...whereClause, status: 'EN_ATTENTE' } }),
+                Ticket.count({ where: { ...whereClause, status: { [Op.in]: ['EN_TRAITEMENT', 'PROCESSING'] } } }),
+                Ticket.findAll({
+                    attributes: [
+                        [fn('AVG', literal('EXTRACT(EPOCH FROM ("calledAt" - "arrivedAt")) / 60')), 'avgWaiting'],
+                        [fn('MIN', literal('EXTRACT(EPOCH FROM ("calledAt" - "arrivedAt")) / 60')), 'minWaiting'],
+                        [fn('MAX', literal('EXTRACT(EPOCH FROM ("calledAt" - "arrivedAt")) / 60')), 'maxWaiting'],
+                        [fn('AVG', literal('EXTRACT(EPOCH FROM ("completedAt" - "startedAt")) / 60')), 'avgProcessing'],
+                        [fn('MIN', literal('EXTRACT(EPOCH FROM ("completedAt" - "startedAt")) / 60')), 'minProcessing'],
+                        [fn('MAX', literal('EXTRACT(EPOCH FROM ("completedAt" - "startedAt")) / 60')), 'maxProcessing'],
+                        [fn('AVG', literal('EXTRACT(EPOCH FROM ("completedAt" - "arrivedAt")) / 60')), 'avgTotal'],
+                        [fn('MIN', literal('EXTRACT(EPOCH FROM ("completedAt" - "arrivedAt")) / 60')), 'minTotal'],
+                        [fn('MAX', literal('EXTRACT(EPOCH FROM ("completedAt" - "arrivedAt")) / 60')), 'maxTotal']
+                    ],
+                    where: { ...whereClause, status: 'COMPLETE' },
+                    raw: true
+                }),
+                QuaiParameter.count({ where: siteId && siteId !== 'global' ? { siteId } : {} }),
+                Ticket.count({ where: { ...whereClause, status: { [Op.in]: ['EN_TRAITEMENT', 'PROCESSING'] }, quaiId: { [Op.ne]: null } } })
+            ]);
 
-            tickets.forEach(t => {
-                const proc = (new Date(t.completedAt) - new Date(t.startedAt)) / 1000;
-                const wait = (new Date(t.startedAt) - new Date(t.arrivedAt)) / 1000;
-                totalProcessingTime += proc;
-                totalWaitTime += wait;
-
-                // Simple SLA rule: Wait time < 30 min (1800s)
-                if (wait < 1800) metSLA++;
-            });
-
-            // Formule validée par le user: Traitement / (Attente + Traitement)
-            const divisor = (totalProcessingTime + totalWaitTime);
-            const efficiency = divisor > 0 ? (totalProcessingTime / divisor) * 100 : 0;
-            
-            const completionRate = 100; // Puisqu'on ne prend que les complets ici, ou calculer vs total
-            const satisfaction = (metSLA / tickets.length) * 100;
+            const t = times[0] || {};
+            const quaiOccupationRate = totalQuais > 0 ? ((occupiedQuais / totalQuais) * 100).toFixed(1) : "0.0";
 
             res.json({
-                completionRate: Math.round(completionRate),
-                efficiency: Math.round(efficiency),
-                satisfaction: Math.round(satisfaction)
+                summary: {
+                    ticketsToday: today,
+                    trucksInQueue: pending,
+                    trucksInLoading: processing,
+                    quaiOccupationRate,
+                    waitingTime: { avg: parseFloat(t.avgWaiting || 0).toFixed(1), min: parseFloat(t.minWaiting || 0).toFixed(1), max: parseFloat(t.maxWaiting || 0).toFixed(1) },
+                    processingTime: { avg: parseFloat(t.avgProcessing || 0).toFixed(1), min: parseFloat(t.minProcessing || 0).toFixed(1), max: parseFloat(t.maxProcessing || 0).toFixed(1) },
+                    totalTime: { avg: parseFloat(t.avgTotal || 0).toFixed(1), min: parseFloat(t.minTotal || 0).toFixed(1), max: parseFloat(t.maxTotal || 0).toFixed(1) }
+                }
             });
         } catch (error) {
-            logger.error('Analytics Performance Error:', error);
-            res.status(500).json({ error: 'Erreur lors du calcul des performances' });
+            logger.error('Analytics stats error:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    /**
+     * Liste détaillée des tickets pour un site (US-035)
+     */
+    getSiteDetails: async (req, res) => {
+        try {
+            const { siteId } = req.query;
+            const { user } = req;
+
+            const whereClause = (user.role !== 'ADMINISTRATOR') ? { siteId: user.siteId } : (siteId && siteId !== 'global' ? { siteId } : {});
+
+            const tickets = await Ticket.findAll({
+                attributes: [
+                    'ticketNumber', 'licensePlate', 
+                    ['arrivedAt', 'entryTime'], 
+                    ['completedAt', 'exitTime'],
+                    [literal('EXTRACT(EPOCH FROM ("completedAt" - "arrivedAt")) / 60'), 'duration']
+                ],
+                where: whereClause,
+                order: [['arrivedAt', 'DESC']],
+                limit: 100
+            });
+
+            res.json(tickets);
+        } catch (error) {
+            logger.error('Analytics details error:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
-}
+};
 
-export default new AnalyticsController();
+export default AnalyticsController;

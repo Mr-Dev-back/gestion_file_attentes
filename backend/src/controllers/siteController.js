@@ -1,4 +1,5 @@
 import { Site, Company, AuditLog } from '../models/index.js';
+import { Op } from 'sequelize';
 import logger from '../config/logger.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
@@ -20,15 +21,62 @@ class SiteController {
                 where.siteId = req.user.siteId;
             }
 
-            const sites = await Site.findAll({
+            const { page, limit, search } = req.query;
+
+            if (search) {
+                where[Op.or] = [
+                    { name: { [Op.iLike]: `%${search}%` } },
+                    { code: { [Op.iLike]: `%${search}%` } }
+                ];
+            }
+
+            const queryOptions = {
                 where,
                 include: [{ model: Company, as: 'company', attributes: ['name'] }],
                 order: [['name', 'ASC']]
-            });
+            };
+
+            if (page && limit) {
+                queryOptions.limit = parseInt(limit);
+                queryOptions.offset = (parseInt(page) - 1) * parseInt(limit);
+                const { count, rows } = await Site.findAndCountAll(queryOptions);
+                return res.json({
+                    total: count,
+                    pages: Math.ceil(count / parseInt(limit)),
+                    currentPage: parseInt(page),
+                    data: rows
+                });
+            }
+
+            const sites = await Site.findAll(queryOptions);
             res.json(sites);
         } catch (error) {
             logger.error('Erreur getAll Sites:', error);
             res.status(500).json({ error: 'Erreur lors de la récupération des sites.' });
+        }
+    }
+
+    async getOne(req, res) {
+        try {
+            const site = await Site.findByPk(req.params.id, {
+                include: [{ model: Company, as: 'company', attributes: ['name'] }]
+            });
+            if (!site) return res.status(404).json({ error: 'Site non trouvé.' });
+            
+            // Security check
+            if (req.user.role !== 'ADMINISTRATOR' && req.user.siteId !== site.siteId) {
+                // Check if manager of the same company
+                if (req.user.role === 'MANAGER' && req.user.site?.companyId === site.companyId) {
+                    // OK
+                } else {
+                    return res.status(403).json({ error: 'Accès interdit.' });
+                }
+            }
+
+            res.json(site);
+        } catch (error) {
+            logger.error('Erreur getOne Site:', error);
+            res.status(500).json({ error: 'Erreur lors de la récupération du site.' });
         }
     }
 

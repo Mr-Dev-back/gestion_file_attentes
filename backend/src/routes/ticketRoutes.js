@@ -28,6 +28,7 @@ router.patch('/:ticketId/priority', authMiddleware.verifyToken, ticketController
 router.post('/:ticketId/cancel', authMiddleware.verifyToken, ticketController.cancelTicket);
 router.patch('/:ticketId/isolate', authMiddleware.verifyToken, ticketController.isolateTicket);
 router.patch('/:ticketId/transfer', authMiddleware.verifyToken, ticketController.transferTicket);
+router.patch('/:ticketId/jump', authMiddleware.verifyToken, ticketController.jumpToStep);
 
 // Configuration dynamique
 router.get('/:ticketId/step-config', authMiddleware.verifyToken, ticketController.getStepConfig);

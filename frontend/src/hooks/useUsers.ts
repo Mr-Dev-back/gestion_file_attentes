@@ -40,14 +40,14 @@ export interface User {
     lastName?: string | null;
 }
 
-export const useUsers = () => {
+export const useUsers = (filters?: { page?: number; limit?: number; search?: string }) => {
     const queryClient = useQueryClient();
     const { user } = useAuthStore();
 
     const usersQuery = useQuery({
-        queryKey: ['users'],
+        queryKey: ['users', filters],
         queryFn: async () => {
-            const { data } = await api.get<User[]>('/users');
+            const { data } = await api.get('/users', { params: filters });
             return data;
         },
         enabled: user?.role === 'ADMINISTRATOR',
@@ -170,7 +170,8 @@ export const useUsers = () => {
     });
 
     return {
-        users: usersQuery.data || [],
+        users: Array.isArray(usersQuery.data) ? usersQuery.data : (usersQuery.data?.data || []),
+        total: !Array.isArray(usersQuery.data) ? usersQuery.data?.total || 0 : (usersQuery.data?.length || 0),
         isLoading: usersQuery.isLoading,
         isError: usersQuery.isError,
         createUser: createUserMutation,

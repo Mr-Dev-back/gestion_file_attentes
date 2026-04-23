@@ -18,10 +18,15 @@ export interface Action {
 
 export interface Permission {
     permissionId: string;
+    name: string;
+    guardName?: string;
     code: string;
     description: string;
     resourceId: string;
     actionId: string;
+    action?: string;
+    subject?: string;
+    conditions?: Record<string, unknown> | null;
     resourceObj?: Resource;
     actionObj?: Action;
 }

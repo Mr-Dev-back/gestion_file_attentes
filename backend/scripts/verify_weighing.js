@@ -12,7 +12,7 @@ async function login(username, password) {
     const res = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: username === 'admin' ? 'admin@sigfa.ci' : 'quai@sigfa.ci', password })
+        body: JSON.stringify({ email: username === 'admin' ? 'admin@gesparc.ci' : 'quai@gesparc.ci', password })
     });
     const data = await res.json();
     console.log('Login Response:', JSON.stringify(data));

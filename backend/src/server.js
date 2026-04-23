@@ -31,37 +31,78 @@ import roleRoutes from './routes/role.routes.js';
 import permissionRoutes from './routes/permission.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import auditRoutes from './routes/audit.routes.js';
-import { apiLimiter, authLimiter } from './middlewares/rateLimiter.js';
+import { apiLimiter, authLimiter, loginLimiter, refreshTokenLimiter, userCreationLimiter } from './middlewares/rateLimiter.js';
+import { disablePoweredBy, securityHeaders, suspiciousRequestLogger, validateEnvironment } from './middlewares/security.middleware.js';
 import cleanupService from './services/cleanupService.js';
 import authMiddleware from './middlewares/auth.middleware.js';
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
+
+// Trust le proxy Nginx (nécessaire pour X-Forwarded-For, rate-limiting par IP réelle)
+app.set('trust proxy', 1);
+
 const server = http.createServer(app);
 
 // Configuration Socket.io
+// Parse CORS origins (supporte plusieurs origines séparées par des virgules)
+const parseCorsOrigins = () => {
+    const raw = process.env.CORS_ORIGIN || 'http://localhost:8080';
+    if (raw === '*') return '*'; // Dev only
+    return raw.split(',').map(o => o.trim()).filter(Boolean);
+};
+
+const corsOrigins = parseCorsOrigins();
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:8081',
-    methods: ['GET', 'POST']
+    origin: corsOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
 // Middleware d'authentification Socket.io
 io.use(authMiddleware.authenticateSocket);
 
-// Middlewares
-app.use(helmet());
+// ─── Middlewares de sécurité ───
+app.use(disablePoweredBy);
+app.use(helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", 'data:', 'blob:'],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'", 'data:'],
+            frameSrc: ["'none'"],
+            objectSrc: ["'none'"],
+        }
+    } : false, // Désactivé en dev pour éviter les blocages HMR
+    crossOriginEmbedderPolicy: false, // Nécessaire pour les ressources audio gTTS
+    hsts: process.env.NODE_ENV === 'production' ? {
+        maxAge: 63072000, // 2 ans
+        includeSubDomains: true,
+        preload: true
+    } : false
+}));
+app.use(securityHeaders);
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:8081',
-  credentials: true
+    origin: corsOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset'],
+    maxAge: 86400 // Préflight cache 24h
 }));
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' })); // Limite la taille des payloads JSON
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
-app.use('/api/', apiLimiter); // Appliquer le rate limiting à toutes les routes API
+app.use(suspiciousRequestLogger);
+app.use('/api/', apiLimiter); // Rate limiting global sur toutes les routes API
 
 // Rendre io accessible dans les routes
 app.set('io', io);
@@ -94,7 +135,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/users', userCreationLimiter, userRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/quais', quaiRoutes);
 app.use('/api/companies', companyRoutes);
@@ -157,6 +198,9 @@ const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 async function startServer() {
   try {
+    // Validation des variables d'environnement critiques
+    validateEnvironment();
+
     // Test connexion DB
     await sequelize.authenticate();
     logger.info('Connexion PostgreSQL établie');

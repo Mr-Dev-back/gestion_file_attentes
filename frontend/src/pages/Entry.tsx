@@ -148,7 +148,7 @@ export default function Entry() {
                 <div className="flex items-center gap-4 animate-slide-in-right">
                     <div className="relative group">
                         <div className="absolute inset-0 bg-primary/20 rounded-xl blur-md group-hover:blur-lg transition-all opacity-50"></div>
-                        <img src="/sibm.png" alt="GFA SIBM" className="relative h-12 w-auto rounded-xl border border-white/50 transition-transform group-hover:scale-105 object-contain bg-white/50" />
+                        <img src="/sibm.png" alt="GesParc" className="relative h-12 w-auto rounded-xl border border-white/50 transition-transform group-hover:scale-105 object-contain bg-white/50" />
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-2xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">GesParc</h1>
@@ -183,7 +183,7 @@ export default function Entry() {
                     <div className="text-center mb-16 animate-slide-up space-y-4">
                         <h2 className="text-4xl md:text-5xl font-black text-text-main tracking-tight mb-4">
                             Bienvenue sur <span className="text-primary relative inline-block">
-                                GFA SIBM
+                                GesParc
                                 <span className="absolute bottom-1 left-0 w-full h-2 bg-primary/10 -z-10 rounded-full"></span>
                             </span>
                         </h2>

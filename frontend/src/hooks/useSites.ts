@@ -24,13 +24,13 @@ export interface Site {
     };
 }
 
-export const useSites = () => {
+export const useSites = (filters?: { page?: number; limit?: number; search?: string }) => {
     const queryClient = useQueryClient();
 
     const sitesQuery = useQuery({
-        queryKey: ['sites'],
+        queryKey: ['sites', filters],
         queryFn: async () => {
-            const { data } = await api.get<Site[]>('/sites');
+            const { data } = await api.get('/sites', { params: filters });
             return data;
         },
     });
@@ -84,8 +84,9 @@ export const useSites = () => {
     });
 
     return {
-        data: sitesQuery.data || [],
-        sites: sitesQuery.data || [],
+        data: sitesQuery.data,
+        sites: Array.isArray(sitesQuery.data) ? sitesQuery.data : (sitesQuery.data?.data || []),
+        total: !Array.isArray(sitesQuery.data) ? sitesQuery.data?.total || 0 : (sitesQuery.data?.length || 0),
         isLoading: sitesQuery.isLoading,
         createSite: createMutation,
         updateSite: updateMutation,

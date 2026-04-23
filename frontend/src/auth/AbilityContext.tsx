@@ -1,4 +1,5 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 import { createContextualCan } from '@casl/react';
 import { ability } from './ability';
 
@@ -9,7 +10,7 @@ interface AbilityProviderProps {
   children: ReactNode;
 }
 
-export const AbilityProvider: React.FC<AbilityProviderProps> = ({ children }) => {
+export const AbilityProvider = ({ children }: AbilityProviderProps) => {
   return (
     <AbilityContext.Provider value={ability}>
       {children}

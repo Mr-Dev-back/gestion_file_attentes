@@ -43,12 +43,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         });
 
         newSocket.on('connect', () => {
-            console.log('Socket connected:', newSocket.id);
             setState('connected');
         });
 
         newSocket.on('disconnect', (reason) => {
-            console.log('Socket disconnected:', reason);
             setState(reason === 'io server disconnect' ? 'disconnected' : 'connecting');
         });
 
@@ -57,13 +55,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
             
             // Si le token est expiré, on délègue au mécanisme de refresh unifié d'Axios/API
             if (error.message.includes('jwt expired') || error.message.includes('Authentification échouée')) {
-                console.warn('Socket token expired, attempting unified refresh...');
+
                 newSocket.disconnect(); // Déconnecter pour éviter les boucles
                 
                 try {
                     // Utiliser le mécanisme unifié qui gère la file d'attente globale
                     await performTokenRefresh();
-                    console.log('Socket token refreshed successfully via unified layer, reconnecting...');
+
                     // Note: Le re-rendu provoqué par useAuthStore.setToken dans performTokenRefresh
                     // s'occupera de recréer le socket via les dépendances du useEffect.
                 } catch (refreshError) {

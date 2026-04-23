@@ -1,293 +1,289 @@
 import jwt from 'jsonwebtoken';
-import { User, Role, Permission, Site, Company, Queue } from '../models/index.js';
+import { Company, Queue, Site, User } from '../models/index.js';
 import logger from '../config/logger.js';
-import { defineAbilitiesFor } from '../config/ability.js';
+import {
+  defineAbilitiesFor,
+  rbacUserAuthorizationInclude
+} from '../config/ability.js';
+
+/**
+ * [SENIOR NOTE] Inclusion de base pour charger l'utilisateur avec ses relations RBAC.
+ * On utilise rbacUserAuthorizationInclude qui contient les rôles et permissions Spatie.
+ */
+const baseUserInclude = [
+  ...rbacUserAuthorizationInclude,
+  {
+    model: Site,
+    as: 'site',
+    include: [{ model: Company, as: 'company' }]
+  },
+  {
+    model: Queue,
+    as: 'queues',
+    attributes: ['queueId', 'name', 'quaiId']
+  },
+  {
+    model: Queue,
+    as: 'queue',
+    attributes: ['queueId', 'name', 'quaiId']
+  },
+  {
+    model: Company,
+    as: 'company'
+  }
+];
 
 class AuthMiddleware {
-    constructor() {
-        this.verifyToken = this.authenticate.bind(this);
+  /**
+   * [SENIOR NOTE] Utilisation de fonctions fléchées pour les méthodes de classe 
+   * afin de garantir que 'this' pointe toujours vers l'instance de AuthMiddleware,
+   * résolvant ainsi l'erreur "this.loadUser is not a function".
+   */
+
+  /**
+   * Charge l'utilisateur complet avec ses rôles et permissions.
+   */
+  loadUser = async (userId) => {
+    return User.findByPk(userId, {
+      include: baseUserInclude
+    });
+  };
+
+  /**
+   * Hydrate l'objet utilisateur avec les capacités CASL et les codes de permission 
+   * pour une utilisation fluide dans le reste de l'application.
+   */
+  hydrateRuntimeRbac = async (user) => {
+    // Récupération de tous les noms de permissions (via rôles et directes)
+    // On utilise la nouvelle méthode ajoutée sur le modèle User lors du refactor Spatie
+    const permissionNames = await user.getAllPermissionNames();
+
+    // Injection des codes pour compatibilité frontend/middlewares
+    user.permissionCodes = permissionNames;
+    user.permissions = permissionNames;
+    
+    // Génération des capacités CASL (Permissions granulaires)
+    user.ability = defineAbilitiesFor(user);
+
+    return user;
+  };
+
+  /**
+   * Middleware d'authentification principal pour les routes Express.
+   */
+  authenticate = async (req, res, next) => {
+    try {
+      const authHeader = req.headers.authorization;
+      let token = null;
+
+      // Priorité 1 : Header Authorization Bearer
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+      } 
+      // Priorité 2 : Cookie HTTP-only (Sécurité renforcée)
+      else if (req.cookies && req.cookies.accessToken) {
+        token = req.cookies.accessToken;
+      }
+
+      if (!token) {
+        return res.status(401).json({ error: 'Accès non autorisé. Token manquant.' });
+      }
+
+      if (!process.env.JWT_SECRET) {
+        logger.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
+        return res.status(500).json({ error: 'Erreur de configuration serveur.' });
+      }
+
+      // Vérification et décodage du JWT
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (!decoded?.id) {
+        return res.status(401).json({ error: 'Token invalide ou malformé.' });
+      }
+
+      // Chargement de l'utilisateur avec la nouvelle structure RBAC
+      const user = await this.loadUser(decoded.id);
+      if (!user) {
+        logger.warn(`AUTHENTICATION FAILED: User ID ${decoded.id} not found.`);
+        return res.status(401).json({ error: 'Utilisateur non trouvé.' });
+      }
+
+      if (!user.isActive) {
+        return res.status(403).json({ error: 'Compte désactivé.' });
+      }
+
+      // Hydratation RBAC (Permissions Spatie -> CASL Ability)
+      req.user = await this.hydrateRuntimeRbac(user);
+      next();
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.' });
+      }
+      logger.error('AUTHENTICATION ERROR:', error);
+      return res.status(401).json({ error: 'Token invalide.' });
     }
+  };
 
-    // Middleware d'authentification (Vérification JWT)
-    async authenticate(req, res, next) {
-        try {
-            const authHeader = req.headers.authorization;
-            let token = null;
+  /**
+   * Middleware de vérification de capacité via CASL.
+   * Utilise les permissions dynamiques héritées des rôles Spatie.
+   */
+  checkAbility = (action, subject) => {
+    return (req, res, next) => {
+      if (!req.user?.ability) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié ou capacités non définies.' });
+      }
 
-            if (authHeader && authHeader.startsWith('Bearer ')) {
-                token = authHeader.split(' ')[1];
-            } else if (req.cookies && req.cookies.accessToken) {
-                token = req.cookies.accessToken;
-            }
+      if (req.user.ability.can(action, subject)) {
+        return next();
+      }
 
-            if (!token) {
-                return res.status(401).json({ error: 'Accès non autorisé. Token manquant.' });
-            }
-            
-            if (!process.env.JWT_SECRET) {
-                logger.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
-                return res.status(500).json({ error: 'Erreur de configuration serveur.' });
-            }
+      return res.status(403).json({
+        error: `Accès refusé. Vous n'avez pas la capacité de : ${action} sur ${subject}`,
+        required: { action, subject }
+      });
+    };
+  };
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  /**
+   * Middleware de vérification de rôle (Nouvelle version Spatie-compatible).
+   */
+  hasRole = (requiredRoles) => {
+    return async (req, res, next) => {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié.' });
+      }
 
-            if (!decoded || !decoded.id) {
-                return res.status(401).json({ error: 'Token invalide ou malformé.' });
-            }
+      const allowed = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+      
+      // Utilisation de la méthode d'instance User.hasRole (inclut rôles directs et via model_has_roles)
+      const hasRequiredRole = await req.user.hasRole(allowed);
 
-            const user = await User.findByPk(decoded.id, {
-                include: [
-                    {
-                        model: Role,
-                        as: 'roles',
-                        include: [{
-                            model: Permission,
-                            as: 'permissions'
-                        }]
-                    },
-                    {
-                        model: Site,
-                        as: 'site',
-                        include: [{
-                            model: Company,
-                            as: 'company'
-                        }]
-                    },
-                    {
-                        model: Queue,
-                        as: 'queues', // Utilisation de queues pour multi-assignation
-                        attributes: ['queueId', 'name']
-                    }
-                ]
-            });
+      if (hasRequiredRole) {
+        return next();
+      }
 
-            if (!user) {
-                logger.warn(`AUTHENTICATION FAILED: User ID ${decoded.id} not found.`);
-                return res.status(401).json({ error: 'Utilisateur non trouvé.' });
-            }
-            
-            if (!user.roles || user.roles.length === 0) {
-                logger.warn(`User ${user.userId} has no roles assigned.`);
-                return res.status(403).json({ error: 'Accès refusé. Aucun rôle assigné.', userId: user.userId });
-            }
+      return res.status(403).json({
+        error: 'Accès refusé. Rôle requis.',
+        required: allowed
+      });
+    };
+  };
 
-            if (!user.isActive) {
-                return res.status(403).json({ error: 'Compte désactivé.' });
-            }
+  /**
+   * Alias pour hasRole (compatibilité avec le code existant)
+   */
+  authorize = (requiredRoles) => {
+    return this.hasRole(requiredRoles);
+  };
 
-            req.user = user;
+  /**
+   * Alias pour authenticate (compatibilité avec le code existant utilisant verifyToken)
+   */
+  verifyToken = (req, res, next) => {
+    return this.authenticate(req, res, next);
+  };
 
-            // Définition des capacités CASL
-            req.user.ability = defineAbilitiesFor(user);
+  /**
+   * Middleware de vérification de permission granulaire (Spatie-compatible).
+   */
+  hasPermission = (requiredPermission) => {
+    return async (req, res, next) => {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Utilisateur non authentifié.' });
+      }
 
-            // Backward Compatibility: Map permissions to a simple array of codes
-            const allPermissions = user.roles?.reduce((acc, role) => {
-                return acc.concat(role.permissions || []);
-            }, []) || [];
-            req.user.permissionCodes = [...new Set(allPermissions.map(p => p.code))];
+      // Utilisation de la méthode d'instance User.hasPermission
+      const hasRequiredPerm = await req.user.hasPermission(requiredPermission);
 
-            next();
-        } catch (error) {
-            logger.error('AUTHENTICATION ERROR:', error);
-            if (error.name === 'TokenExpiredError') {
-                return res.status(401).json({ error: 'Session expirée. Veuillez vous reconnecter.' });
-            }
-            return res.status(401).json({ error: 'Token invalide.' });
-        }
-    }
+      if (hasRequiredPerm) {
+        return next();
+      }
 
-    /**
-     * Middleware de vérification des capacités CASL
-     * @param {string} action - manage, read, create, update, delete
-     * @param {string} subject - User, Ticket, Site, etc.
-     */
-    checkAbility(action, subject) {
-        return (req, res, next) => {
-            if (!req.user || !req.user.ability) {
-                return res.status(401).json({ error: 'Utilisateur non authentifié ou capacités non définies.' });
-            }
+      return res.status(403).json({
+        error: 'Accès refusé. Permission requise.',
+        required: requiredPermission
+      });
+    };
+  };
 
-            if (req.user.ability.can(action, subject)) {
-                return next();
-            }
+  /**
+   * Middleware Socket.io pour l'authentification en temps réel.
+   */
+  authenticateSocket = async (socket, next) => {
+    try {
+      const token = socket.handshake.auth.token || socket.handshake.query.token;
 
-            return res.status(403).json({
-                error: `Accès refusé. Vous n'avez pas la capacité de : ${action} sur ${subject}`,
-                required: { action, subject }
-            });
+      // Invité (Lecture seule limitée par exemple)
+      if (!token) {
+        socket.user = {
+          role: 'GUEST',
+          isGuest: true,
+          permissionCodes: [],
+          permissions: []
         };
+        return next();
+      }
+
+      if (!process.env.JWT_SECRET) {
+        logger.error('FATAL ERROR: JWT_SECRET not defined (Socket).');
+        return next(new Error('Erreur de configuration serveur.'));
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await this.loadUser(decoded.id);
+
+      if (!user) {
+        return next(new Error('Utilisateur non trouvé.'));
+      }
+
+      if (!user.isActive) {
+        return next(new Error('Compte désactivé.'));
+      }
+
+      // Hydratation RBAC pour Socket
+      socket.user = await this.hydrateRuntimeRbac(user);
+      next();
+    } catch (error) {
+      logger.error('SOCKET AUTH ERROR:', error);
+      next(new Error(`Authentification échouée: ${error.message}`));
+    }
+  };
+
+  /**
+   * Vérification de scope (Site/Compagnie).
+   * Utile pour s'assurer qu'un Manager ne modifie que son site.
+   */
+  checkScope = (user, targetSiteId = null, targetCompanyId = null) => {
+    // L'administrateur a un scope global
+    if (user.assignedRole?.name === 'ADMINISTRATOR') return true;
+
+    // Logique Manager
+    if (user.assignedRole?.name === 'MANAGER') {
+      if (targetCompanyId) {
+        return user.site?.companyId === targetCompanyId || user.companyId === targetCompanyId;
+      }
+      if (targetSiteId) return user.siteId === targetSiteId;
     }
 
-    /**
-     * Check if user has a specific permission (Legacy)
-     * @param {string} requiredPermission e.g. 'ticket:create'
-     */
-    hasPermission(requiredPermission) {
-        return (req, res, next) => {
-            if (!req.user) {
-                return res.status(401).json({ error: 'Utilisateur non authentifié.' });
-            }
+    // Autres rôles limités à leur site
+    if (targetSiteId) return user.siteId === targetSiteId;
 
-            // Admin bypasses checks
-            if (req.user.roles?.some(r => r.name === 'ADMINISTRATOR')) {
-                return next();
-            }
-
-            if (!req.user.permissionCodes || !req.user.permissionCodes.includes(requiredPermission)) {
-                return res.status(403).json({
-                    error: 'Accès refusé. Permission requise.',
-                    required: requiredPermission
-                });
-            }
-
-            next();
-        };
-    }
-
-    // Middleware d'autorisation (RBAC)
-    // Middleware d'autorisation (RBAC)
-    authorize(allowedRoles) {
-        return (req, res, next) => {
-            if (!req.user) {
-                return res.status(401).json({ error: 'Utilisateur non authentifié.' });
-            }
-
-            const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-
-            // Hierarchical Logic: Admin and Supervisor usually have access to everything below them
-            // But strict RBAC requested: "Admin doesn't do business actions"
-
-            // Check if user's role is strictly in the allowed list
-            if (!roles.includes(req.user.role)) {
-                // Exceptional Hierarchical Overrides
-                // Example: Supervisor can do what Manager does (Override logic)
-                if (allowedRoles.includes('MANAGER') && req.user.role === 'SUPERVISOR') {
-                    // Pass through for Supervisor overriding Manager actions if verified elsewhere
-                    return next();
-                }
-
-                return res.status(403).json({
-                    error: 'Accès refusé. Privilèges insuffisants.',
-                    required: roles,
-                    current: req.user.role
-                });
-            }
-
-            next();
-        };
-    }
-    /**
-     * @returns { boolean }
-     */
-    checkScope(user, targetSiteId = null, targetCompanyId = null) {
-        // 1. ADMINISTRATOR has global access
-        if (user.role === 'ADMINISTRATOR') return true;
-
-        // 2. MANAGER: Restricted to their Company (and all sites within)
-        if (user.role === 'MANAGER') {
-            // If target is a Company
-            if (targetCompanyId) {
-                return user.site?.companyId === targetCompanyId;
-            }
-
-            // If target is a Site
-            if (targetSiteId) {
-                // Assuming Manager is bound to a single Site for now, or check company match if Site model loaded
-                return user.siteId === targetSiteId;
-            }
-        }
-
-        // 3. SUPERVISOR / AGENT: Strictly their Site
-        if (['SUPERVISOR', 'AGENT_QUAI'].includes(user.role)) {
-            if (targetSiteId) {
-                return user.siteId === targetSiteId;
-            }
-            // They shouldn't be accessing Company endpoints directly usually
-            if (targetCompanyId) return false;
-        }
-
-        return false;
-    }
-
-    /**
-     * WebSocket authentication middleware
-     */
-    async authenticateSocket(socket, next) {
-        try {
-            const token = socket.handshake.auth.token || socket.handshake.query.token;
-            
-            if (!token) {
-                // Allow guest connection for Public TV
-                socket.user = {
-                    role: 'GUEST',
-                    isGuest: true,
-                    permissionCodes: []
-                };
-                return next();
-            }
-
-            if (!process.env.JWT_SECRET) {
-                logger.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
-                return next(new Error('Erreur de configuration serveur.'));
-            }
-
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await User.findByPk(decoded.id, {
-                include: [
-                    {
-                        model: Role,
-                        as: 'roles',
-                        include: [{
-                            model: Permission,
-                            as: 'permissions'
-                        }]
-                    },
-                    {
-                        model: Site,
-                        as: 'site',
-                        include: [{
-                            model: Company,
-                            as: 'company'
-                        }]
-                    },
-                    {
-                        model: Queue,
-                        as: 'queues',
-                        attributes: ['name']
-                    }
-                ]
-            });
-
-            if (!user) return next(new Error('Utilisateur non trouvé.'));
-            
-            if (!user.roles || user.roles.length === 0) {
-                logger.warn(`User ${user.userId} has no roles assigned (Socket). roles length: 0.`);
-                return next(new Error('Accès refusé. Aucun rôle assigné.'));
-            }
-
-            if (!user.isActive) return next(new Error('Compte désactivé.'));
-
-            socket.user = user;
-            
-            // Map permissions from multiple roles
-            const allPermissions = user.roles.reduce((acc, role) => {
-                const codes = role.permissions?.map(p => p.code) || [];
-                return acc.concat(codes);
-            }, []);
-            socket.user.permissionCodes = [...new Set(allPermissions)];
-            next();
-        } catch (error) {
-            logger.error('SOCKET AUTH ERROR:', error);
-            // If token is invalid, we don't allow guest fallback for security (might be a malformed attempt)
-            next(new Error(`Authentification échouée: ${error.message}`));
-        }
-    }
+    return false;
+  };
 }
 
 const authMiddleware = new AuthMiddleware();
-export const authenticate = authMiddleware.authenticate.bind(authMiddleware);
-export const checkAbility = authMiddleware.checkAbility.bind(authMiddleware);
-export const authorize = authMiddleware.authorize.bind(authMiddleware);
-export const hasPermission = authMiddleware.hasPermission.bind(authMiddleware);
+
+/**
+ * [SENIOR NOTE] Exports nommés pour garder la compatibilité avec les imports existants.
+ * Les liaisons sont automatiques grâce aux fonctions fléchées dans la classe.
+ */
+export const authenticate = authMiddleware.authenticate;
+export const checkAbility = authMiddleware.checkAbility;
+export const hasRole = authMiddleware.hasRole;
+export const authorize = authMiddleware.hasRole; // Alias pour compatibilité ascendante
+export const verifyToken = authMiddleware.authenticate; // Alias pour compatibilité ascendante
+export const hasPermission = authMiddleware.hasPermission;
+export const authenticateSocket = authMiddleware.authenticateSocket;
 
 export default authMiddleware;

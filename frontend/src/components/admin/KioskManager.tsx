@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSocketEvent } from '../../hooks/useSocketEvent';
 import { useKiosks, type Kiosk } from '../../hooks/useKiosks';
-import { useSites } from '../../hooks/useSites';
-import { useQueues } from '../../hooks/useQueues';
+import { useSites, type Site } from '../../hooks/useSites';
+import { useQueues, type Queue } from '../../hooks/useQueues';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Card, CardContent } from '../molecules/ui/card';
@@ -276,7 +276,7 @@ export const KioskManager = () => {
                         <label className="text-xs font-bold uppercase mb-1 block">Site</label>
                         <select className="w-full p-2 border rounded-md" value={form.siteId} onChange={(e) => setForm({ ...form, siteId: e.target.value, queueId: '' })}>
                             <option value="">-- Sélectionner un Site --</option>
-                            {sites.map(s => <option key={s.siteId} value={s.siteId}>{s.name}</option>)}
+                            {sites.map((site: Site) => <option key={site.siteId} value={site.siteId}>{site.name}</option>)}
                         </select>
                     </div>
 
@@ -285,7 +285,7 @@ export const KioskManager = () => {
                             <label className="text-xs font-bold uppercase mb-1 block">File associée (optionnel)</label>
                             <select className="w-full p-2 border rounded-md" value={form.queueId} onChange={(e) => setForm({ ...form, queueId: e.target.value })}>
                                 <option value="">-- Aucune --</option>
-                                {filteredQueues.map(q => <option key={q.queueId} value={q.queueId}>{q.name}</option>)}
+                                {filteredQueues.map((queue: Queue) => <option key={queue.queueId} value={queue.queueId}>{queue.name}</option>)}
                             </select>
                         </div>
                     )}

@@ -64,8 +64,8 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
       {/* Header : Logo & Toggle */}
       <div className="flex h-20 items-center justify-between px-5 border-b border-slate-50">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center shadow-md border border-slate-100 shrink-0 p-1">
-            <img src="/sibm.png" alt="Logo" className="h-10 w-10 object-contain" />
+          <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center shadow-md border border-slate-100 shrink-0 p-2">
+            <img src="/sibm.png" alt="Logo SIBM" className="h-full w-full object-contain" />
           </div>
           <AnimatePresence>
             {!collapsed && (
@@ -76,7 +76,7 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                 className="flex flex-col"
               >
                 <span className="text-lg font-black text-slate-800 tracking-tighter leading-none">SIBM</span>
-                <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">GesParc</span>
+                <span className="text-[10px] font-bold text-[#008F39] uppercase tracking-[0.2em] mt-0.5">GesParc</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -107,7 +107,7 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                 <div key={`group-${index}`} className="pt-2">
                   {!collapsed ? (
                     <div className="px-3 mb-2 text-[10px] font-black tracking-[0.15em] uppercase text-slate-400 flex items-center gap-2">
-                       <span className="w-1.5 h-1.5 rounded-full bg-primary/20" />
+                       <span className="w-1.5 h-1.5 rounded-full bg-[#008F39]/40" />
                        {item.title}
                     </div>
                   ) : (
@@ -180,14 +180,14 @@ function SidebarLink({ to, icon: Icon, label, collapsed }: { to: string, icon: a
           'flex items-center rounded-xl transition-all duration-300 relative group overflow-hidden h-11',
           collapsed ? 'justify-center mx-1' : 'px-3 mx-1',
           isActive
-            ? 'bg-slate-900 text-white shadow-xl shadow-slate-200'
-            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+            ? 'bg-[#008F39] text-white shadow-lg shadow-[#008F39]/40 font-semibold'
+            : 'text-slate-500 hover:bg-[#008F39]/5 hover:text-[#008F39]'
         )
       }
     >
       {({ isActive }) => (
         <>
-          <Icon className={cn('h-5 w-5 shrink-0 transition-all duration-300', isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-primary')} />
+          <Icon className={cn('h-5 w-5 shrink-0 transition-all duration-300', isActive ? 'scale-110 text-white' : 'group-hover:scale-110 group-hover:text-[#008F39]')} />
           
           <AnimatePresence>
             {!collapsed && (
@@ -205,7 +205,7 @@ function SidebarLink({ to, icon: Icon, label, collapsed }: { to: string, icon: a
           {isActive && (
             <motion.div 
               layoutId="active-indicator"
-              className="absolute left-0 w-1 h-1/2 bg-primary rounded-r-full" 
+              className="absolute left-0 w-1 h-3/5 bg-white/20 rounded-r-full" 
             />
           )}
 

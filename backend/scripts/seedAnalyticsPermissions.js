@@ -1,4 +1,4 @@
-const { Resource, Action, Permission, Role, RolePermission } = await import('../models/index.js');
+import { Resource, Action, Permission, Role, RolePermission } from '../models/index.js';
 import logger from '../config/logger.js';
 
 async function seedAnalytics() {

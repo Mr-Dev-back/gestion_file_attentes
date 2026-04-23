@@ -284,7 +284,6 @@ export const getMenuItems = (
     const entryItem: MenuItem = { isGroup: false, label: 'Borne / Entrée', icon: Home, path: '/' };
     return [
       entryItem,
-      dynamicQuaiGroup,
       ...supervisorMenuGroups
     ];
   }

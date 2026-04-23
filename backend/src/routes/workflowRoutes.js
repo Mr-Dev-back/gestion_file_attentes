@@ -7,7 +7,8 @@ import {
     bulkUpdateWorkflowStatus,
     addStep,
     updateStep,
-    deleteStep
+    deleteStep,
+    getWorkflowSteps
 } from '../controllers/workflowController.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
@@ -23,6 +24,7 @@ router.put('/:id', authMiddleware.authorize(['ADMINISTRATOR']), updateWorkflow);
 router.delete('/:id', authMiddleware.authorize(['ADMINISTRATOR']), deleteWorkflow);
 
 // Steps
+router.get('/:workflowId/steps', getWorkflowSteps);
 router.post('/:workflowId/steps', authMiddleware.authorize(['ADMINISTRATOR']), addStep);
 router.put('/steps/:id', authMiddleware.authorize(['ADMINISTRATOR']), updateStep); // ID is Step ID
 router.delete('/steps/:id', authMiddleware.authorize(['ADMINISTRATOR']), deleteStep);
