@@ -1,43 +1,41 @@
 #!/bin/bash
+# ================================================
+# Deploy.sh SIGFA - 100% Docker (Version Finale)
+# ================================================
 
-# Configuration
-REPO_URL="https://github.com/Frejus-dev/.git"
-PROJECT_DIR="GesParc"
+set -e  # Arrête le script en cas d'erreur
+
+PROJECT_DIR="/home/adminsibm/gesparc"
 ENV_FILE=".env.prod"
+COMPOSE_FILE="docker-compose.prod.yml"
 
-echo "Starting Deployment..."
+echo "🚀 Déploiement SIGFA - Mode Docker"
 
-# 1. Handle Repository
-if [ ! -d ".git" ]; then
-    echo "This directory is not a Git repository. Re-initializing or cloning might be needed."
-    echo "Attempting to sync with: $REPO_URL"
-    # If the user is running this script from outside the project or wants to reset
-    # We will assume they want to ensure origin is set correctly if it is a git repo
-    # But since it's NOT a git repo yet, let's offer a way to initialize it or just pull if possible
-    git init
-    git remote add origin $REPO_URL
-    git fetch
-    git checkout -f main
-else
-    echo "Pulling latest code from $REPO_URL..."
-    git pull origin main
-fi
+# 1. Aller dans le répertoire du projet
+cd "$PROJECT_DIR" || { echo "❌ Erreur : Répertoire $PROJECT_DIR introuvable"; exit 1; }
 
-# 2. Build and start containers
-echo "Building and starting containers using $ENV_FILE..."
+# 2. Mise à jour du code
+echo "📥 Pull des dernières modifications..."
+git pull origin main || { echo "❌ Erreur git pull"; exit 1; }
+
+# 3. Vérification .env.prod
 if [ ! -f "$ENV_FILE" ]; then
-    echo "Error: $ENV_FILE not found! Please create it from the template."
-    exit 1
+  echo "❌ Erreur : $ENV_FILE manquant !"
+  exit 1
 fi
 
-docker-compose --env-file $ENV_FILE -f docker-compose.prod.yml up -d --build
+# 4. Build & Démarrage des containers
+echo "🏗 Construction et démarrage des services..."
+docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --build
 
-# 3. Run database migrations
-echo "Running database migrations..."   
-docker-compose --env-file $ENV_FILE -f docker-compose.prod.yml exec -T backend npm run db:migrate
+# 5. Migrations base de données
+echo "🔄 Exécution des migrations..."
+docker compose -f "$COMPOSE_FILE" exec -T backend npm run db:migrate || echo "⚠️ Attention : Migrations ont échoué"
 
-# 4. Clean up unused images
-echo "Cleaning up..."
+# 6. Nettoyage
+echo "🧹 Nettoyage des images inutilisées..."
 docker image prune -f
 
-echo "Deployment Complete! Application is running."
+echo "✅ Déploiement terminé avec succès !"
+echo "   Frontend → http://192.168.11.189:3006"
+echo "   Backend  → http://192.168.11.189:3003/api"

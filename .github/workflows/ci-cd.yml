@@ -1,0 +1,176 @@
+name: GesParc CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  # ─────────────────────────────────────────
+  # 1. Tests Backend & Preparation
+  # ─────────────────────────────────────────
+  backend-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: gesparc_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./backend
+        run: npm run lint
+
+      - name: Run tests
+        working-directory: ./backend
+        run: npm test
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: gesparc_test
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
+
+      # Préparation du bundle backend (sans node_modules ni tests)
+      - name: Package Backend
+        run: |
+          mkdir -p deploy_backend
+          cp -r backend/src backend/package.json backend/package-lock.json deploy_backend/
+          tar -czf backend-bundle.tar.gz -C deploy_backend .
+
+      - name: Upload Backend Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-bundle
+          path: backend-bundle.tar.gz
+          retention-days: 1
+
+  # ─────────────────────────────────────────
+  # 2. Tests & Build Frontend
+  # ─────────────────────────────────────────
+  frontend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run unit tests
+        working-directory: ./frontend
+        run: npm test
+
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Upload Frontend Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
+
+  # ─────────────────────────────────────────
+  # 3. Déploiement 100% Docker (main uniquement)
+  # ─────────────────────────────────────────
+  deploy:
+    needs: [ backend-test, frontend-test ]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 2112
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            chmod +x deploy.sh
+            ./deploy.sh
+
+      # Vérification de santé (Health Check)
+      - name: Health Check
+        run: |
+          echo "→ Waiting for services to restart..."
+          sleep 20
+          URL="http://${{ secrets.DEPLOY_HOST }}/api/health"
+          if curl -sSf "$URL" > /dev/null; then
+            echo "✅ Deployment Verified: Service is healthy at $URL"
+          else
+            echo "❌ Deployment Failed: Health check at $URL failed"
+            exit 1
+          fi
+
+      # Notification (Webhook Placeholder)
+      - name: Notify Success
+        if: success()
+        run: |
+          if [ -n "${{ secrets.DISCORD_WEBHOOK }}" ]; then
+            curl -H "Content-Type: application/json" -d '{"content": "🚀 **GesParc Deployment Successful!**\nBranch: `main`\nCommit: `${{ github.sha }}`"}' ${{ secrets.DISCORD_WEBHOOK }}
+          fi
+
+      - name: Notify Failure
+        if: failure()
+        run: |
+          if [ -n "${{ secrets.DISCORD_WEBHOOK }}" ]; then
+            curl -H "Content-Type: application/json" -d '{"content": "❌ **GesParc Deployment FAILED!**\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' ${{ secrets.DISCORD_WEBHOOK }}
+          fi
