@@ -205,11 +205,10 @@ async function startServer() {
     await sequelize.authenticate();
     logger.info('Connexion PostgreSQL établie');
 
-    // Sync des models (en dev uniquement)
-    // Sync des models (en dev uniquement)
-    if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: false }); 
-      logger.info('Models synchronisés (alter: false)');
+    // Sync des models (création des tables manquantes comme Site, Queue, etc.)
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
+      await sequelize.sync({ alter: true }); 
+      logger.info('Models synchronisés (alter: true) pour générer les tables manquantes');
     }
 
     // Test connexion Redis & Adapter Socket.io
