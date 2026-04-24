@@ -207,8 +207,8 @@ async function startServer() {
 
     // Sync des models (création des tables manquantes comme Site, Queue, etc.)
     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
-      await sequelize.sync({ alter: true }); 
-      logger.info('Models synchronisés (alter: true) pour générer les tables manquantes');
+      await sequelize.sync({ alter: false }); 
+      logger.info('Models synchronisés (alter: false) pour générer les tables manquantes');
     }
 
     // Test connexion Redis & Adapter Socket.io
