@@ -22,7 +22,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
             return;
         }
 
-        const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
+        const SOCKET_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
 
         const authPayload: { token?: string; siteId?: string } = {};
         if (token) authPayload.token = token;

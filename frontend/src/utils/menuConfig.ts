@@ -190,30 +190,21 @@ const managerMenuGroups: MenuGroup[] = [
 const supervisorMenuGroups: MenuGroup[] = [
   {
     isGroup: true,
-    title: "Gestion du Site",
-    icon: Building2,
+    title: "Régulation Site",
+    icon: Zap,
     items: [
-      { label: "Synoptique Workflow", path: "/supervisor/workflow-view", icon: MapPinned },
-      { label: "Suivi Temps Réel", path: "/supervisor/live-tracking", icon: Activity },
-      { label: "Recherche Véhicule", path: "/supervisor/search", icon: Search }
+      { label: "Synoptique Workflow", path: "/supervisor/workflow-view", icon: Zap },
+      { label: "Suivi Temps Réel",   path: "/supervisor/live-tracking",  icon: Activity },
+      { label: "Recherche Véhicule", path: "/supervisor/search",         icon: Search }
     ]
   },
   {
     isGroup: true,
-    title: "Régulation",
-    icon: Zap, 
-    items: [
-      { label: "Priorités & Urgences", path: "/supervisor/priorities", icon: Zap },
-      { label: "Transferts Manuels", path: "/supervisor/manual-dispatch", icon: Truck }
-    ]
-  },
-  {
-    isGroup: true,
-    title: "Analyse Locale",
+    title: "Analyse & Contrôle",
     icon: TrendingUp,
     items: [
-      { label: "Stats de mon Site", path: "/supervisor/dashboard", icon: TrendingUp },
-      { label: "Historique du Site", path: "/supervisor/history", icon: History }
+      { label: "Stats de mon Site",  path: "/supervisor/dashboard",      icon: TrendingUp },
+      { label: "Cartographie",       path: "/supervisor/live-tracking",  icon: MapPinned }
     ]
   }
 ];

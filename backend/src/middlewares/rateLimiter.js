@@ -11,12 +11,12 @@ const isDev = process.env.NODE_ENV === 'development';
 
 /**
  * Rate limiter GLOBAL pour toutes les routes /api/*
- * Production : 100 requêtes / 15 min par IP
- * Développement : 5000 requêtes / 15 min (relaxé)
+ * Production : 2000 requêtes / 15 min par IP (augmenté de 100)
+ * Développement : 10000 requêtes / 15 min (relaxé)
  */
 export const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: isDev ? 5000 : 100,
+    max: isDev ? 10000 : 2000,
     message: {
         error: 'Trop de requêtes depuis cette adresse IP. Veuillez réessayer dans 15 minutes.'
     },
@@ -31,18 +31,17 @@ export const apiLimiter = rateLimit({
 
 /**
  * Rate limiter STRICT pour /api/auth/login
- * Production : 5 tentatives / 5 min par IP
- * Ne skip PAS les requêtes réussies (anti brute-force total)
+ * Production : 20 tentatives / 5 min par IP (augmenté de 5)
  */
 export const loginLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: isDev ? 100 : 5,
+    max: isDev ? 500 : 20,
     message: {
         error: 'Trop de tentatives de connexion. Veuillez réessayer dans 5 minutes.'
     },
     standardHeaders: true,
     legacyHeaders: false,
-    skipSuccessfulRequests: false, // NE PAS skip — même les tentatives réussies comptent
+    skipSuccessfulRequests: false,
     keyGenerator: (req) => {
         return req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip;
     }
@@ -50,11 +49,11 @@ export const loginLimiter = rateLimit({
 
 /**
  * Rate limiter pour /api/auth/* (général auth: refresh, logout, forgot-password)
- * Production : 10 tentatives / 5 min
+ * Production : 100 tentatives / 5 min (augmenté de 10)
  */
 export const authLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: isDev ? 200 : 10,
+    max: isDev ? 1000 : 100,
     message: {
         error: 'Trop de requêtes d\'authentification. Veuillez réessayer dans 5 minutes.'
     },
@@ -68,11 +67,11 @@ export const authLimiter = rateLimit({
 
 /**
  * Rate limiter pour /api/auth/refresh-token
- * Production : 10 tentatives / 5 min
+ * Production : 100 tentatives / 5 min (augmenté de 10)
  */
 export const refreshTokenLimiter = rateLimit({
     windowMs: 5 * 60 * 1000,
-    max: isDev ? 200 : 10,
+    max: isDev ? 1000 : 100,
     message: {
         error: 'Trop de tentatives de rafraîchissement de token. Veuillez vous reconnecter.'
     },

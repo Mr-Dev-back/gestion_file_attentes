@@ -274,37 +274,34 @@ class DashboardController {
      */
     getSupervisorDepartments = async (req, res) => {
         try {
-            const { siteId } = req.query;
-            if (!siteId) return res.status(400).json({ error: 'siteId est requis.' });
+            const siteId = req.query.siteId || req.user.siteId;
+            if (!siteId) return res.status(200).json({ departments: [] });
 
-            // On pourrait grouper par file d'attente (Queue)
             const stats = await Ticket.findAll({
                 where: { 
                     siteId,
                     status: { [Op.notIn]: ['COMPLETE', 'ANNULE'] }
                 },
                 attributes: [
-                    [sequelize.col('currentStep.queue.name'), 'department'],
-                    [sequelize.fn('COUNT', sequelize.col('ticketId')), 'ticketCount']
+                    [sequelize.col('currentStep.name'), 'department'],
+                    [sequelize.fn('COUNT', sequelize.col('Ticket.ticketId')), 'ticketCount']
                 ],
                 include: [{
                     model: WorkflowStep,
                     as: 'currentStep',
-                    attributes: [],
-                    include: [{
-                        model: Queue,
-                        as: 'queue',
-                        attributes: []
-                    }]
+                    attributes: []
                 }],
-                group: [sequelize.col('currentStep.queue.name')]
+                group: [sequelize.col('currentStep.stepId'), sequelize.col('currentStep.name')],
+                raw: true,
+                nest: true
             });
 
             res.status(200).json({
                 departments: stats.map(s => ({
-                    name: s.getDataValue('department') || 'Non assigné',
-                    ticketCount: parseInt(s.getDataValue('ticketCount')),
-                    status: 'operational'
+                    name: s.department || 'Non assigné',
+                    tickets: parseInt(s.ticketCount),
+                    pending: parseInt(s.ticketCount),
+                    color: 'bg-indigo-500'
                 }))
             });
         } catch (error) {
@@ -321,49 +318,44 @@ class DashboardController {
             const { siteId } = req.query;
             const isManagerOrAdmin = ['MANAGER', 'ADMINISTRATOR'].includes(req.user.role);
 
-            // If no siteId provided and user is Manager/Admin, we fetch for all sites
             const siteWhere = siteId ? { siteId } : (isManagerOrAdmin ? {} : { siteId: req.user.siteId });
 
-            const sites = await Site.findAll({
-                where: siteWhere,
-            });
-
-            if (sites.length === 0) return res.status(404).json({ error: 'Aucun site trouvé.' });
+            const sites = await Site.findAll({ where: siteWhere });
+            if (sites.length === 0) return res.json([]);
 
             const allQueues = [];
 
             for (const site of sites) {
                 if (!site.workflowId) continue;
 
-                // Trouver toutes les queues impliquées dans le workflow du site
+                // Fetch steps with their queues (association alias = 'queues' plural)
                 const steps = await WorkflowStep.findAll({
                     where: { workflowId: site.workflowId },
                     include: [{ 
                         model: Queue, 
-                        as: 'queue',
+                        as: 'queues',
                         include: [{ model: Category, as: 'category', attributes: ['categoryId', 'name', 'color'] }]
                     }]
                 });
 
                 const queuesMap = {};
                 for (const step of steps) {
-                    if (step.queue && !queuesMap[step.queueId]) {
-                        queuesMap[step.queueId] = {
-                            queueId: step.queueId,
-                            name: step.queue.name,
-                            siteId: site.siteId,
-                            siteName: site.name,
-                            category: step.queue.category ? {
-                                categoryId: step.queue.category.categoryId,
-                                name: step.queue.category.name,
-                                color: step.queue.category.color
-                            } : null,
-                            tickets: []
-                        };
+                    const stepQueues = step.queues || [];
+                    for (const queue of stepQueues) {
+                        if (!queuesMap[queue.queueId]) {
+                            queuesMap[queue.queueId] = {
+                                queueId: queue.queueId,
+                                name: queue.name,
+                                siteId: site.siteId,
+                                siteName: site.name,
+                                truckCount: 0,
+                                tickets: []
+                            };
+                        }
                     }
                 }
 
-                // Récupérer les tickets actifs du site
+                // Get active tickets for this site
                 const tickets = await Ticket.findAll({
                     where: {
                         siteId: site.siteId,
@@ -377,11 +369,20 @@ class DashboardController {
                     order: [['priority', 'DESC'], ['arrivedAt', 'ASC']]
                 });
 
-                // Répartir les tickets dans les queues
                 for (const ticket of tickets) {
-                    const qId = ticket.currentStep?.queueId;
+                    const qId = ticket.queueId;
                     if (qId && queuesMap[qId]) {
-                        queuesMap[qId].tickets.push(ticket);
+                        queuesMap[qId].tickets.push({
+                            ticketId: ticket.ticketId,
+                            ticketNumber: ticket.ticketNumber,
+                            priority: ticket.priority,
+                            status: ticket.status,
+                            arrivedAt: ticket.arrivedAt,
+                            vehicleInfo: { licensePlate: ticket.licensePlate },
+                            estimatedWaitTime: 15,
+                            position: queuesMap[qId].tickets.length + 1
+                        });
+                        queuesMap[qId].truckCount++;
                     }
                 }
 

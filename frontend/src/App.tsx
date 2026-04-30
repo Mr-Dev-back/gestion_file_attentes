@@ -28,7 +28,10 @@ import { AbilityProvider } from './auth/AbilityContext';
 import { updateAbility } from './auth/ability';
 
 function App() {
-  const { isAuthenticated, token, setAuth, logout } = useAuthStore();
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const token = useAuthStore(state => state.token);
+  const setAuth = useAuthStore(state => state.setAuth);
+  const logout = useAuthStore(state => state.logout);
 
   useEffect(() => {
     const syncAuth = async () => {

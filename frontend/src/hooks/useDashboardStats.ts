@@ -68,11 +68,12 @@ export const useAdminOverview = (siteId?: string) => {
  * Supervisor Dashboard Hooks
  */
 export const useSupervisorStats = () => {
-    const { hasRole, isAuthenticated } = useAuthStore();
+    const { user, hasRole, isAuthenticated } = useAuthStore();
+    const siteId = (user as any)?.siteId;
     return useQuery<SupervisorStatsResponse>({
-        queryKey: ['dashboard', 'supervisor', 'stats'],
+        queryKey: ['dashboard', 'supervisor', 'stats', siteId],
         queryFn: async () => {
-            const { data } = await dashboardApi.getSummary();
+            const { data } = await dashboardApi.getSupervisorStats(siteId);
             return data;
         },
         enabled: isAuthenticated && hasRole(['SUPERVISOR', 'ADMINISTRATOR']),
@@ -82,11 +83,12 @@ export const useSupervisorStats = () => {
 };
 
 export const useSupervisorDepartments = () => {
-    const { hasRole, isAuthenticated } = useAuthStore();
+    const { user, hasRole, isAuthenticated } = useAuthStore();
+    const siteId = (user as any)?.siteId;
     return useQuery<SupervisorDepartmentsResponse>({
-        queryKey: ['dashboard', 'supervisor', 'departments'],
+        queryKey: ['dashboard', 'supervisor', 'departments', siteId],
         queryFn: async () => {
-            const { data } = await dashboardApi.getSupervisorDepartments();
+            const { data } = await dashboardApi.getSupervisorDepartments(siteId);
             return data;
         },
         enabled: isAuthenticated && hasRole(['SUPERVISOR', 'ADMINISTRATOR']),

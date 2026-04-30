@@ -7,8 +7,8 @@ export const dashboardApi = {
     getAdminOverview: (siteId?: string) => api.get('/dashboard/admin/overview', { params: { siteId } }),
 
     // Supervisor endpoints
-    getSupervisorStats: () => api.get('/dashboard/supervisor/stats'),
-    getSupervisorDepartments: () => api.get('/dashboard/supervisor/departments'),
+    getSupervisorStats: (siteId?: string) => api.get('/dashboard/supervisor/stats', { params: { siteId } }),
+    getSupervisorDepartments: (siteId?: string) => api.get('/dashboard/supervisor/departments', { params: { siteId } }),
     getSupervisorQueues: (siteId: string) => api.get('/dashboard/supervisor/queues', { params: { siteId } }),
 
     // Manager endpoints
