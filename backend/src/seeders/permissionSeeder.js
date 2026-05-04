@@ -26,10 +26,10 @@ const ACTIONS = [
 async function seedPermissions() {
     try {
         console.log('--- DEBUT DE LA MIGRATION DES PERMISSIONS ---');
-        
+
         console.log('Synchronisation des modèles...');
-        await sequelize.sync(); 
-        
+        await sequelize.sync();
+
         const transaction = await sequelize.transaction();
         try {
             // 1. Peupler les Ressources

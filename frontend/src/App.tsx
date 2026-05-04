@@ -66,7 +66,8 @@ function App() {
         <SocketProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Entry />} />
+               <Route path="/" element={<Entry />} />
+              <Route path="/kiosk/:kioskId" element={<Entry />} />
               <Route path="/tv" element={<PublicTV />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />

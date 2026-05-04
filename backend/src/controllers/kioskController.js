@@ -24,13 +24,16 @@ export const getAllKiosks = async (req, res) => {
 
 export const createKiosk = async (req, res) => {
     try {
-        const { name, siteId, status, ipAddress, queueIds } = req.body;
+        const { name, siteId, status, ipAddress, queueIds, config, capabilities, type } = req.body;
         
         const kiosk = await Kiosk.create({
             name,
             siteId,
             status: status || 'OFFLINE',
-            ipAddress
+            ipAddress,
+            kioskType: type || 'ENTRANCE',
+            config,
+            capabilities
         });
 
         if (queueIds && queueIds.length > 0) {
@@ -53,7 +56,7 @@ export const createKiosk = async (req, res) => {
 export const updateKiosk = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, siteId, status, ipAddress, queueIds } = req.body;
+        const { name, siteId, status, ipAddress, queueIds, config, capabilities, type } = req.body;
 
         const kiosk = await Kiosk.findByPk(id);
         if (!kiosk) return res.status(404).json({ error: 'Borne non trouvée' });
@@ -62,7 +65,10 @@ export const updateKiosk = async (req, res) => {
             name,
             siteId,
             status,
-            ipAddress
+            ipAddress,
+            kioskType: type,
+            config,
+            capabilities
         });
 
         if (queueIds) {
@@ -114,6 +120,26 @@ export const getKioskHistory = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+/**
+ * Récupération de la configuration publique d'une borne (sans auth admin)
+ */
+export const getPublicKioskConfig = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const kiosk = await Kiosk.findByPk(id, {
+            attributes: ['kioskId', 'name', 'status', 'config', 'capabilities', 'siteId'],
+            include: [{ model: Site, as: 'site', attributes: ['name'] }]
+        });
+
+        if (!kiosk) return res.status(404).json({ error: 'Borne non trouvée' });
+        
+        res.json(kiosk);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 
 /**
  * Suppression groupée de bornes

@@ -1,5 +1,5 @@
-import { Badge } from '../../atoms/ui/badge';
 import type { Ticket } from '../../../types/ticket';
+import { Badge } from '../ui/badge';
 
 interface TicketStatusBadgeProps {
     status: Ticket['status'];

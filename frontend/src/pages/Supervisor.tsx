@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Building2, LayoutDashboard, Zap, MapPinned, Search } from 'lucide-react';
 import SupervisorTactical from './supervisor/SupervisorTactical';
 import SupervisorDashboard from './dashboards/SupervisorDashboard';
+import LiveTracking from './supervisor/LiveTracking';
 
 // ─── Harmonized Header (same structure as Manager) ─────────────────────────
 const SupervisorHeader = () => {
@@ -102,11 +103,7 @@ export default function Supervisor() {
 
             <Route path="workflow-view" element={<SupervisorTactical />} />
 
-            <Route path="live-tracking" element={<ViewPlaceholder
-              title="Tracking Temps Réel"
-              description="Suivi minute par minute des déplacements, statuts des tickets et alertes immédiates du site."
-              icon={MapPinned}
-            />} />
+            <Route path="live-tracking" element={<LiveTracking />} />
 
             <Route path="dashboard" element={<SupervisorDashboard />} />
 

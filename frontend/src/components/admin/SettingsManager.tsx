@@ -56,6 +56,7 @@ export const SettingsManager = () => {
     // Normalize category mapping for tabs (simplified)
     const groupedSettings: Record<string, SystemSetting[]> = {
         'general': settings.filter(s => !s.category || s.category.toUpperCase() === 'GENERAL' || s.category.toUpperCase() === 'PROCESS'),
+        'alerts': settings.filter(s => s.category?.toUpperCase() === 'ALERTS' || s.category?.toUpperCase() === 'SLA' || s.key.includes('TIMEOUT') || s.key.includes('DELAY')),
         'display': settings.filter(s => s.category?.toUpperCase() === 'DISPLAY'),
         'notifications': settings.filter(s => s.category?.toUpperCase() === 'NOTIFICATIONS'),
     };
@@ -161,8 +162,9 @@ export const SettingsManager = () => {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 max-w-[500px]">
-                    <TabsTrigger value="general">Général & Processus</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-4 max-w-[600px]">
+                    <TabsTrigger value="general">Général</TabsTrigger>
+                    <TabsTrigger value="alerts">Seuils d'Alertes</TabsTrigger>
                     <TabsTrigger value="display">Affichage</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
                 </TabsList>
@@ -171,8 +173,18 @@ export const SettingsManager = () => {
                     <TabsContent key={tabKey} value={tabKey} className="mt-4">
                         <Card className="border-border/50 shadow-sm">
                             <CardHeader>
-                                <CardTitle className="capitalize">{tabKey}</CardTitle>
-                                <CardDescription>Paramètres liés à {tabKey === 'display' ? "l'affichage" : tabKey === 'notifications' ? 'aux notifications' : 'au fonctionnement général'}</CardDescription>
+                                <CardTitle className="capitalize">
+                                    {tabKey === 'alerts' ? "Seuils d'Alertes & SLA" : 
+                                     tabKey === 'display' ? "Affichage & Personnalisation" : 
+                                     tabKey === 'notifications' ? "Configuration des Notifications" : 
+                                     "Fonctionnement Général"}
+                                </CardTitle>
+                                <CardDescription>
+                                    {tabKey === 'alerts' ? "Définissez les délais maximums autorisés pour chaque étape du flux." : 
+                                     tabKey === 'display' ? "Paramètres liés à l'interface visuelle et aux écrans publics." : 
+                                     tabKey === 'notifications' ? "Configuration des canaux d'alerte (Audio, SMS, Email)." : 
+                                     "Paramètres de base du moteur de workflow."}
+                                </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 {settingsList.length === 0 ? (

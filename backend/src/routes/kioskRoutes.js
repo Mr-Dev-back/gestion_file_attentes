@@ -4,6 +4,10 @@ import AuthMiddleware from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
+// Route publique pour l'interface de la borne (pas de RBAC nécessaire ici, juste l'ID)
+import { getPublicKioskConfig } from '../controllers/kioskController.js';
+router.get('/public/:id', getPublicKioskConfig);
+
 router.use(AuthMiddleware.authenticate.bind(AuthMiddleware));
 
 // Read

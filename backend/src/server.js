@@ -31,6 +31,7 @@ import roleRoutes from './routes/role.routes.js';
 import permissionRoutes from './routes/permission.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import auditRoutes from './routes/audit.routes.js';
+import trackingRoutes from './routes/tracking.routes.js';
 import { apiLimiter, authLimiter, loginLimiter, refreshTokenLimiter, userCreationLimiter } from './middlewares/rateLimiter.js';
 import { disablePoweredBy, securityHeaders, suspiciousRequestLogger, validateEnvironment } from './middlewares/security.middleware.js';
 import cleanupService from './services/cleanupService.js';
@@ -151,6 +152,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // Gestion des erreurs 404
 app.use((req, res) => {
@@ -193,7 +195,8 @@ io.on('connection', (socket) => {
 });
 
 // Démarrage du serveur
-const PORT = process.env.BACKEND_PORT || 3000;
+const PORT = process.env.PORT || 3000;
+
 const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 async function startServer() {

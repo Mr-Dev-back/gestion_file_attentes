@@ -42,6 +42,7 @@ export interface Ticket {
 
     // Relations
     category?: Category;
+    site?: { siteId: string; name: string };
     currentStep?: WorkflowStep;
     queue?: Queue;
     vehicleInfo?: TicketVehicleInfo;

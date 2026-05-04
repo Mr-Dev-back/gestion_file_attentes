@@ -57,3 +57,11 @@ export const getShiftStats = async (siteId: string) => {
     const response = await api.get(`/analytics/site/${siteId}/shift-stats`);
     return response.data;
 };
+
+/**
+ * Recherche un véhicule par matricule (Tracking)
+ */
+export const searchVehicleByPlate = async (plateNumber: string) => {
+    const response = await api.get(`/tracking/search/${plateNumber}`);
+    return response.data;
+};

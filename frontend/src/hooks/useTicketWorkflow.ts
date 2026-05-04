@@ -167,6 +167,16 @@ export function useTicketWorkflow(quaiId?: string) {
         },
         onError: (error) => toast.error(getErrorMessage(error, 'Erreur isolation'))
     });
+    
+    const transferMutation = useMutation({
+        mutationFn: (payload: { ticketId: string; targetQuaiId?: string; targetCategoryId?: string }) => 
+            ticketApi.transferTicket(payload.ticketId, payload.targetQuaiId, payload.targetCategoryId),
+        onSuccess: (data) => {
+            toast.success(`Ticket ${data.ticket.ticketNumber} transféré avec succès`);
+            queryClient.invalidateQueries({ queryKey: ['tickets'] });
+        },
+        onError: (error) => toast.error(getErrorMessage(error, 'Erreur transfert'))
+    });
 
     return {
         tickets,
@@ -178,11 +188,14 @@ export function useTicketWorkflow(quaiId?: string) {
         assignTicket: assignMutation.mutate,
         completeStep: completeMutation.mutate,
         isolateTicket: isolateMutation.mutate,
+        transferTicket: transferMutation.mutate,
         isCalling: callMutation.isPending,
         isRecalling: recallMutation.isPending,
         isProcessing: processMutation.isPending,
         isAssigning: assignMutation.isPending,
         isCompleting: completeMutation.isPending,
-        isIsolating: isolateMutation.isPending
+        isIsolating: isolateMutation.isPending,
+        isTransferring: transferMutation.isPending
     };
+
 }

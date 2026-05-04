@@ -22,7 +22,7 @@ export const seedProduction = async () => {
         if (!fs.existsSync(dataPath)) {
             throw new Error(`Data file not found at ${dataPath}`);
         }
-        
+
         const dump = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
         // 1. Reference: Resources

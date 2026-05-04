@@ -20,7 +20,7 @@ import { AdminSkeleton } from '../molecules/ui/admin-skeleton';
 import { EmptyState } from '../molecules/ui/empty-state';
 
 export const WorkflowManager = () => {
-    const { workflows, isLoading, createWorkflow, updateWorkflow, addStep, updateStep, bulkUpdateWorkflowStatus } = useWorkflows();
+    const { workflows, isLoading, createWorkflow, updateWorkflow, addStep, updateStep, bulkUpdateWorkflowStatus, reorderSteps } = useWorkflows();
     const { queues } = useQueues();
 
     // View Mode State
@@ -354,10 +354,10 @@ export const WorkflowManager = () => {
                             ) : (
                                 <WorkflowVisualEditor
                                     workflow={wf}
+                                    isSaving={reorderSteps.isPending}
                                     onSave={(steps) => {
-                                        toast("Réorganisation automatique en cours...", "info");
-                                        steps.forEach((s, idx) => {
-                                            updateStep.mutate({ id: s.stepId, data: { ...s, orderNumber: idx + 1 } as any });
+                                        reorderSteps.mutate({ workflowId: wf.workflowId, steps }, {
+                                            onSuccess: () => toast("Séquence mise à jour avec succès", "success")
                                         });
                                     }}
                                     onAddStep={() => handleOpenStepModal(wf)}

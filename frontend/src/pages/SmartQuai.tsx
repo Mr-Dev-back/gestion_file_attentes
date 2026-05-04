@@ -6,6 +6,7 @@ import { SmartQuaiSidebar } from '../components/supervisor/smart-quai/SmartQuaiS
 import { SmartQuaiCentralArea } from '../components/supervisor/smart-quai/SmartQuaiCentralArea';
 import { SmartQuaiHistory } from '../components/supervisor/smart-quai/SmartQuaiHistory';
 import { SmartQuaiErrorState } from '../components/supervisor/smart-quai/SmartQuaiErrorState';
+import { SmartQuaiTransferModal } from '../components/supervisor/smart-quai/SmartQuaiTransferModal';
 import { toast } from '../components/molecules/ui/toast';
 
 export default function SmartQuai() {
@@ -20,6 +21,7 @@ export default function SmartQuai() {
     selectedTicket,
     setSelectedTicket,
     pendingCallTicketId,
+    isTransferModalOpen,
     setIsTransferModalOpen,
     waitingTickets,
     activeTicket,
@@ -64,7 +66,29 @@ export default function SmartQuai() {
         variant="warning"
       />
 
+      {(activeTicket || callingTicket || selectedTicket) && (
+        <SmartQuaiTransferModal
+          isOpen={isTransferModalOpen}
+          onClose={() => setIsTransferModalOpen(false)}
+          ticket={(activeTicket || callingTicket || selectedTicket)!}
+          currentQuaiId={quaiId}
+          isTransferring={workflow.isTransferring}
+          onTransfer={(data) => {
+            workflow.transferTicket(
+              { ticketId: (activeTicket || callingTicket || selectedTicket)!.ticketId, ...data },
+              {
+                onSuccess: () => {
+                  setIsTransferModalOpen(false);
+                  setSelectedTicket(null);
+                }
+              }
+            );
+          }}
+        />
+      )}
+
       {/* 1: WAITING LIST */}
+
       <SmartQuaiSidebar
         waitingTickets={waitingTickets}
         selectedTicket={selectedTicket}

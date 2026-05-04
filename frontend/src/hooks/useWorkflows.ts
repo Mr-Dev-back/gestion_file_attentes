@@ -57,6 +57,12 @@ export function useWorkflows() {
         }),
         addStep,
         updateStep,
-        deleteStep
+        deleteStep,
+        reorderSteps: useMutation({
+            mutationFn: ({ workflowId, steps }: { workflowId: string; steps: { stepId: string; orderNumber: number }[] }) => 
+                api.patch(`/workflows/${workflowId}/reorder-steps`, { steps }),
+            onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workflows'] }),
+        }),
     };
 }
+

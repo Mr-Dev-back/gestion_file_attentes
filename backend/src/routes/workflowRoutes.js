@@ -8,7 +8,8 @@ import {
     addStep,
     updateStep,
     deleteStep,
-    getWorkflowSteps
+    getWorkflowSteps,
+    reorderSteps
 } from '../controllers/workflowController.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
@@ -28,5 +29,6 @@ router.get('/:workflowId/steps', getWorkflowSteps);
 router.post('/:workflowId/steps', authMiddleware.authorize(['ADMINISTRATOR']), addStep);
 router.put('/steps/:id', authMiddleware.authorize(['ADMINISTRATOR']), updateStep); // ID is Step ID
 router.delete('/steps/:id', authMiddleware.authorize(['ADMINISTRATOR']), deleteStep);
+router.patch('/:workflowId/reorder-steps', authMiddleware.authorize(['ADMINISTRATOR']), reorderSteps);
 
 export default router;

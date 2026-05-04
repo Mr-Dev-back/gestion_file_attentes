@@ -5,11 +5,14 @@ import { Badge } from '../atoms/ui/badge';
 import type { Ticket } from '../../types/ticket';
 
 interface EntryHomeViewProps {
+    welcomeMessage: string;
+    showWeather?: boolean;
     queuedTrucks: Ticket[];
     onStartEntry: () => void;
 }
 
-export function EntryHomeView({ queuedTrucks, onStartEntry }: EntryHomeViewProps) {
+
+export function EntryHomeView({ welcomeMessage, showWeather, queuedTrucks, onStartEntry }: EntryHomeViewProps) {
     const navigate = useNavigate();
 
     return (
@@ -17,10 +20,13 @@ export function EntryHomeView({ queuedTrucks, onStartEntry }: EntryHomeViewProps
             {/* Hero Section */}
             <div className="text-center mb-16 animate-slide-up space-y-4">
                 <h2 className="text-4xl md:text-5xl font-black text-text-main tracking-tight mb-4">
-                    Bienvenue sur <span className="text-primary relative inline-block">
-                        GesParc
-                        <span className="absolute bottom-1 left-0 w-full h-2 bg-primary/10 -z-10 rounded-full"></span>
-                    </span>
+                    {welcomeMessage.split(' ').map((word, i) => (
+                        word.toLowerCase() === 'gesparc' || word.toLowerCase() === 'sibm' ? 
+                        <span key={i} className="text-primary relative inline-block mx-1">
+                            {word}
+                            <span className="absolute bottom-1 left-0 w-full h-2 bg-primary/10 -z-10 rounded-full"></span>
+                        </span> : <span key={i} className="mx-1">{word}</span>
+                    ))}
                 </h2>
                 <p className="text-xl text-text-muted max-w-2xl mx-auto leading-relaxed">
                     Notre plateforme centralisée pour la gestion des files d'attente des camions.

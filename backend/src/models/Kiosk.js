@@ -37,6 +37,16 @@ Kiosk.init({
         type: DataTypes.JSONB,
         defaultValue: { hasPrinter: true, hasScale: false }
     },
+    config: {
+        type: DataTypes.JSONB,
+        defaultValue: { 
+            welcomeMessage: "Bienvenue chez SIBM", 
+            primaryColor: "#3B82F6",
+            logoUrl: null,
+            showWeather: true,
+            language: "fr"
+        }
+    },
     lastPing: {
         type: DataTypes.DATE
     }

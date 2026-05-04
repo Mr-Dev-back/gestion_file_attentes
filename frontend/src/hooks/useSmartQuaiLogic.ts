@@ -43,6 +43,8 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
     isCompleting,
     isolateTicket,
     isIsolating,
+    transferTicket,
+    isTransferring
   } = useTicketWorkflow(quaiId);
 
   // Tickets en attente
@@ -50,7 +52,7 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
     tickets
       .filter(t => {
         const ticketWithTypename = { ...t, __typename: 'Ticket' };
-        if (!ability.can('manage', subject('Ticket', ticketWithTypename))) return false;
+        if (!ability.can('read', subject('Ticket', ticketWithTypename))) return false;
 
         if (config?.expectedStepCode && t.currentStep?.stepCode) {
            const allowedCodes = config.expectedStepCode.split(',').map(s => s.trim());
@@ -75,26 +77,26 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
     tickets.find(t => {
       if (t.status !== 'PROCESSING' || t.quaiId !== quaiId) return false;
       const ticketWithTypename = { ...t, __typename: 'Ticket' };
-      if (!ability.can('manage', subject('Ticket', ticketWithTypename))) return false;
+      if (!ability.can('read', subject('Ticket', ticketWithTypename))) return false;
       if (!config?.expectedStepCode) return true;
       const allowedCodes = config.expectedStepCode.split(',').map(s => s.trim());
       return t.currentStep?.stepCode && allowedCodes.includes(t.currentStep.stepCode);
     }),
     [tickets, quaiId, config?.expectedStepCode, ability]
-  );
+  ) || null;
 
   // Ticket appelé
   const callingTicket = useMemo(() =>
     tickets.find(t => {
       if (t.status !== 'CALLING' || t.quaiId !== quaiId) return false;
       const ticketWithTypename = { ...t, __typename: 'Ticket' };
-      if (!ability.can('manage', subject('Ticket', ticketWithTypename))) return false;
+      if (!ability.can('read', subject('Ticket', ticketWithTypename))) return false;
       if (!config?.expectedStepCode) return true;
       const allowedCodes = config.expectedStepCode.split(',').map(s => s.trim());
       return t.currentStep?.stepCode && allowedCodes.includes(t.currentStep.stepCode);
     }),
     [tickets, quaiId, config?.expectedStepCode, ability]
-  );
+  ) || null;
 
   // Sync selectedTicket avec les MAJ temps-réel
   useEffect(() => {
@@ -205,7 +207,7 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
     setSelectedTicket(null);
   };
 
-  const centralView = activeTicket ? 'processing'
+  const centralView: 'processing' | 'calling' | 'preview' | 'empty' = activeTicket ? 'processing'
     : callingTicket ? 'calling'
       : selectedTicket ? 'preview'
         : 'empty';
@@ -240,7 +242,9 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
       recallTicket,
       processTicket,
       completeStep,
-      isolateTicket
+      isolateTicket,
+      transferTicket,
+      isTransferring
     },
     actions: {
       handleCallNext,

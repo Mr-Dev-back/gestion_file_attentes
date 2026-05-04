@@ -49,20 +49,22 @@ class TicketController {
             const startOfToday = new Date(now);
             startOfToday.setHours(0, 0, 0, 0);
 
-            // Verrouiller les tickets du jour pour éviter les doublons de numéro
-            // On cherche le dernier ticket créé aujourd'hui avec un lock
-            const lastTicket = await Ticket.findOne({
-                where: {
-                    arrivedAt: { [Op.gte]: startOfToday }
-                },
-                order: [['arrivedAt', 'DESC']],
-                lock: transaction.LOCK.UPDATE,
-                transaction
-            });
-
             const siteCode = site.code || 'GP';
             const categoryObj = await Category.findByPk(categoryId, { transaction });
             const catCode = categoryObj?.code || categoryObj?.prefix || 'GEN';
+            const ticketPrefix = `${siteCode}${catCode}-`;
+
+            // Verrouiller les tickets pour éviter les doublons de numéro
+            // On cherche le dernier ticket créé pour ce site et ce préfixe, toutes dates confondues
+            const lastTicket = await Ticket.findOne({
+                where: {
+                    siteId,
+                    ticketNumber: { [Op.like]: `${ticketPrefix}%` }
+                },
+                order: [['ticketNumber', 'DESC']],
+                lock: transaction.LOCK.UPDATE,
+                transaction
+            });
 
             let nextNumber = 1;
             if (lastTicket && lastTicket.ticketNumber) {
@@ -73,7 +75,7 @@ class TicketController {
                 }
             }
 
-            const ticketNumber = `${siteCode}${catCode}-${nextNumber.toString().padStart(4, '0')}`;
+            const ticketNumber = `${ticketPrefix}${nextNumber.toString().padStart(4, '0')}`;
 
             // Déterminer la file d'attente initiale
             // Priorité 1: Une file associée à la fois à l'étape initiale ET à la catégorie du ticket
@@ -83,7 +85,8 @@ class TicketController {
             
             if (stepQueues && stepQueues.length > 0) {
                 if (categoryId) {
-                    const catQueues = await categoryObj.getQueues({ transaction });
+                    // Use getQueuesList for the One-to-Many relation defined by categoryId on Queue model
+                    const catQueues = await categoryObj.getQueuesList({ transaction });
                     
                     // On cherche une file qui appartient à la fois à l'étape ET à la catégorie
                     const commonQueue = stepQueues.find(sq => catQueues.some(cq => cq.queueId === sq.queueId));

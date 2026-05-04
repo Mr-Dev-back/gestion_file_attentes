@@ -187,3 +187,41 @@ export const getWorkflowSteps = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+/**
+ * Réorganiser les étapes d'un workflow en une seule fois
+ */
+export const reorderSteps = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    try {
+        const { workflowId } = req.params;
+        const { steps } = req.body; // Array of { stepId, orderNumber }
+
+        if (!Array.isArray(steps)) {
+            return res.status(400).json({ error: 'Une liste d\'étapes est requise.' });
+        }
+
+        // Mise à jour de chaque étape dans la transaction
+        for (const item of steps) {
+            await WorkflowStep.update(
+                { orderNumber: item.orderNumber },
+                { where: { stepId: item.stepId, workflowId }, transaction }
+            );
+        }
+
+        await AuditLog.create({
+            userId: req.user.userId,
+            action: 'REORDER_WORKFLOW_STEPS',
+            details: { workflowId, stepsCount: steps.length },
+            ipAddress: req.ip
+        }, { transaction });
+
+        await transaction.commit();
+        res.json({ message: 'Étapes réorganisées avec succès.' });
+    } catch (error) {
+        if (transaction) await transaction.rollback();
+        logger.error('Erreur réorganisation étapes workflow:', error);
+        res.status(500).json({ error: 'Erreur lors de la réorganisation.' });
+    }
+};
+

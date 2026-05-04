@@ -13,6 +13,13 @@ export interface Kiosk {
     queues?: { queueId: string; name: string }[];
     queueId?: string; // Legacy/Compat for now if needed, but better remove
     capabilities: any;
+    config: {
+        welcomeMessage: string;
+        primaryColor: string;
+        logoUrl?: string | null;
+        showWeather: boolean;
+        language: string;
+    };
     site?: { name: string };
     queue?: { name: string };
 }

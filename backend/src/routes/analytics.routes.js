@@ -15,8 +15,8 @@ router.use(authMiddleware.authorize(['ADMINISTRATOR', 'MANAGER', 'SUPERVISOR']))
  *     tags: [Analytics]
  */
 router.get('/stats', AnalyticsController.getStats);
-router.get('/summary', AnalyticsController.getStats);
-router.get('/performance', AnalyticsController.getStats);
-router.get('/site-details', AnalyticsController.getSiteDetails);
+router.get('/reports', AnalyticsController.getReports);
+router.get('/export', AnalyticsController.exportData);
+router.get('/tickets', AnalyticsController.getTicketsList);
 
 export default router;
