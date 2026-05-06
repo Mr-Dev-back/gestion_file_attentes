@@ -209,10 +209,13 @@ async function startServer() {
     logger.info('Connexion PostgreSQL établie');
 
     // Sync des models (création des tables manquantes comme Site, Queue, etc.)
+    // NOTE: Désactivé car nous utilisons les migrations Sequelize (db:migrate) pour la production
+    /*
     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
       await sequelize.sync({ alter: true }); 
       logger.info('Models synchronisés (alter: true) - Le schéma de la base de données a été mis à jour.');
     }
+    */
 
     // Test connexion Redis & Adapter Socket.io
     try {
