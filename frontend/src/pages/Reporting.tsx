@@ -4,6 +4,8 @@ import { useSites } from '../hooks/useSites';
 import StatCards from '../components/analytics/StatCards';
 import AnalyticsTicketTable from '../components/analytics/AnalyticsTicketTable';
 import TicketDetailsModal from '../components/analytics/TicketDetailsModal';
+import AnalyticsCharts from '../components/analytics/AnalyticsCharts';
+import { exportToExcel, exportToPDF } from '../utils/exportUtils';
 import { 
     Loader2, 
     AlertCircle, 
@@ -12,6 +14,7 @@ import {
     Filter, 
     RefreshCcw, 
     FileSpreadsheet,
+    FileCode,
     Building2,
     BarChart3,
     ClipboardList
@@ -30,6 +33,10 @@ export default function Reporting() {
     const [reports, setReports] = useState<any>(null);
     const [ticketList, setTicketList] = useState<any[]>([]);
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+    const [chartData, setChartData] = useState<{ hourlyVolume: any[]; categories: any[] }>({
+        hourlyVolume: [],
+        categories: []
+    });
     const [isLoading, setIsLoading] = useState(true);
     const [isExporting, setIsExporting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -48,13 +55,14 @@ export default function Reporting() {
             setIsLoading(true);
             setError(null);
             
-            const [statsData, reportsData, listData] = await Promise.all([
+            const [statsRes, reportsData, listData] = await Promise.all([
                 analyticsApi.getDashboardStats(selectedSite, dateRange.start, dateRange.end),
                 analyticsApi.getReports(dateRange.start, dateRange.end, selectedSite),
                 analyticsApi.getTicketsList(dateRange.start, dateRange.end, selectedSite)
             ]);
             
-            setStats(statsData);
+            setStats(statsRes.summary);
+            setChartData(statsRes.charts || { hourlyVolume: [], categories: [] });
             setReports(reportsData);
             setTicketList(listData.tickets || []);
         } catch (err) {
@@ -121,12 +129,34 @@ export default function Reporting() {
                     
                     <Button 
                         size="sm" 
+                        variant="outline"
+                        onClick={() => exportToExcel(ticketList)} 
+                        disabled={ticketList.length === 0}
+                        className="border-success/50 text-success hover:bg-success/10 rounded-xl px-4 font-bold"
+                    >
+                        <FileSpreadsheet className="h-4 w-4 mr-2" />
+                        EXCEL
+                    </Button>
+
+                    <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => exportToPDF(ticketList)} 
+                        disabled={ticketList.length === 0}
+                        className="border-danger/50 text-danger hover:bg-danger/10 rounded-xl px-4 font-bold"
+                    >
+                        <Download className="h-4 w-4 mr-2" />
+                        PDF
+                    </Button>
+
+                    <Button 
+                        size="sm" 
                         onClick={handleExport} 
                         disabled={isExporting}
-                        className="bg-success hover:bg-success/90 text-white rounded-xl shadow-lg shadow-success/20 px-6 font-bold"
+                        className="bg-slate-800 hover:bg-slate-900 text-white rounded-xl shadow-lg shadow-slate-900/20 px-4 font-bold"
                     >
-                        {isExporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileSpreadsheet className="h-4 w-4 mr-2" />}
-                        EXPORT CSV
+                        {isExporting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileCode className="h-4 w-4 mr-2" />}
+                        CSV
                     </Button>
                 </div>
             </div>
@@ -183,17 +213,25 @@ export default function Reporting() {
                 </div>
             )}
 
-            {stats?.summary && (
+            {stats && (
                 <div className="space-y-10">
                     <StatCards summary={{
-                        ticketsToday: stats.summary.ticketsTotal ?? 0,
-                        avgWaitingTime: stats.summary.waitingTime?.avg ?? "0",
-                        avgProcessingTime: stats.summary.processingTime?.avg ?? "0",
-                        avgTotalTime: stats.summary.totalTime?.avg ?? "0",
-                        trucksInQueue: stats.summary.trucksInQueue ?? 0,
-                        trucksInLoading: stats.summary.trucksInLoading ?? 0,
-                        quaiOccupationRate: stats.summary.quaiOccupationRate ?? "0"
+                        ticketsToday: stats.ticketsTotal ?? 0,
+                        avgWaitingTime: stats.waitingTime?.avg ?? "0",
+                        avgProcessingTime: stats.processingTime?.avg ?? "0",
+                        avgTotalTime: stats.totalTime?.avg ?? "0",
+                        trucksInQueue: stats.trucksInQueue ?? 0,
+                        trucksInLoading: stats.trucksInLoading ?? 0,
+                        quaiOccupationRate: stats.quaiOccupationRate ?? "0"
                     }} />
+
+                    {/* Visualisations */}
+                    {!isLoading && (chartData.hourlyVolume.length > 0 || chartData.categories.length > 0) && (
+                        <AnalyticsCharts 
+                            hourlyData={chartData.hourlyVolume} 
+                            categoryData={chartData.categories} 
+                        />
+                    )}
 
                     {/* NEW: RECAP TABLE */}
                     <AnalyticsTicketTable 
@@ -247,9 +285,8 @@ export default function Reporting() {
                                         <span>Valeur Relative</span>
                                     </div>
                                     {[
-                                        { label: 'Attente Camions', val: stats.summary.trucksInQueue, max: 20, color: 'bg-primary' },
-                                        { label: 'Occupation Quais', val: parseFloat(stats.summary.quaiOccupationRate), max: 100, color: 'bg-secondary' },
-                                        { label: 'Flux Total', val: stats.summary.ticketsTotal, max: 100, color: 'bg-success' }
+                                        { label: 'Occupation Quais', val: parseFloat(stats.quaiOccupationRate), max: 100, color: 'bg-secondary' },
+                                        { label: 'Flux Total', val: stats.ticketsTotal, max: 100, color: 'bg-success' }
                                     ].map(kpi => (
                                         <div key={kpi.label} className="space-y-3">
                                             <div className="flex justify-between items-center">

@@ -11,6 +11,7 @@ import { UserManager } from '../components/admin/UserManager';
 import { CompanySiteManager } from '../components/admin/CompanySiteManager';
 import { SiteManager } from '../components/admin/SiteManager';
 import { AuditLogs } from '../components/admin/AuditLogs';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 // Header section for Admin
 const AdminHeader = () => {
@@ -88,20 +89,8 @@ export default function Admin() {
             <Route index element={<Navigate to="stats" replace />} />
             
             {/* Pilotage */}
-            <Route path="stats" element={
-              <div className="py-20 text-center space-y-4">
-                <LayoutDashboard className="w-16 h-16 mx-auto text-primary/30" />
-                <h2 className="text-2xl font-bold text-slate-700">Statistiques Globales</h2>
-                <p className="text-slate-500">Module en cours de développement.</p>
-              </div>
-            } />
-            <Route path="reports" element={
-              <div className="py-20 text-center space-y-4">
-                <LayoutDashboard className="w-16 h-16 mx-auto text-primary/30" />
-                <h2 className="text-2xl font-bold text-slate-700">Rapports d'Activité</h2>
-                <p className="text-slate-500">Module en cours de développement.</p>
-              </div>
-            } />
+            <Route path="stats" element={<AnalyticsDashboard />} />
+            <Route path="reports" element={<AnalyticsDashboard />} />
             <Route path="audit" element={<AuditLogs />} />
 
             {/* Exploitation */}

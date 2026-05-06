@@ -20,12 +20,12 @@ export const WorkflowMonitor: React.FC = () => {
 
   // Map real queues to our workflow stages
   // This is a simplified mapping: we take the first few queues as stages
-  const stages: WorkflowStage[] = (queues || []).slice(0, 3).map((q, idx) => ({
+  const stages: WorkflowStage[] = (queues || []).slice(0, 4).map((q, idx) => ({
     id: q.queueId,
     name: q.name,
     truckCount: q.truckCount,
-    avgTime: Math.floor(Math.random() * 60), // Mocking avg time as it's not in the response
-    isBottleneck: q.truckCount > 10 || Math.random() > 0.7 // Example logic for bottleneck
+    avgTime: q.tickets && q.tickets.length > 0 ? q.tickets[0].estimatedWaitTime : 0,
+    isBottleneck: q.truckCount > 15 || (q.tickets && q.tickets.length > 0 && q.tickets[0].estimatedWaitTime > 60)
   }));
 
   const totalTrucks = stages.reduce((acc, s) => acc + s.truckCount, 0);

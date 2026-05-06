@@ -9,13 +9,20 @@ export const dashboardApi = {
     // Supervisor endpoints
     getSupervisorStats: (siteId?: string) => api.get('/dashboard/supervisor/stats', { params: { siteId } }),
     getSupervisorDepartments: (siteId?: string) => api.get('/dashboard/supervisor/departments', { params: { siteId } }),
-    getSupervisorQueues: (siteId: string) => api.get('/dashboard/supervisor/queues', { params: { siteId } }),
+    getSupervisorQueues: (siteId?: string) =>
+        api.get('/dashboard/supervisor/queues', { params: siteId ? { siteId } : {} }),
 
     // Manager endpoints
-    getManagerStats: (department?: string) =>
-        api.get('/dashboard/manager/stats', { params: { department } }),
-    getManagerPerformance: (department?: string) =>
-        api.get('/dashboard/manager/performance', { params: { department } }),
+    getManagerStats: (siteId?: string) =>
+        api.get('/dashboard/manager/stats', { params: (siteId && siteId !== '') ? { siteId } : {} }),
+    getManagerPerformance: (siteId?: string) =>
+        api.get('/dashboard/manager/performance', { params: (siteId && siteId !== '') ? { siteId } : {} }),
+    getManagerDistribution: (siteId?: string) =>
+        api.get('/dashboard/manager/distribution', { params: (siteId && siteId !== '') ? { siteId } : {} }),
+    getManagerSiteComparison: () =>
+        api.get('/dashboard/manager/site-comparison'),
+    getMapStats: () =>
+        api.get('/dashboard/manager/map-stats'),
 
     // Sales endpoints
     getSalesStats: () => api.get('/dashboard/sales/stats'),
@@ -25,9 +32,7 @@ export const dashboardApi = {
     getControlStats: () => api.get('/dashboard/control/stats'),
     getControlPending: () => api.get('/dashboard/control/pending'),
 
-    // Analytics (New CASL-based)
-    getSummary: () => api.get('/analytics/summary'),
-    getPerformance: () => api.get('/analytics/performance'),
+    // Analytics
 
     // Sites
     getSites: () => api.get('/sites'),

@@ -30,7 +30,7 @@ const AnalyticsController = {
                 whereClause.siteId = siteId;
             }
 
-            const [totalTickets, pending, processing, times, totalQuais, occupiedQuais] = await Promise.all([
+            const [totalTickets, pending, processing, times, totalQuais, occupiedQuais, hourlyVolume, categoryDistribution] = await Promise.all([
                 Ticket.count({ where: whereClause }),
                 Ticket.count({ where: { ...whereClause, status: 'EN_ATTENTE' } }),
                 Ticket.count({ where: { ...whereClause, status: { [Op.in]: ['EN_TRAITEMENT', 'PROCESSING'] } } }),
@@ -44,7 +44,28 @@ const AnalyticsController = {
                     raw: true
                 }),
                 QuaiParameter.count({ where: siteId && siteId !== 'global' ? { siteId } : {} }),
-                Ticket.count({ where: { ...whereClause, status: { [Op.in]: ['EN_TRAITEMENT', 'PROCESSING'] }, quaiId: { [Op.ne]: null } } })
+                Ticket.count({ where: { ...whereClause, status: { [Op.in]: ['EN_TRAITEMENT', 'PROCESSING'] }, quaiId: { [Op.ne]: null } } }),
+                Ticket.findAll({
+                    attributes: [
+                        [fn('DATE_TRUNC', 'hour', col('arrivedAt')), 'hour'],
+                        [fn('COUNT', col('ticketId')), 'count']
+                    ],
+                    where: whereClause,
+                    group: [fn('DATE_TRUNC', 'hour', col('arrivedAt'))],
+                    order: [[fn('DATE_TRUNC', 'hour', col('arrivedAt')), 'ASC']],
+                    raw: true
+                }),
+                Ticket.findAll({
+                    attributes: [
+                        'categoryId',
+                        [fn('COUNT', col('Ticket.ticketId')), 'count']
+                    ],
+                    include: [{ model: Category, as: 'category', attributes: ['name'] }],
+                    where: whereClause,
+                    group: ['Ticket.categoryId', 'category.categoryId', 'category.name'],
+                    raw: true,
+                    nest: true
+                })
             ]);
 
             const t = times[0] || {};
@@ -59,6 +80,16 @@ const AnalyticsController = {
                     waitingTime: { avg: parseFloat(t.avgWaiting || 0).toFixed(1) },
                     processingTime: { avg: parseFloat(t.avgProcessing || 0).toFixed(1) },
                     totalTime: { avg: parseFloat(t.avgTotal || 0).toFixed(1) }
+                },
+                charts: {
+                    hourlyVolume: hourlyVolume.map(h => ({
+                        time: new Date(h.hour).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                        count: parseInt(h.count)
+                    })),
+                    categories: categoryDistribution.map(c => ({
+                        name: c.category?.name || 'Inconnu',
+                        value: parseInt(c.count)
+                    }))
                 }
             });
         } catch (error) {

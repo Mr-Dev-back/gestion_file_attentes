@@ -204,12 +204,28 @@ export const ArchiveSearch: React.FC = () => {
           </table>
         </div>
         
-        {/* Pagination Placeholder */}
-        <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between">
-          <p className="text-xs font-bold text-slate-400">Affichage de 1-3 sur 1,240 archives</p>
+        {/* Pagination */}
+        <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            {tickets?.length || 0} résultat(s) trouvé(s)
+          </p>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled className="rounded-xl px-4 font-black">Précédent</Button>
-            <Button variant="outline" size="sm" className="rounded-xl px-4 font-black">Suivant</Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="rounded-xl px-4 font-black uppercase text-[10px] tracking-widest border-slate-200 hover:bg-white transition-all"
+              disabled={true} // Logic to be implemented if API supports pagination
+            >
+              Précédent
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="rounded-xl px-4 font-black uppercase text-[10px] tracking-widest border-slate-200 hover:bg-white transition-all"
+              disabled={true} // Logic to be implemented if API supports pagination
+            >
+              Suivant
+            </Button>
           </div>
         </div>
       </Card>

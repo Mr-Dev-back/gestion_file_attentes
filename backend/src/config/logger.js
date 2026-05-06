@@ -69,7 +69,7 @@ class LoggerService {
         });
 
         // Add console transport in non-production environments
-        if (true) {
+        if (process.env.NODE_ENV !== 'production') {
             this.logger.add(new winston.transports.Console({
                 format: consoleFormat
             }));

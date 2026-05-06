@@ -118,6 +118,7 @@ export interface Workflow {
     isActived: boolean;
     createdAt: string;
     steps?: WorkflowStep[];
+    sites?: { siteId: string; name: string; code: string }[];
 }
 export interface TicketActionLog {
     logId: string;

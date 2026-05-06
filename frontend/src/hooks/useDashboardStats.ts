@@ -97,15 +97,20 @@ export const useSupervisorDepartments = () => {
     });
 };
 
-export const useSupervisorQueues = (siteId: string) => {
+export const useSupervisorQueues = (siteId?: string) => {
     const { hasRole, isAuthenticated } = useAuthStore();
+    const isGlobalQuery = !siteId;
     return useQuery<SupervisorQueueResponse[]>({
-        queryKey: ['dashboard', 'supervisor', 'queues', siteId],
+        queryKey: ['dashboard', 'supervisor', 'queues', siteId || 'ALL'],
         queryFn: async () => {
             const { data } = await dashboardApi.getSupervisorQueues(siteId);
             return data;
         },
-        enabled: !!siteId && isAuthenticated && hasRole(['SUPERVISOR', 'ADMINISTRATOR']),
+        enabled: isAuthenticated && (
+            isGlobalQuery
+                ? hasRole(['MANAGER', 'ADMINISTRATOR'])
+                : hasRole(['SUPERVISOR', 'ADMINISTRATOR', 'MANAGER'])
+        ),
         refetchInterval: DASHBOARD_REFRESH_INTERVAL,
         staleTime: 10000, // Frequent updates for queues
     });
@@ -114,12 +119,12 @@ export const useSupervisorQueues = (siteId: string) => {
 /**
  * Manager Dashboard Hooks
  */
-export const useManagerStats = (department?: string) => {
+export const useManagerStats = (siteId?: string) => {
     const { hasRole, isAuthenticated } = useAuthStore();
     return useQuery<ManagerStatsResponse>({
-        queryKey: ['dashboard', 'manager', 'stats', department],
+        queryKey: ['dashboard', 'manager', 'stats', siteId],
         queryFn: async () => {
-            const { data } = await dashboardApi.getSummary();
+            const { data } = await dashboardApi.getManagerStats(siteId);
             return data;
         },
         enabled: isAuthenticated && hasRole(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
@@ -128,17 +133,59 @@ export const useManagerStats = (department?: string) => {
     });
 };
 
-export const useManagerPerformance = (department?: string) => {
+export const useManagerPerformance = (siteId?: string) => {
     const { hasRole, isAuthenticated } = useAuthStore();
     return useQuery<ManagerPerformanceResponse>({
-        queryKey: ['dashboard', 'manager', 'performance', department],
+        queryKey: ['dashboard', 'manager', 'performance', siteId],
         queryFn: async () => {
-            const { data } = await dashboardApi.getPerformance();
+            const { data } = await dashboardApi.getManagerPerformance(siteId);
             return data;
         },
         enabled: isAuthenticated && hasRole(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
         refetchInterval: DASHBOARD_REFRESH_INTERVAL,
         staleTime: 20000,
+    });
+};
+
+export const useManagerDistribution = (siteId?: string) => {
+    const { hasRole, isAuthenticated } = useAuthStore();
+    return useQuery<{ distribution: any[] }>({
+        queryKey: ['dashboard', 'manager', 'distribution', siteId],
+        queryFn: async () => {
+            const { data } = await dashboardApi.getManagerDistribution(siteId);
+            return data;
+        },
+        enabled: isAuthenticated && hasRole(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
+        refetchInterval: DASHBOARD_REFRESH_INTERVAL,
+        staleTime: 20000,
+    });
+};
+
+export const useManagerSiteComparison = () => {
+    const { hasRole, isAuthenticated } = useAuthStore();
+    return useQuery<any[]>({
+        queryKey: ['dashboard', 'manager', 'site-comparison'],
+        queryFn: async () => {
+            const { data } = await dashboardApi.getManagerSiteComparison();
+            return data;
+        },
+        enabled: isAuthenticated && hasRole(['MANAGER', 'ADMINISTRATOR']),
+        refetchInterval: DASHBOARD_REFRESH_INTERVAL,
+        staleTime: 20000,
+    });
+};
+
+export const useMapStats = () => {
+    const { hasRole, isAuthenticated } = useAuthStore();
+    return useQuery<any[]>({
+        queryKey: ['dashboard', 'manager', 'map-stats'],
+        queryFn: async () => {
+            const { data } = await dashboardApi.getMapStats();
+            return data;
+        },
+        enabled: isAuthenticated && hasRole(['MANAGER', 'ADMINISTRATOR']),
+        refetchInterval: DASHBOARD_REFRESH_INTERVAL,
+        staleTime: 60000,
     });
 };
 

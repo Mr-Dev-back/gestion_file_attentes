@@ -1,4 +1,5 @@
 import { Site, Company, AuditLog } from '../models/index.js';
+import { sequelize } from '../config/database.js';
 import { Op } from 'sequelize';
 import logger from '../config/logger.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
@@ -32,6 +33,19 @@ class SiteController {
 
             const queryOptions = {
                 where,
+                attributes: {
+                    include: [
+                        [
+                            sequelize.literal(`(
+                                SELECT COUNT(*)
+                                FROM "Ticket" AS t
+                                WHERE t."siteId" = "Site"."siteId"
+                                AND t."status" NOT IN ('COMPLETE', 'ANNULE')
+                            )`),
+                            'truckCount'
+                        ]
+                    ]
+                },
                 include: [{ model: Company, as: 'company', attributes: ['name'] }],
                 order: [['name', 'ASC']]
             };

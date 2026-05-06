@@ -4,6 +4,7 @@ import { Building2, LayoutDashboard, Zap, MapPinned, Search } from 'lucide-react
 import SupervisorTactical from './supervisor/SupervisorTactical';
 import SupervisorDashboard from './dashboards/SupervisorDashboard';
 import LiveTracking from './supervisor/LiveTracking';
+import VehicleSearch from './supervisor/VehicleSearch';
 
 // ─── Harmonized Header (same structure as Manager) ─────────────────────────
 const SupervisorHeader = () => {
@@ -66,26 +67,6 @@ const SupervisorHeader = () => {
   );
 };
 
-// ─── Generic Placeholder (matches Manager's style) ──────────────────────────
-const ViewPlaceholder = ({ title, description, icon: Icon }: { title: string; description: string; icon: React.ElementType }) => (
-  <div className="flex flex-col items-center justify-center py-24 px-4 text-center space-y-6">
-    <div className="p-6 bg-primary/5 rounded-full ring-8 ring-primary/5 shadow-inner">
-      <Icon className="w-16 h-16 text-primary/40" />
-    </div>
-    <div className="max-w-md space-y-2">
-      <h2 className="text-2xl font-black text-slate-700 tracking-tight uppercase">{title}</h2>
-      <p className="text-slate-500 font-medium leading-relaxed">{description}</p>
-    </div>
-    <div className="pt-4 flex items-center gap-3 text-sm text-primary/60 font-bold bg-white px-4 py-2 rounded-xl shadow-sm border border-black/5">
-      <span className="relative flex h-3 w-3">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20"></span>
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary/40"></span>
-      </span>
-      En cours de développement
-    </div>
-  </div>
-);
-
 // ─── Main Supervisor Page ────────────────────────────────────────────────────
 export default function Supervisor() {
   return (
@@ -107,11 +88,7 @@ export default function Supervisor() {
 
             <Route path="dashboard" element={<SupervisorDashboard />} />
 
-            <Route path="search" element={<ViewPlaceholder
-              title="Recherche & Archives"
-              description="Consultez l'historique complet des tickets du site et exportez les rapports de pesée."
-              icon={Search}
-            />} />
+            <Route path="search" element={<VehicleSearch />} />
 
             <Route path="*" element={<Navigate to="workflow-view" replace />} />
           </Routes>

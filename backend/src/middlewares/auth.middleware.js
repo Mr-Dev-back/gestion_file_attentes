@@ -211,7 +211,18 @@ class AuthMiddleware {
    */
   authenticateSocket = async (socket, next) => {
     try {
-      const token = socket.handshake.auth.token || socket.handshake.query.token;
+      let token = socket.handshake.auth?.token || socket.handshake.query?.token;
+
+      // [SENIOR NOTE] Ajout du support des cookies pour Socket.io 
+      // Si le token n'est pas dans auth/query, on regarde dans les headers
+      if (!token && socket.handshake.headers.cookie) {
+        const cookies = socket.handshake.headers.cookie.split(';').reduce((acc, cookie) => {
+          const [name, value] = cookie.trim().split('=');
+          acc[name] = value;
+          return acc;
+        }, {});
+        token = cookies.accessToken;
+      }
 
       // Invité (Lecture seule limitée par exemple)
       if (!token) {
@@ -229,22 +240,29 @@ class AuthMiddleware {
         return next(new Error('Erreur de configuration serveur.'));
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await this.loadUser(decoded.id);
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await this.loadUser(decoded.id);
 
-      if (!user) {
-        return next(new Error('Utilisateur non trouvé.'));
+        if (!user) {
+          return next(new Error('Utilisateur non trouvé.'));
+        }
+
+        if (!user.isActive) {
+          return next(new Error('Compte désactivé.'));
+        }
+
+        // Hydratation RBAC pour Socket
+        socket.user = await this.hydrateRuntimeRbac(user);
+        next();
+      } catch (jwtError) {
+        if (jwtError.name === 'TokenExpiredError') {
+          return next(new Error('jwt expired'));
+        }
+        throw jwtError;
       }
-
-      if (!user.isActive) {
-        return next(new Error('Compte désactivé.'));
-      }
-
-      // Hydratation RBAC pour Socket
-      socket.user = await this.hydrateRuntimeRbac(user);
-      next();
     } catch (error) {
-      logger.error('SOCKET AUTH ERROR:', error);
+      logger.error('SOCKET AUTH ERROR:', error.message);
       next(new Error(`Authentification échouée: ${error.message}`));
     }
   };

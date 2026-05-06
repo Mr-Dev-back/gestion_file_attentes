@@ -26,8 +26,12 @@ QuaiParameter.init({
   },
   stepId: {
     type: DataTypes.UUID,
-    allowNull: false,
+    allowNull: true,
     references: { model: 'WorkflowStep', key: 'stepId' }
+  },
+  stepIds: {
+    type: DataTypes.JSONB,
+    defaultValue: [] // Array of stepIds
   },
   expectedStepCode: {
     type: DataTypes.STRING(50),

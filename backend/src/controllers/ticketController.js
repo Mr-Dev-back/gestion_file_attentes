@@ -156,7 +156,7 @@ class TicketController {
 
             const fullTicket = await Ticket.findByPk(ticket.ticketId, {
                 include: [
-                    { model: Category, as: 'category' },
+                    { model: Category, as: 'category' }, { model: Site, as: 'site' },
                     { model: TicketVehicleInfo, as: 'vehicleInfo' },
                     { model: TicketLogistic, as: 'logistic' },
                     { model: WorkflowStep, as: 'currentStep', include: ['queues'] }
@@ -243,10 +243,15 @@ class TicketController {
         try {
             const { siteId, status, queueId, quaiId, categoryId } = req.query;
             const where = {};
+            if (siteId) where.siteId = siteId;
             
-            // Si on est sur un quai, on ignore le siteId pour éviter les problèmes de comptes sans siteId
-            if (siteId && !quaiId) where.siteId = siteId;
-            if (categoryId) where.categoryId = categoryId;
+            // [RBAC] Restriction stricte pour l'AGENT_QUAI
+            // Il ne voit que les tickets de sa file d'attente assignée
+            if (req.user && await req.user.hasRole('AGENT_QUAI') && req.user.assignedQueueId) {
+                where.queueId = req.user.assignedQueueId;
+            } else if (categoryId) {
+                where.categoryId = categoryId;
+            }
             
             // Gestion du filtrage par statut (accepter tableau ou string)
             if (status) {
@@ -270,30 +275,44 @@ class TicketController {
                 });
 
                 if (quaiParam) {
-                    // Support multiples step codes as comma-separated: "STP_2,STP_4"
-                    expectedStepCode = quaiParam.expectedStepCode || (quaiParam.step ? quaiParam.step.stepCode : null);
+                    // Collect all step codes from single stepId or multiple stepIds
+                    let stepCodes = [];
+                    if (quaiParam.expectedStepCode) {
+                        stepCodes = quaiParam.expectedStepCode.split(',').map(s => s.trim());
+                    } else if (quaiParam.step) {
+                        stepCodes = [quaiParam.step.stepCode];
+                    }
 
-                    // Collect all queues allowed for this quai (from self mapping or linked steps)
+                    // Also check stepIds array (UUIDs)
+                    if (quaiParam.stepIds && Array.isArray(quaiParam.stepIds) && quaiParam.stepIds.length > 0) {
+                        const additionalSteps = await WorkflowStep.findAll({
+                            where: { stepId: { [Op.in]: quaiParam.stepIds } },
+                            attributes: ['stepCode']
+                        });
+                        const additionalCodes = additionalSteps.map(s => s.stepCode);
+                        stepCodes = [...new Set([...stepCodes, ...additionalCodes])];
+                    }
+
+                    expectedStepCode = stepCodes.join(',');
+
+                    // Collect all queues allowed for this quai
                     let quaiAllowedQueues = [];
                     if (quaiParam.queues && quaiParam.queues.length > 0) {
                         quaiAllowedQueues = quaiParam.queues.map(q => q.queueId);
                     } else if (quaiParam.queueId) {
                         quaiAllowedQueues = [quaiParam.queueId];
-                    } else if (quaiParam.step) {
-                         // If we have explicit multi-step code, we might need to find all queues of all those steps
-                         if (expectedStepCode && expectedStepCode.includes(',')) {
-                             const stepCodes = expectedStepCode.split(',').map(s => s.trim());
-                             const steps = await WorkflowStep.findAll({
-                                 where: { stepCode: { [Op.in]: stepCodes } },
-                                 include: [{ model: Queue, as: 'queues' }]
-                             });
-                             steps.forEach(s => {
-                                 const sq = s.queues?.map(q => q.queueId) || [];
-                                 quaiAllowedQueues = [...new Set([...quaiAllowedQueues, ...sq])];
-                             });
-                         } else if (quaiParam.step.queues?.length > 0) {
-                             quaiAllowedQueues = quaiParam.step.queues.map(q => q.queueId);
-                         }
+                    } 
+                    
+                    // If no explicit queues, fallback to all queues of the associated steps
+                    if (quaiAllowedQueues.length === 0 && stepCodes.length > 0) {
+                         const stepsWithQueues = await WorkflowStep.findAll({
+                             where: { stepCode: { [Op.in]: stepCodes } },
+                             include: [{ model: Queue, as: 'queues' }]
+                         });
+                         stepsWithQueues.forEach(s => {
+                             const sq = s.queues?.map(q => q.queueId) || [];
+                             quaiAllowedQueues = [...new Set([...quaiAllowedQueues, ...sq])];
+                         });
                     }
 
                     // Intel-Filtering logic:
@@ -855,6 +874,51 @@ class TicketController {
         } catch (error) {
             logger.error('Error updating priority:', error);
             res.status(500).json({ error: 'Erreur lors de la mise à jour de la priorité.' });
+        }
+    }
+
+    /**
+     * Forcer le passage d'un ticket à l'étape suivante (SUPERVISOR)
+     */
+    forceNextStep = async (req, res) => {
+        const transaction = await sequelize.transaction();
+        try {
+            const { ticketId } = req.params;
+            const { reason } = req.body;
+            const userId = req.user.userId;
+
+            const ticket = await Ticket.findByPk(ticketId, { transaction });
+            if (!ticket) {
+                await transaction.rollback();
+                return res.status(404).json({ error: 'Ticket non trouvé.' });
+            }
+
+            // Log d'intervention manuelle
+            await auditService.logAction(req, 'TICKET_FORCE_STEP', 'Ticket', ticket.ticketId, 
+                { stepId: ticket.currentStepId }, 
+                { reason: reason || 'Intervention manuelle superviseur' }
+            );
+
+            // Appel au service de workflow pour passer à l'étape suivante
+            const result = await workflowService.moveToNextStep(ticket.ticketId, userId, transaction);
+
+            await transaction.commit();
+
+            const updatedTicket = await Ticket.findByPk(ticketId, {
+                include: [
+                    { model: Category, as: 'category' },
+                    { model: TicketVehicleInfo, as: 'vehicleInfo' },
+                    { model: TicketLogistic, as: 'logistic' },
+                    { model: WorkflowStep, as: 'currentStep', include: ['queues'] }
+                ]
+            });
+
+            res.json({ ticket: updatedTicket, result });
+            notificationService.emitTicketUpdate(req.app, updatedTicket, result.completed ? 'ticket_completed' : 'ticket_assigned');
+        } catch (error) {
+            if (transaction) await transaction.rollback();
+            logger.error('Error forcing next step:', error);
+            res.status(500).json({ error: 'Erreur lors du forçage de l\'étape.' });
         }
     }
 

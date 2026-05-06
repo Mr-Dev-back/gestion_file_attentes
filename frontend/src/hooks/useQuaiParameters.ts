@@ -8,6 +8,7 @@ export interface QuaiParameter {
   siteId?: string | null;
   categoryId?: string | null;
   stepId: string;
+  stepIds: string[];
   queueIds?: string[];
   queues?: Array<{ queueId: string; name: string }>;
   formConfig: any[];

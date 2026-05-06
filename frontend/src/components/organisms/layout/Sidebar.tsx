@@ -75,8 +75,8 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                 exit={{ opacity: 0, x: -10 }}
                 className="flex flex-col"
               >
-                <span className="text-lg font-black text-slate-800 tracking-tighter leading-none">SIBM</span>
-                <span className="text-[10px] font-bold text-[#008F39] uppercase tracking-[0.2em] mt-0.5">GesParc</span>
+                <span className="text-lg font-black text-slate-800 tracking-tighter leading-none">GesParc</span>
+                <span className="text-[10px] font-bold text-[#008F39] uppercase tracking-[0.2em] mt-0.5">SIBM Logistique</span>
               </motion.div>
             )}
           </AnimatePresence>

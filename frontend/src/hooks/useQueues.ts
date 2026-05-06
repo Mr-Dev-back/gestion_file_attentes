@@ -26,6 +26,11 @@ export interface Queue {
         quaiId: string;
         label: string;
     };
+    site?: {
+        siteId: string;
+        name: string;
+        code: string;
+    };
 }
 
 export function useQueues() {

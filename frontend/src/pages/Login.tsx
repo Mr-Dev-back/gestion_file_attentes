@@ -75,10 +75,12 @@ export default function Login() {
                     <div className="mb-8 p-4 bg-white rounded-2xl shadow-2xl">
                         <img src="/sibm.png" alt="SIBM Logo" className="h-24 w-auto object-contain" />
                     </div>
-                    <h1 className="text-5xl font-black tracking-tight mb-6">GesParc</h1>
-                    <p className="text-xl text-primary-foreground/90 font-medium leading-relaxed mb-8">
-                        Gestion des files d'attentes - SIBM.
-                        Optimisez vos flux logistiques, sécurisez vos accès et améliorez l'efficacité de votre site.
+                    <h1 className="text-5xl font-black tracking-tight mb-6">GesParc SIBM</h1>
+                    <p className="text-xl text-primary-foreground/90 font-medium leading-relaxed mb-4 italic">
+                        "Fluidité, Sécurité, Performance."
+                    </p>
+                    <p className="text-lg text-primary-foreground/80 font-medium leading-relaxed mb-8">
+                        La plateforme de gestion intelligente des flux de camions pour les sites industriels SIBM. Optimisez vos rotations et sécurisez vos accès en temps réel.
                     </p>
                     <div className="flex gap-4 opacity-80">
                         <div className="flex items-center gap-2 text-sm font-medium bg-white/10 px-4 py-2 rounded-full border border-white/10">

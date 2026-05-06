@@ -261,7 +261,7 @@ export const getMenuItems = (
 
   // Si l'utilisateur est superviseur, il garde la vue des quais et a accès à son tableau de bord opérationnel
   if (role === 'SUPERVISOR') {
-    const dynamicQuaiGroup: MenuGroup = {
+    const dynamicQuaiGroup: MenuGroup | null = dynamicQuais.length > 0 ? {
       isGroup: true,
       title: "Accès Quais",
       icon: ListOrdered,
@@ -270,17 +270,18 @@ export const getMenuItems = (
         icon: ListOrdered,
         path: `/quai/${quai.quaiId}`,
       }))
-    };
+    } : null;
     
     const entryItem: MenuItem = { isGroup: false, label: 'Borne / Entrée', icon: Home, path: '/' };
     return [
       entryItem,
+      ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : []),
       ...supervisorMenuGroups
     ];
   }
 
-  // Comportement pour l'Agent de Quai : Redirection directe vers le poste opérationnel
-  if (role === 'AGENT_QUAI' || role === 'EXPLOITATION') {
+  // Comportement pour l'Agent de Quai
+  if (role === 'AGENT_QUAI' || role === 'AGENT_GUERITE') {
     return [
       {
         isGroup: false,
@@ -294,6 +295,15 @@ export const getMenuItems = (
         icon: ListOrdered,
         path: '/queue',
       }
+    ];
+  }
+
+  // Rôle Exploitation : accès opérationnel + pilotage de base
+  if (role === 'EXPLOITATION') {
+    return [
+      { isGroup: false, label: 'Poste Opérationnel', icon: Zap, path: '/operational' },
+      { isGroup: false, label: "File d'Attente", icon: ListOrdered, path: '/queue' },
+      { isGroup: false, label: 'Rapports', icon: BarChart3, path: '/reporting' },
     ];
   }
 

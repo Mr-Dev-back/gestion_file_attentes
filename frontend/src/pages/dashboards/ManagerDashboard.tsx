@@ -24,13 +24,18 @@ import { Card } from '../../components/molecules/ui/card';
 import { Button } from '../../components/atoms/ui/button';
 import { useNavigate } from 'react-router-dom';
 
+import { useManagerContext } from '../Manager';
+import { LogisticMap } from '../../components/analytics/LogisticMap';
+
 export default function ManagerDashboard() {
     const { user } = useAuthStore();
     const navigate = useNavigate();
+    const { activeSiteId } = useManagerContext();
     const { state: socketState } = useSocket();
-    const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useManagerStats();
-    const { data: performance, isLoading: perfLoading } = useManagerPerformance();
-    const { data: siteQueues, isLoading: queuesLoading, refetch: refetchQueues } = useSupervisorQueues('');
+    
+    const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useManagerStats(activeSiteId || '');
+    const { data: performance, isLoading: perfLoading } = useManagerPerformance(activeSiteId || '');
+    const { data: siteQueues, isLoading: queuesLoading, refetch: refetchQueues } = useSupervisorQueues(activeSiteId || '');
 
     useSocketEvent('ticket_updated', () => { refetchStats(); refetchQueues(); });
     useSocketEvent('ticket_created', () => { refetchStats(); refetchQueues(); });
@@ -115,6 +120,11 @@ export default function ManagerDashboard() {
                     iconColor="text-purple-600"
                     iconBgColor="bg-purple-100"
                 />
+            </div>
+            
+            {/* Flux Logistique National (NEW) */}
+            <div className="space-y-4">
+                <LogisticMap />
             </div>
 
             <Can I="read" a="GlobalStats">

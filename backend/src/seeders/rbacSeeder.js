@@ -3,60 +3,107 @@ import logger from '../config/logger.js';
 import bcrypt from 'bcrypt';
 
 const PERMISSIONS = [
-    // User Management
-    { code: 'user:read', resource: 'user', action: 'read', description: 'View users' },
-    { code: 'user:create', resource: 'user', action: 'create', description: 'Create users' },
-    { code: 'user:update', resource: 'user', action: 'update', description: 'Update users' },
-    { code: 'user:delete', resource: 'user', action: 'delete', description: 'Delete users' },
+    // 1. User Management (ADMIN)
+    { code: 'user:read', resource: 'user', action: 'read', description: 'Consulter les utilisateurs' },
+    { code: 'user:create', resource: 'user', action: 'create', description: 'Créer des comptes' },
+    { code: 'user:update', resource: 'user', action: 'update', description: 'Modifier/Suspendre des comptes' },
+    { code: 'user:delete', resource: 'user', action: 'delete', description: 'Supprimer des comptes' },
 
-    // Ticket Management
-    { code: 'ticket:read', resource: 'ticket', action: 'read', description: 'View tickets' },
-    { code: 'ticket:create', resource: 'ticket', action: 'create', description: 'Create tickets' },
-    { code: 'ticket:update', resource: 'ticket', action: 'update', description: 'Update ticket details' },
-    { code: 'ticket:status', resource: 'ticket', action: 'status', description: 'Change ticket status' },
-    { code: 'ticket:delete', resource: 'ticket', action: 'delete', description: 'Delete tickets' },
+    // 2. System Configuration (ADMIN)
+    { code: 'config:read', resource: 'config', action: 'read', description: 'Consulter les paramètres' },
+    { code: 'config:update', resource: 'config', action: 'update', description: 'Modifier les paramètres globaux' },
+    
+    // 3. Workflow Architecture (ADMIN)
+    { code: 'workflow:manage', resource: 'workflow', action: 'manage', description: 'Gérer les étapes et transitions' },
 
-    // Queue Management
-    { code: 'queue:read', resource: 'queue', action: 'read', description: 'View queue status' },
-    { code: 'queue:manage', resource: 'queue', action: 'manage', description: 'Manage queue (priority, call)' },
+    // 4. Maintenance & Audit (ADMIN/MANAGER)
+    { code: 'audit:read', resource: 'audit', action: 'read', description: 'Consulter les logs audit' },
+    { code: 'audit:full', resource: 'audit', action: 'full', description: 'Accès complet aux logs et backups' },
 
-    // Configuration / References
-    { code: 'config:read', resource: 'config', action: 'read', description: 'View system configuration' },
-    { code: 'config:update', resource: 'config', action: 'update', description: 'Update system configuration' },
-    { code: 'reference:read', resource: 'reference', action: 'read', description: 'View reference data (sites, categories)' },
-    { code: 'reference:manage', resource: 'reference', action: 'manage', description: 'Manage reference data' },
+    // 5. Analytics (MANAGER/ADMIN)
+    { code: 'dashboard:read', resource: 'dashboard', action: 'read', description: 'Accès aux statistiques temps réel' },
+    { code: 'report:export', resource: 'report', action: 'export', description: 'Générer des exports de performance' },
+
+    // 6. Ticket Operations (SUPERVISOR/AGENT)
+    { code: 'ticket:read', resource: 'ticket', action: 'read', description: 'Visualiser l\'état des tickets' },
+    { code: 'ticket:search', resource: 'ticket', action: 'search', description: 'Rechercher par matricule' },
+    { code: 'ticket:status', resource: 'ticket', action: 'status', description: 'Changer l\'étape ou annuler' },
+    { code: 'ticket:update', resource: 'ticket', action: 'update', description: 'Saisir des données (poids, chargement)' },
+    
+    // 7. Queue Operations (SUPERVISOR/AGENT)
+    { code: 'queue:read', resource: 'queue', action: 'read', description: 'Voir sa file d\'attente' },
+    { code: 'queue:manage', resource: 'queue', action: 'manage', description: 'Réordonner les priorités' },
 ];
 
 const ROLES = [
     {
         name: 'ADMINISTRATOR',
-        description: 'Global Administrator',
+        description: 'Accès total et destructif sur le système',
         scope: 'GLOBAL',
-        permissions: ['*'] // Wildcard logic to be handled or mapping all
-    },
-    {
-        name: 'SUPERVISOR',
-        description: 'Site Supervisor',
-        scope: 'SITE',
-        permissions: ['ticket:*', 'queue:*', 'user:read', 'reference:read']
+        permissions: ['*'] 
     },
     {
         name: 'MANAGER',
-        description: 'Company/Site Manager',
+        description: 'Rôle analytique et surveillance de performance',
         scope: 'COMPANY',
-        permissions: ['ticket:read', 'queue:read', 'report:read', 'user:read']
+        permissions: [
+            'dashboard:read', 
+            'report:export', 
+            'audit:read', 
+            'ticket:read'
+        ]
+    },
+    {
+        name: 'SUPERVISOR',
+        description: 'Régulateur du site et intervention opérationnelle',
+        scope: 'SITE',
+        permissions: [
+            'ticket:read', 
+            'ticket:search', 
+            'ticket:status', 
+            'queue:read', 
+            'queue:manage', 
+            'ticket:update'
+        ]
     },
     {
         name: 'AGENT_QUAI',
-        description: 'Dock Agent',
+        description: 'Opérations zone d\'affectation (Bascule/Parc/Contrôle/Vente)',
         scope: 'SITE',
-        permissions: ['ticket:read', 'ticket:status', 'queue:read', 'queue:manage']
+        permissions: [
+            'queue:read', 
+            'ticket:read',
+            'ticket:search',
+            'ticket:status', 
+            'ticket:update',
+            'dashboard:read'
+        ]
     },
     {
         name: 'AGENT_GUERITE',
-        description: 'Gate Agent',
+        description: 'Opérations d\'accueil / contrôle à la guérite',
         scope: 'SITE',
-        permissions: ['ticket:create', 'ticket:read', 'queue:read']
+        permissions: [
+            'queue:read',
+            'ticket:read',
+            'ticket:status',
+            'ticket:update'
+        ]
+    },
+    {
+        name: 'EXPLOITATION',
+        description: 'Rôle exploitation (supervision opérationnelle élargie)',
+        scope: 'SITE',
+        permissions: [
+            'dashboard:read',
+            'audit:read',
+            'ticket:read',
+            'ticket:search',
+            'ticket:status',
+            'ticket:update',
+            'queue:read',
+            'queue:manage'
+        ]
     }
 ];
 
@@ -114,28 +161,12 @@ export const seedRBAC = async () => {
     logger.info('Creating test users...');
     const testUsers = [
         {
-            username: 'admin',
-            email: 'admin@sibm.ci',
-            password: 'Admin123!',
+            username: 'LABELMANAGER',
+            email: 'info.dsi@sibmci.com',
+            password: 'SIBMlab@2026!', // À changer par la DSI au premier login
             roleName: 'ADMINISTRATOR',
-            firstName: 'System',
-            lastName: 'Admin'
-        },
-        {
-            username: 'agentquai',
-            email: 'quai@sibm.ci',
-            password: 'Admin123!',
-            roleName: 'AGENT_QUAI',
-            firstName: 'Jean',
-            lastName: 'Quai'
-        },
-        {
-            username: 'agentsales',
-            email: 'sales@sibm.ci',
-            password: 'Admin123!',
-            roleName: 'AGENT_QUAI',
-            firstName: 'Marie',
-            lastName: 'Vente'
+            firstName: 'ADMIN',
+            lastName: 'DSI'
         }
     ];
 

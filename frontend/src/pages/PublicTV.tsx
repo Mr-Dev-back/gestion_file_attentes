@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
-import { Bell, BellRing, AlertTriangle, Zap, Building2, Speaker } from 'lucide-react';
+import { Bell, BellRing, AlertTriangle, Zap, Building2, Speaker, Clock } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useSocketEvent } from '../hooks/useSocketEvent';
 import { useQuery } from '@tanstack/react-query';
@@ -337,6 +337,12 @@ function PublicTVInner() {
     const [isRecall, setIsRecall] = useState(false);
     const [showCallAnimation, setShowCallAnimation] = useState(false);
     const [priorityUpdate, setPriorityUpdate] = useState<{ number: string; priority: string } | null>(null);
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     // [AMÉLIORATION 7] Ref pour nettoyer le timeout showCallAnimation au démontage
     const callAnimationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -560,11 +566,19 @@ function PublicTVInner() {
         <div className="h-screen w-screen bg-background flex flex-col overflow-hidden relative selection:bg-none">
 
             {/* 1️⃣ BANDEAU MESSAGE — CSS-only marquee */}
-            {/* [AMÉLIORATION 5] Messages dynamiques depuis l'API */}
             <div className="relative h-[6vh] bg-gradient-to-r from-primary via-primary/95 to-primary border-b-4 border-primary/80 flex items-center overflow-hidden shadow-2xl z-20">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm" />
+                
+                {/* Clock / Site Info */}
+                <div className="absolute left-0 top-0 bottom-0 bg-slate-900/40 backdrop-blur-md px-8 flex items-center gap-4 border-r border-white/10 z-20">
+                    <Clock className="h-5 w-5 text-white/50" />
+                    <span className="text-white font-black tracking-widest text-[2vh] tabular-nums">
+                        {currentTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                </div>
+
                 <div
-                    className="animate-marquee-slow whitespace-nowrap text-white font-black tracking-widest px-8 relative z-10 flex items-center gap-12"
+                    className="animate-marquee-slow whitespace-nowrap text-white font-black tracking-widest px-8 relative z-10 flex items-center gap-12 ml-40"
                     style={{ fontSize: '2vh' }}
                 >
                     {marqueeContent.map((msg, i) => (

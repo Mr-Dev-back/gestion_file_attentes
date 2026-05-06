@@ -47,7 +47,7 @@ export default function SmartQuai() {
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="text-xs font-black uppercase tracking-[0.5em] text-slate-400 animate-pulse">Initialisation</span>
-          <span className="text-[10px] font-bold text-primary/40 uppercase tracking-[0.2em]">Terminal de Gestion SIBM</span>
+          <span className="text-[10px] font-bold text-primary/40 uppercase tracking-[0.2em]">Terminal de Gestion GesParc</span>
         </div>
       </div>
     );

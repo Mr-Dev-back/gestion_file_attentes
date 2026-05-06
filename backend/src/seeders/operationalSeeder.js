@@ -8,7 +8,7 @@ export const seedOperations = async () => {
     const [company, companyCreated] = await Company.findOrCreate({
         where: { code: 'SIBM' },
         defaults: {
-            name: 'SIBM',
+            name: 'SIBM - Société Ivoirienne de Béton Manufacturé',
             email: 'contact@sibm.ci'
         }
     });
@@ -17,7 +17,7 @@ export const seedOperations = async () => {
     const [site, siteCreated] = await Site.findOrCreate({
         where: { code: 'SSP' },
         defaults: {
-            name: 'Site San Pedro',
+            name: 'SIBM San Pedro - Terminal Industriel',
             companyId: company.companyId
         }
     });
@@ -40,22 +40,19 @@ export const seedOperations = async () => {
 
     // 3. Create Workflow
     const [workflow, workflowCreated] = await Workflow.findOrCreate({
-        where: { name: 'Parcourt Client' },
+        where: { name: 'Circuit Industriel SIBM' },
         defaults: {
-            description: 'Workflow principal des camions SIBM'
+            description: 'Workflow principal de gestion des flux camions SIBM'
         }
     });
-    if (workflowCreated) logger.info('Created workflow: Parcourt Client');
+    if (workflowCreated) logger.info('Created workflow: Circuit Industriel SIBM');
 
     // 4. Create Queues
     const queuesData = [
-        { name: 'Ventes Bâtiment', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Ventes Infrastructure', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Ventes Electricité', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Pont Bascule', type: 'WEIGHING', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Parc Bâtiment', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Parc Infrastructure', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId },
-        { name: 'Parc Electricité', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId }
+        { name: 'Bureau des Ventes', type: 'SALES', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Pont Bascule Entrée', type: 'WEIGH_IN', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Pont Bascule Sortie', type: 'WEIGH_OUT', siteId: site.siteId, workflowId: workflow.workflowId },
+        { name: 'Zone de Chargement', type: 'LOADING', siteId: site.siteId, workflowId: workflow.workflowId }
     ];
 
     const queueMap = {};
@@ -71,9 +68,9 @@ export const seedOperations = async () => {
     // 5. Create Workflow Steps
     const stepsData = [
         { name: 'Bureau des Ventes', code: 'SALES', queueId: queueMap.SALES.queueId, orderNumber: 1 },
-        { name: 'Pesée Entrée', code: 'WEIGH_IN', queueId: queueMap.WEIGHING.queueId, orderNumber: 2 },
-        { name: 'Chargement', code: 'LOADING', queueId: queueMap.LOADING.queueId, orderNumber: 3 },
-        { name: 'Pesée Sortie', code: 'WEIGH_OUT', queueId: queueMap.WEIGHING.queueId, orderNumber: 4 }
+        { name: 'Pesée Entrée', code: 'WEIGH_IN', queueId: queueMap.WEIGH_IN.queueId, orderNumber: 2 },
+        { name: 'Chargement / Parcs', code: 'LOADING', queueId: queueMap.LOADING.queueId, orderNumber: 3 },
+        { name: 'Pesée Sortie', code: 'WEIGH_OUT', queueId: queueMap.WEIGH_OUT.queueId, orderNumber: 4 }
     ];
 
     for (const sData of stepsData) {

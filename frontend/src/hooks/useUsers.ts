@@ -7,7 +7,7 @@ export interface User {
     userId: string;
     username: string;
     email: string;
-    role: 'ADMINISTRATOR' | 'SUPERVISOR' | 'MANAGER' | 'AGENT_QUAI' | 'AGENT_GUERITE';
+    role: 'ADMINISTRATOR' | 'SUPERVISOR' | 'MANAGER' | 'AGENT_QUAI' | 'AGENT_GUERITE' | 'EXPLOITATION';
     isActive: boolean;
     site?: {
         siteId: string;

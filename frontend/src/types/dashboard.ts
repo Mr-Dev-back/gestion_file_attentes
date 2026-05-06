@@ -169,7 +169,8 @@ export interface SupervisorQueueResponse {
         ticketNumber: string;
         priority: 'NORMAL' | 'URGENT' | 'CRITIQUE';
         status: string;
-        createdAt: string;
+        createdAt?: string;
+        arrivedAt?: string;
         position: number;
         estimatedWaitTime: number;
         categories?: Array<{ name: string; color: string }>;

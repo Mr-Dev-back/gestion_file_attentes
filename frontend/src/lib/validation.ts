@@ -4,7 +4,7 @@ export const userSchema = z.object({
   username: z.string().min(3, "Le nom d'utilisateur doit contenir au moins 3 caractères"),
   email: z.string().email("Adresse email invalide"),
   password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères").optional().or(z.literal('')),
-  role: z.enum(['ADMINISTRATOR', 'MANAGER', 'SUPERVISOR', 'AGENT_QUAI', 'AGENT_GUERITE'], {
+  role: z.enum(['ADMINISTRATOR', 'MANAGER', 'SUPERVISOR', 'AGENT_QUAI', 'AGENT_GUERITE', 'EXPLOITATION'], {
     message: "Le rôle est requis et doit être valide"
   }),
   companyId: z.string().uuid("Société invalide").or(z.literal("")).transform(v => v === "" ? null : v).nullable().optional(),
@@ -20,10 +20,10 @@ export const userSchema = z.object({
   message: "La société est requise pour un Manager",
   path: ["companyId"]
 }).refine((data) => {
-  if (data.role === 'SUPERVISOR' && !data.siteId) return false;
+  if (['SUPERVISOR', 'AGENT_GUERITE', 'EXPLOITATION'].includes(data.role) && !data.siteId) return false;
   return true;
 }, {
-  message: "Le site est requis pour un Superviseur",
+  message: "Le site est requis pour ce rôle",
   path: ["siteId"]
 }).refine((data) => {
   if (data.role === 'AGENT_QUAI' && (!data.queueId && (!data.queueIds || data.queueIds.length === 0))) return false;
@@ -60,7 +60,7 @@ export const workflowSchema = z.object({
 export const quaiParameterSchema = z.object({
   label: z.string().min(3, "Le label du quai est requis"),
   siteId: z.string().uuid("Le site est requis"),
-  stepId: z.string().uuid("L'étape liée est requise"),
+  stepIds: z.array(z.string().uuid()).min(1, "Au moins une étape est requise"),
   queueIds: z.array(z.string().uuid()).default([]),
   formConfig: z.array(z.any()).default([]),
   allowedUsers: z.array(z.string()).default([])

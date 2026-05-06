@@ -3,12 +3,14 @@ import { cn } from '../../lib/utils';
 import { useQueues, type Queue } from '../../hooks/useQueues';
 import { useCategories } from '../../hooks/useCategories';
 import { useWorkflows } from '../../hooks/useWorkflows';
+import type { Workflow } from '../../types/ticket';
 import { useQuaiParameters } from '../../hooks/useQuaiParameters';
+import { useSites, type Site } from '../../hooks/useSites';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Card, CardContent } from '../molecules/ui/card';
 import { Badge } from '../atoms/ui/badge';
-import { Loader2, Plus, Edit2, ListOrdered, Info, Power, PowerOff, Tag, GitBranch, Monitor } from 'lucide-react';
+import { Loader2, Plus, Edit2, ListOrdered, Info, Power, PowerOff, Tag, GitBranch, Monitor, Building2 } from 'lucide-react';
 import { Modal } from '../molecules/ui/modal';
 import { toast } from '../molecules/ui/toast';
 import { useBulkSelection } from '../../hooks/useBulkSelection';
@@ -21,6 +23,7 @@ export const QueueManager = () => {
     const { categories, isLoading: isLoadingCategories } = useCategories();
     const { workflows, isLoading: isLoadingWorkflows } = useWorkflows();
     const { parameters: quais, isLoading: isLoadingQuais } = useQuaiParameters();
+    const { sites, isLoading: isLoadingSites } = useSites();
 
     const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +33,8 @@ export const QueueManager = () => {
         isActive: true, 
         categoryId: '',
         stepId: '',
-        quaiId: ''
+        quaiId: '',
+        siteId: ''
     });
 
     const {
@@ -51,7 +55,8 @@ export const QueueManager = () => {
                 isActive: queue.isActive,
                 categoryId: queue.categoryId || '',
                 stepId: queue.stepId || '',
-                quaiId: queue.quaiId || ''
+                quaiId: queue.quaiId || '',
+                siteId: queue.siteId || ''
             });
             setSelectedQueue(queue);
         } else {
@@ -61,7 +66,8 @@ export const QueueManager = () => {
                 isActive: true, 
                 categoryId: '',
                 stepId: '',
-                quaiId: ''
+                quaiId: '',
+                siteId: ''
             });
             setSelectedQueue(null);
         }
@@ -108,7 +114,7 @@ export const QueueManager = () => {
         });
     };
 
-    const isLoading = isLoadingQueues || isLoadingCategories || isLoadingWorkflows || isLoadingQuais;
+    const isLoading = isLoadingQueues || isLoadingCategories || isLoadingWorkflows || isLoadingQuais || isLoadingSites;
 
     if (isLoading) return (
         <div className="space-y-6">
@@ -120,8 +126,24 @@ export const QueueManager = () => {
         </div>
     );
 
-    // Flatten all steps from all workflows for the selector
-    const allSteps = workflows.flatMap(w => (w.steps || []).map(s => ({ ...s, workflowName: w.name })));
+    // Filtered data based on selected site
+    const filteredQuais = form.siteId 
+        ? quais.filter(q => q.siteId === form.siteId) 
+        : quais;
+
+    const allSteps = (() => {
+        if (form.siteId) {
+            const site = (sites as Site[]).find((s: Site) => s.siteId === form.siteId);
+            if (site && site.workflowId) {
+                const workflow = (workflows as Workflow[]).find(w => w.workflowId === site.workflowId);
+                if (workflow && workflow.steps && workflow.steps.length > 0) {
+                    return workflow.steps.map(s => ({ ...s, workflowName: workflow.name }));
+                }
+            }
+        }
+        // Fallback: show everything if no site selected or site has no steps
+        return workflows.flatMap(w => (w.steps || []).map(s => ({ ...s, workflowName: w.name })));
+    })();
 
     return (
         <div className="space-y-6">
@@ -189,6 +211,12 @@ export const QueueManager = () => {
                                                 {queue.category.name}
                                             </Badge>
                                         )}
+                                        {queue.site && (
+                                            <Badge variant="outline" className="text-[10px] border-slate-200 text-slate-500">
+                                                <Building2 className="h-3 w-3 mr-1" />
+                                                {queue.site.name}
+                                            </Badge>
+                                        )}
                                     </div>
                                     <div className="flex flex-wrap gap-4 pt-1">
                                         {queue.step && (
@@ -239,6 +267,22 @@ export const QueueManager = () => {
                         <Input placeholder="Ex: File d'attente Ventes" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-xl h-11" />
                     </div>
 
+                    <div className="space-y-1">
+                        <label className="text-xs font-black uppercase text-text-muted ml-1">Site Géographique</label>
+                        <select 
+                            value={form.siteId} 
+                            onChange={(e) => setForm({ ...form, siteId: e.target.value, stepId: '', quaiId: '' })}
+                            className="w-full h-11 rounded-xl border border-border bg-white/50 px-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        >
+                            <option value="">Sélectionner un site</option>
+                            {sites.map((site: Site) => (
+                                <option key={site.siteId} value={site.siteId}>
+                                    {site.name} ({site.code})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-xs font-black uppercase text-text-muted ml-1">Étape du Workflow</label>
@@ -264,7 +308,7 @@ export const QueueManager = () => {
                                 className="w-full h-11 rounded-xl border border-border bg-white/50 px-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/20"
                             >
                                 <option value="">Non assigné</option>
-                                {quais.map(quai => (
+                                {filteredQuais.map(quai => (
                                     <option key={quai.quaiId} value={quai.quaiId!}>
                                         {quai.label}
                                     </option>

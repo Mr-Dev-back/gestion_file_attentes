@@ -145,6 +145,11 @@ class QuaiController {
             const { quaiId, queueIds, ...data } = req.body;
             let param;
             
+            // Compatibility: ensure stepId is the first of stepIds if present
+            if (data.stepIds && Array.isArray(data.stepIds) && data.stepIds.length > 0) {
+                data.stepId = data.stepIds[0];
+            }
+
             if (quaiId) {
                 param = await QuaiParameter.findByPk(quaiId);
                 if (!param) return res.status(404).json({ error: 'Paramètre non trouvé' });
@@ -225,7 +230,12 @@ class QuaiController {
             const role = req.user.role;
 
             const quais = await QuaiParameter.findAll({
-                where: { stepId },
+                where: {
+                    [Op.or]: [
+                        { stepId },
+                        { stepIds: { [Op.contains]: [stepId] } }
+                    ]
+                },
                 include: [{ model: Queue, as: 'queues', attributes: ['queueId'] }]
             });
 

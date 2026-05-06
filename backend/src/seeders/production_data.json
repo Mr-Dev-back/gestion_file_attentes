@@ -6,7 +6,7 @@
       "slug": "USER",
       "description": "Gestion des comptes utilisateurs et profils",
       "createdAt": "2026-04-07T13:47:59.188Z",
-      "updatedAt": "2026-04-07T13:47:59.188Z"
+      "updatedAt": "2026-05-05T15:22:50.402Z"
     },
     {
       "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
@@ -14,7 +14,7 @@
       "slug": "ROLE",
       "description": "Configuration des accès et droits",
       "createdAt": "2026-04-07T13:47:59.216Z",
-      "updatedAt": "2026-04-07T13:47:59.216Z"
+      "updatedAt": "2026-05-05T15:22:50.408Z"
     },
     {
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
@@ -22,7 +22,7 @@
       "slug": "TICKET",
       "description": "Gestion des tickets de pesée et d'exploitation",
       "createdAt": "2026-04-07T13:47:59.219Z",
-      "updatedAt": "2026-04-07T13:47:59.219Z"
+      "updatedAt": "2026-05-05T15:22:50.410Z"
     },
     {
       "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
@@ -30,7 +30,7 @@
       "slug": "QUEUE",
       "description": "Configuration des files de traitement",
       "createdAt": "2026-04-07T13:47:59.222Z",
-      "updatedAt": "2026-04-07T13:47:59.222Z"
+      "updatedAt": "2026-05-05T15:22:50.412Z"
     },
     {
       "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
@@ -38,7 +38,7 @@
       "slug": "SITE",
       "description": "Paramétrage des sites physiques",
       "createdAt": "2026-04-07T13:47:59.224Z",
-      "updatedAt": "2026-04-07T13:47:59.224Z"
+      "updatedAt": "2026-05-05T15:22:50.413Z"
     },
     {
       "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
@@ -46,7 +46,7 @@
       "slug": "QUAI",
       "description": "Gestion des points de passage et terminaux",
       "createdAt": "2026-04-07T13:47:59.227Z",
-      "updatedAt": "2026-04-07T13:47:59.227Z"
+      "updatedAt": "2026-05-05T15:22:50.415Z"
     },
     {
       "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
@@ -54,7 +54,7 @@
       "slug": "REPORT",
       "description": "Accès aux statistiques et exports",
       "createdAt": "2026-04-07T13:47:59.230Z",
-      "updatedAt": "2026-04-07T13:47:59.230Z"
+      "updatedAt": "2026-05-05T15:22:50.416Z"
     },
     {
       "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
@@ -62,7 +62,7 @@
       "slug": "WORKFLOW",
       "description": "Configuration des parcours clients",
       "createdAt": "2026-04-07T13:47:59.232Z",
-      "updatedAt": "2026-04-07T13:47:59.232Z"
+      "updatedAt": "2026-05-05T15:22:50.418Z"
     },
     {
       "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
@@ -70,7 +70,7 @@
       "slug": "BORNE",
       "description": "Gestion des bornes tactiles",
       "createdAt": "2026-04-07T13:47:59.234Z",
-      "updatedAt": "2026-04-07T13:47:59.234Z"
+      "updatedAt": "2026-05-05T15:22:50.419Z"
     },
     {
       "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
@@ -78,7 +78,7 @@
       "slug": "SOCIETES",
       "description": "Gestion des sociétés ",
       "createdAt": "2026-04-07T16:06:29.065Z",
-      "updatedAt": "2026-04-07T16:06:29.065Z"
+      "updatedAt": "2026-05-05T15:22:50.420Z"
     },
     {
       "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
@@ -86,7 +86,7 @@
       "slug": "LOGS",
       "description": "Gestion des logs",
       "createdAt": "2026-04-13T11:24:04.618Z",
-      "updatedAt": "2026-04-13T11:24:04.618Z"
+      "updatedAt": "2026-05-05T15:22:50.422Z"
     }
   ],
   "actions": [
@@ -96,7 +96,7 @@
       "slug": "CREATE",
       "description": "Droit de création d'un nouvel objet",
       "createdAt": "2026-04-07T13:47:59.243Z",
-      "updatedAt": "2026-04-07T13:47:59.243Z"
+      "updatedAt": "2026-05-05T15:22:50.491Z"
     },
     {
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
@@ -104,7 +104,7 @@
       "slug": "READ",
       "description": "Droit de consultation des données",
       "createdAt": "2026-04-07T13:47:59.246Z",
-      "updatedAt": "2026-04-07T13:47:59.246Z"
+      "updatedAt": "2026-05-05T15:22:50.494Z"
     },
     {
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
@@ -112,7 +112,7 @@
       "slug": "UPDATE",
       "description": "Droit d'édition des données existantes",
       "createdAt": "2026-04-07T13:47:59.249Z",
-      "updatedAt": "2026-04-07T13:47:59.249Z"
+      "updatedAt": "2026-05-05T15:22:50.496Z"
     },
     {
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
@@ -120,7 +120,7 @@
       "slug": "DELETE",
       "description": "Droit de suppression",
       "createdAt": "2026-04-07T13:47:59.252Z",
-      "updatedAt": "2026-04-07T13:47:59.252Z"
+      "updatedAt": "2026-05-05T15:22:50.498Z"
     },
     {
       "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
@@ -128,7 +128,7 @@
       "slug": "VALIDATE",
       "description": "Droit de validation/approbation (ex: pesée)",
       "createdAt": "2026-04-07T13:47:59.255Z",
-      "updatedAt": "2026-04-07T13:47:59.255Z"
+      "updatedAt": "2026-05-05T15:22:50.500Z"
     },
     {
       "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
@@ -136,7 +136,7 @@
       "slug": "TRANSFER",
       "description": "Droit de réassignation ou transfert",
       "createdAt": "2026-04-07T13:47:59.257Z",
-      "updatedAt": "2026-04-07T13:47:59.257Z"
+      "updatedAt": "2026-05-05T15:22:50.502Z"
     },
     {
       "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
@@ -144,7 +144,7 @@
       "slug": "CALL",
       "description": "Droit d'appel d'un véhicule au quai",
       "createdAt": "2026-04-07T13:47:59.260Z",
-      "updatedAt": "2026-04-07T13:47:59.260Z"
+      "updatedAt": "2026-05-05T15:22:50.505Z"
     },
     {
       "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
@@ -152,488 +152,1733 @@
       "slug": "PRINT",
       "description": "Droit de génération de documents physiques",
       "createdAt": "2026-04-07T13:47:59.263Z",
-      "updatedAt": "2026-04-07T13:47:59.263Z"
+      "updatedAt": "2026-05-05T15:22:50.508Z"
+    }
+  ],
+  "companies": [
+    {
+      "companyId": "38839360-d2a9-429c-b9cc-f40f9cc5ca68",
+      "name": "Société Ivoirienne de Béton Manufacturé ",
+      "code": "SIBM",
+      "isActived": true,
+      "createdAt": "2026-05-05T11:36:23.533Z"
+    }
+  ],
+  "categories": [
+    {
+      "categoryId": "55fb71c2-5f5e-4d1c-9244-e6911ee31114",
+      "name": "Infrastructure ",
+      "prefix": "INFRA",
+      "color": "#f77d3b",
+      "estimatedDuration": 30,
+      "description": "Produits relatif à la construction d'infrastructure ",
+      "isActive": true,
+      "createdAt": "2026-05-05T11:32:24.969Z",
+      "updatedAt": "2026-05-05T15:22:50.687Z"
+    },
+    {
+      "categoryId": "340bce4b-c1a4-4354-a0d2-7f347dc2a1ff",
+      "name": "Electricité ",
+      "prefix": "ELEC",
+      "color": "#903bf7",
+      "estimatedDuration": 30,
+      "description": "Produits relatif à la construction d'infrastructure électrique ",
+      "isActive": true,
+      "createdAt": "2026-05-05T11:33:06.346Z",
+      "updatedAt": "2026-05-05T15:22:50.689Z"
+    },
+    {
+      "categoryId": "caae74eb-94e0-4542-9a75-0e11ba6df7bb",
+      "name": "Bâtiment ",
+      "prefix": "BAT",
+      "color": "#3b82f6",
+      "estimatedDuration": 20,
+      "description": "Produits relatif à construction de bâtiment ",
+      "isActive": true,
+      "createdAt": "2026-05-05T11:30:45.025Z",
+      "updatedAt": "2026-05-05T15:33:57.884Z"
+    }
+  ],
+  "workflows": [
+    {
+      "workflowId": "14aa75b4-0708-48b9-b0e4-4bf80ea14f09",
+      "name": "Parcours Client ",
+      "description": "Flux  standard ",
+      "isActived": true,
+      "createdAt": "2026-05-05T11:29:36.930Z"
+    },
+    {
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "Parcourt Secondaire ",
+      "description": "Flux Secondaire relatif au site",
+      "isActived": true,
+      "createdAt": "2026-05-06T08:24:52.037Z"
     }
   ],
   "permissions": [
     {
+      "permissionId": "017c3e5c-be85-4b6d-8a0a-4329c0fa4da3",
+      "name": "user:read",
+      "guardName": "api",
+      "code": "user:read",
+      "description": "Consulter les utilisateurs",
+      "action": "read",
+      "subject": "User",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.168Z",
+      "updatedAt": "2026-05-05T11:26:02.168Z"
+    },
+    {
+      "permissionId": "e8730692-c5dd-4120-b2e7-d06fade1da4e",
+      "name": "user:create",
+      "guardName": "api",
+      "code": "user:create",
+      "description": "Créer des comptes",
+      "action": "create",
+      "subject": "User",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.218Z",
+      "updatedAt": "2026-05-05T11:26:02.218Z"
+    },
+    {
+      "permissionId": "65bf5e6e-a6fa-4637-a62c-3dfc8d7e6ce8",
+      "name": "user:update",
+      "guardName": "api",
+      "code": "user:update",
+      "description": "Modifier/Suspendre des comptes",
+      "action": "update",
+      "subject": "User",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.223Z",
+      "updatedAt": "2026-05-05T11:26:02.223Z"
+    },
+    {
+      "permissionId": "a8b8200e-4bff-4d37-82ee-fc9e50f16819",
+      "name": "user:delete",
+      "guardName": "api",
+      "code": "user:delete",
+      "description": "Supprimer des comptes",
+      "action": "delete",
+      "subject": "User",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.227Z",
+      "updatedAt": "2026-05-05T11:26:02.227Z"
+    },
+    {
+      "permissionId": "f0efc00a-ed37-480b-b79b-aedacd198de6",
+      "name": "config:read",
+      "guardName": "api",
+      "code": "config:read",
+      "description": "Consulter les paramètres",
+      "action": "read",
+      "subject": "Config",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.231Z",
+      "updatedAt": "2026-05-05T11:26:02.231Z"
+    },
+    {
+      "permissionId": "87151a55-0da0-42cc-b622-deaa03b057c3",
+      "name": "config:update",
+      "guardName": "api",
+      "code": "config:update",
+      "description": "Modifier les paramètres globaux",
+      "action": "update",
+      "subject": "Config",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.235Z",
+      "updatedAt": "2026-05-05T11:26:02.235Z"
+    },
+    {
+      "permissionId": "c28ed143-338d-4bce-82ce-dbe2222b1d05",
+      "name": "workflow:manage",
+      "guardName": "api",
+      "code": "workflow:manage",
+      "description": "Gérer les étapes et transitions",
+      "action": "manage",
+      "subject": "Workflow",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.239Z",
+      "updatedAt": "2026-05-05T11:26:02.239Z"
+    },
+    {
+      "permissionId": "ed37ceb0-ce11-4514-9067-20d4a35dfb15",
+      "name": "audit:read",
+      "guardName": "api",
+      "code": "audit:read",
+      "description": "Consulter les logs audit",
+      "action": "read",
+      "subject": "Audit",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.244Z",
+      "updatedAt": "2026-05-05T11:26:02.244Z"
+    },
+    {
+      "permissionId": "52f5b0da-a30b-4c0f-a335-1a10b9770039",
+      "name": "audit:full",
+      "guardName": "api",
+      "code": "audit:full",
+      "description": "Accès complet aux logs et backups",
+      "action": "full",
+      "subject": "Audit",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.248Z",
+      "updatedAt": "2026-05-05T11:26:02.248Z"
+    },
+    {
+      "permissionId": "05d1d177-2a38-47e0-a8ba-d52dce073d5e",
+      "name": "dashboard:read",
+      "guardName": "api",
+      "code": "dashboard:read",
+      "description": "Accès aux statistiques temps réel",
+      "action": "read",
+      "subject": "Dashboard",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.252Z",
+      "updatedAt": "2026-05-05T11:26:02.252Z"
+    },
+    {
+      "permissionId": "54d7fdce-379a-4244-b326-882b764d347a",
+      "name": "report:export",
+      "guardName": "api",
+      "code": "report:export",
+      "description": "Générer des exports de performance",
+      "action": "export",
+      "subject": "Report",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.256Z",
+      "updatedAt": "2026-05-05T11:26:02.256Z"
+    },
+    {
+      "permissionId": "2b843d0b-7779-4e15-a172-7fe89deed2f6",
+      "name": "ticket:read",
+      "guardName": "api",
+      "code": "ticket:read",
+      "description": "Visualiser l'état des tickets",
+      "action": "read",
+      "subject": "Ticket",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.260Z",
+      "updatedAt": "2026-05-05T11:26:02.260Z"
+    },
+    {
+      "permissionId": "01be4385-52ab-49ab-bd01-bd2478ed9016",
+      "name": "ticket:search",
+      "guardName": "api",
+      "code": "ticket:search",
+      "description": "Rechercher par matricule",
+      "action": "search",
+      "subject": "Ticket",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.264Z",
+      "updatedAt": "2026-05-05T11:26:02.264Z"
+    },
+    {
+      "permissionId": "adeb8cbe-9d7b-4942-8d76-e2a229b0f880",
+      "name": "ticket:status",
+      "guardName": "api",
+      "code": "ticket:status",
+      "description": "Changer l'étape ou annuler",
+      "action": "status",
+      "subject": "Ticket",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.267Z",
+      "updatedAt": "2026-05-05T11:26:02.267Z"
+    },
+    {
+      "permissionId": "aad787ae-1627-4c35-8a08-15d9f3896717",
+      "name": "ticket:update",
+      "guardName": "api",
+      "code": "ticket:update",
+      "description": "Saisir des données (poids, chargement)",
+      "action": "update",
+      "subject": "Ticket",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.270Z",
+      "updatedAt": "2026-05-05T11:26:02.270Z"
+    },
+    {
+      "permissionId": "1b70bc6b-7831-4f8d-892f-bf4ee9d75907",
+      "name": "queue:read",
+      "guardName": "api",
+      "code": "queue:read",
+      "description": "Voir sa file d'attente",
+      "action": "read",
+      "subject": "Queue",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.274Z",
+      "updatedAt": "2026-05-05T11:26:02.274Z"
+    },
+    {
+      "permissionId": "5f5a692e-d960-414a-962e-394a6aa25e7e",
+      "name": "queue:manage",
+      "guardName": "api",
+      "code": "queue:manage",
+      "description": "Réordonner les priorités",
+      "action": "manage",
+      "subject": "Queue",
+      "conditions": null,
+      "resourceId": null,
+      "actionId": null,
+      "createdAt": "2026-05-05T11:26:02.277Z",
+      "updatedAt": "2026-05-05T11:26:02.277Z"
+    },
+    {
       "permissionId": "efe429cd-7182-44ea-912c-5764ecbaba6c",
+      "name": "USER:CREATE",
+      "guardName": "api",
       "code": "USER:CREATE",
       "description": "Droit de création d'un nouvel utilisateur",
+      "action": "create",
+      "subject": "User",
+      "conditions": null,
       "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.275Z",
-      "updatedAt": "2026-04-07T13:47:59.275Z"
+      "updatedAt": "2026-05-05T15:22:50.735Z"
     },
     {
       "permissionId": "c7463e7f-f09d-4ae8-bf48-f877224a62f0",
+      "name": "USER:READ",
+      "guardName": "api",
       "code": "USER:READ",
       "description": "Droit de consultation des données",
+      "action": "read",
+      "subject": "User",
+      "conditions": null,
       "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.358Z",
-      "updatedAt": "2026-04-07T13:47:59.358Z"
+      "updatedAt": "2026-05-05T15:22:50.744Z"
     },
     {
       "permissionId": "6df3d341-91eb-42fc-83b2-1c082897c5d5",
+      "name": "USER:UPDATE",
+      "guardName": "api",
       "code": "USER:UPDATE",
       "description": "Droit de modification des données",
+      "action": "update",
+      "subject": "User",
+      "conditions": null,
       "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.365Z",
-      "updatedAt": "2026-04-07T13:47:59.365Z"
+      "updatedAt": "2026-05-05T15:22:50.749Z"
     },
     {
       "permissionId": "b6bc25a8-e504-4c74-a2ea-51b57d82baae",
+      "name": "USER:DELETE",
+      "guardName": "api",
       "code": "USER:DELETE",
       "description": "Droit de suppression des données",
+      "action": "delete",
+      "subject": "User",
+      "conditions": null,
       "resourceId": "5ec75a1e-b8a5-431c-aded-ca5c2397a073",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.370Z",
-      "updatedAt": "2026-04-07T13:47:59.370Z"
+      "updatedAt": "2026-05-05T15:22:50.754Z"
     },
     {
       "permissionId": "fdf1d6d3-ec65-4ec4-9323-34cdae891dfd",
+      "name": "ROLE:CREATE",
+      "guardName": "api",
       "code": "ROLE:CREATE",
       "description": "Droit de création des rôles",
+      "action": "create",
+      "subject": "Role",
+      "conditions": null,
       "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.391Z",
-      "updatedAt": "2026-04-07T13:47:59.391Z"
+      "updatedAt": "2026-05-05T15:22:50.759Z"
     },
     {
       "permissionId": "a5df1c77-eccc-436d-b4c9-941064a4e775",
+      "name": "ROLE:READ",
+      "guardName": "api",
       "code": "ROLE:READ",
       "description": "Droit de consultation des rôles",
+      "action": "read",
+      "subject": "Role",
+      "conditions": null,
       "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.395Z",
-      "updatedAt": "2026-04-07T13:47:59.395Z"
+      "updatedAt": "2026-05-05T15:22:50.763Z"
     },
     {
       "permissionId": "1f5f1f18-0481-4434-9eda-a5e6e8859b0f",
+      "name": "ROLE:UPDATE",
+      "guardName": "api",
       "code": "ROLE:UPDATE",
       "description": "Droit de modification des rôles",
+      "action": "update",
+      "subject": "Role",
+      "conditions": null,
       "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.399Z",
-      "updatedAt": "2026-04-07T13:47:59.399Z"
+      "updatedAt": "2026-05-05T15:22:50.766Z"
     },
     {
       "permissionId": "a45d6b20-acf9-414b-bae1-9965391f5ce0",
+      "name": "ROLE:DELETE",
+      "guardName": "api",
       "code": "ROLE:DELETE",
       "description": "Droit de suppression des rôles",
+      "action": "delete",
+      "subject": "Role",
+      "conditions": null,
       "resourceId": "c4c2a984-2bab-4d17-a743-384f0d531c54",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.403Z",
-      "updatedAt": "2026-04-07T13:47:59.403Z"
+      "updatedAt": "2026-05-05T15:22:50.770Z"
     },
     {
       "permissionId": "c1e40447-34f9-49f4-9eab-a004c680a5b7",
+      "name": "TICKET:CREATE",
+      "guardName": "api",
       "code": "TICKET:CREATE",
       "description": "Droit de création des tickets",
+      "action": "create",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.422Z",
-      "updatedAt": "2026-04-07T13:47:59.422Z"
+      "updatedAt": "2026-05-05T15:22:50.774Z"
     },
     {
       "permissionId": "baf0d716-097c-40f5-8ecf-6024803e8b3b",
+      "name": "TICKET:READ",
+      "guardName": "api",
       "code": "TICKET:READ",
       "description": "Droit de consultation des tickets",
+      "action": "read",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.480Z",
-      "updatedAt": "2026-04-07T13:47:59.480Z"
+      "updatedAt": "2026-05-05T15:22:50.778Z"
     },
     {
       "permissionId": "72abdbe5-ad9a-4b54-9023-7d0b0c95b13b",
+      "name": "TICKET:UPDATE",
+      "guardName": "api",
       "code": "TICKET:UPDATE",
       "description": "Droit de modification des tickets",
+      "action": "update",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.487Z",
-      "updatedAt": "2026-04-07T13:47:59.487Z"
+      "updatedAt": "2026-05-05T15:22:50.781Z"
     },
     {
       "permissionId": "55bac2a5-8e1b-4448-8371-aba7148f0f46",
+      "name": "TICKET:DELETE",
+      "guardName": "api",
       "code": "TICKET:DELETE",
       "description": "Droit de suppression des tickets",
+      "action": "delete",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.493Z",
-      "updatedAt": "2026-04-07T13:47:59.493Z"
+      "updatedAt": "2026-05-05T15:22:50.785Z"
     },
     {
       "permissionId": "b163dbe9-b715-4074-bb64-5ec3ed16e010",
+      "name": "TICKET:VALIDATE",
+      "guardName": "api",
       "code": "TICKET:VALIDATE",
       "description": "Droit de validation des tickets",
+      "action": "validate",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "acf9dd41-acb5-4722-af10-a99ac3da3a2d",
       "createdAt": "2026-04-07T13:47:59.498Z",
-      "updatedAt": "2026-04-07T13:47:59.498Z"
+      "updatedAt": "2026-05-05T15:22:50.789Z"
     },
     {
       "permissionId": "465ed602-e9dc-475b-8acf-e4e43a9440ff",
+      "name": "TICKET:TRANSFER",
+      "guardName": "api",
       "code": "TICKET:TRANSFER",
       "description": "Droit de transfert des tickets",
+      "action": "transfer",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "3dc2fc3d-de4d-4fbb-8afb-d6724713dbfa",
       "createdAt": "2026-04-07T13:47:59.502Z",
-      "updatedAt": "2026-04-07T13:47:59.502Z"
+      "updatedAt": "2026-05-05T15:22:50.792Z"
     },
     {
       "permissionId": "0c1a9ccc-89c2-4177-871d-07feb59250e6",
+      "name": "TICKET:CALL",
+      "guardName": "api",
       "code": "TICKET:CALL",
       "description": "Droit d'appel des tickets",
+      "action": "call",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "36e1265d-d954-4e12-8e6b-05016eda0f94",
       "createdAt": "2026-04-07T13:47:59.506Z",
-      "updatedAt": "2026-04-07T13:47:59.506Z"
+      "updatedAt": "2026-05-05T15:22:50.796Z"
     },
     {
       "permissionId": "482a72c1-7091-481a-8704-c7ab0c347ac9",
+      "name": "TICKET:PRINT",
+      "guardName": "api",
       "code": "TICKET:PRINT",
       "description": "Droit d'impression des tickets",
+      "action": "print",
+      "subject": "Ticket",
+      "conditions": null,
       "resourceId": "3663a607-5d6f-4762-89ba-3985759d55b9",
       "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
       "createdAt": "2026-04-07T13:47:59.509Z",
-      "updatedAt": "2026-04-07T13:47:59.509Z"
+      "updatedAt": "2026-05-05T15:22:50.799Z"
     },
     {
       "permissionId": "12061b61-0a2a-4247-b933-4b9e80edd88c",
+      "name": "QUEUE:CREATE",
+      "guardName": "api",
       "code": "QUEUE:CREATE",
       "description": "Droit de création des files d'attente",
+      "action": "create",
+      "subject": "Queue",
+      "conditions": null,
       "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.513Z",
-      "updatedAt": "2026-04-07T13:47:59.513Z"
+      "updatedAt": "2026-05-05T15:22:50.803Z"
     },
     {
       "permissionId": "ff309d59-394e-48d8-954f-286c3108dd4d",
+      "name": "QUEUE:READ",
+      "guardName": "api",
       "code": "QUEUE:READ",
       "description": "Droit de consultation des files d'attente",
+      "action": "read",
+      "subject": "Queue",
+      "conditions": null,
       "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.518Z",
-      "updatedAt": "2026-04-07T13:47:59.518Z"
+      "updatedAt": "2026-05-05T15:22:50.807Z"
     },
     {
       "permissionId": "acd63819-9390-49bb-b30e-811e6a405e51",
+      "name": "QUEUE:UPDATE",
+      "guardName": "api",
       "code": "QUEUE:UPDATE",
       "description": "Droit de modification des files d'attente",
+      "action": "update",
+      "subject": "Queue",
+      "conditions": null,
       "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.523Z",
-      "updatedAt": "2026-04-07T13:47:59.523Z"
+      "updatedAt": "2026-05-05T15:22:50.811Z"
     },
     {
       "permissionId": "7ec17510-9a12-4e76-802c-0dcbb1a3b155",
+      "name": "QUEUE:DELETE",
+      "guardName": "api",
       "code": "QUEUE:DELETE",
       "description": "Droit de suppression des files d'attente",
+      "action": "delete",
+      "subject": "Queue",
+      "conditions": null,
       "resourceId": "6bd7b7fb-17e6-4cdc-8ee4-7a5db714ff9c",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.528Z",
-      "updatedAt": "2026-04-07T13:47:59.528Z"
+      "updatedAt": "2026-05-05T15:22:50.816Z"
     },
     {
       "permissionId": "b53255e3-f84a-49db-a4a6-5a1fd98f2c0c",
+      "name": "SITE:CREATE",
+      "guardName": "api",
       "code": "SITE:CREATE",
       "description": "Droit de création des sites",
+      "action": "create",
+      "subject": "Site",
+      "conditions": null,
       "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.552Z",
-      "updatedAt": "2026-04-07T13:47:59.552Z"
+      "updatedAt": "2026-05-05T15:22:50.820Z"
     },
     {
       "permissionId": "20d9708d-cfd6-4589-b3c6-32ddf8596f3f",
+      "name": "SITE:READ",
+      "guardName": "api",
       "code": "SITE:READ",
       "description": "Droit de consultation des sites",
+      "action": "read",
+      "subject": "Site",
+      "conditions": null,
       "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.557Z",
-      "updatedAt": "2026-04-07T13:47:59.557Z"
+      "updatedAt": "2026-05-05T15:22:50.825Z"
     },
     {
       "permissionId": "6587b7ac-9dc4-4115-a1b3-ce4649b87366",
+      "name": "SITE:UPDATE",
+      "guardName": "api",
       "code": "SITE:UPDATE",
       "description": "Droit de modification des sites",
+      "action": "update",
+      "subject": "Site",
+      "conditions": null,
       "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.562Z",
-      "updatedAt": "2026-04-07T13:47:59.562Z"
+      "updatedAt": "2026-05-05T15:22:50.829Z"
     },
     {
       "permissionId": "e7a4e4f5-3f27-4269-afd6-a4e16830acc7",
+      "name": "SITE:DELETE",
+      "guardName": "api",
       "code": "SITE:DELETE",
       "description": "Droit de suppression des sites",
+      "action": "delete",
+      "subject": "Site",
+      "conditions": null,
       "resourceId": "e068ed33-41cf-4b00-938a-c1daff5a6279",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.569Z",
-      "updatedAt": "2026-04-07T13:47:59.569Z"
+      "updatedAt": "2026-05-05T15:22:50.833Z"
     },
     {
       "permissionId": "4dd3a7d9-ba10-4166-8e9d-4a606364d926",
+      "name": "QUAI:CREATE",
+      "guardName": "api",
       "code": "QUAI:CREATE",
       "description": "Droit de création des quais",
+      "action": "create",
+      "subject": "Quai",
+      "conditions": null,
       "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.591Z",
-      "updatedAt": "2026-04-07T13:47:59.591Z"
+      "updatedAt": "2026-05-05T15:22:50.838Z"
     },
     {
       "permissionId": "497a37be-93e0-47d4-abda-f529b61571de",
+      "name": "QUAI:READ",
+      "guardName": "api",
       "code": "QUAI:READ",
       "description": "Droit de consultation des quais",
+      "action": "read",
+      "subject": "Quai",
+      "conditions": null,
       "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.598Z",
-      "updatedAt": "2026-04-07T13:47:59.598Z"
+      "updatedAt": "2026-05-05T15:22:50.841Z"
     },
     {
       "permissionId": "06954e69-79bc-42ba-8e5e-cb94b1063756",
+      "name": "QUAI:UPDATE",
+      "guardName": "api",
       "code": "QUAI:UPDATE",
       "description": "Droit de modification des quais",
+      "action": "update",
+      "subject": "Quai",
+      "conditions": null,
       "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.603Z",
-      "updatedAt": "2026-04-07T13:47:59.603Z"
+      "updatedAt": "2026-05-05T15:22:50.845Z"
     },
     {
       "permissionId": "9ec66af9-aff9-4c33-9094-2d4a65e7f902",
+      "name": "QUAI:DELETE",
+      "guardName": "api",
       "code": "QUAI:DELETE",
       "description": "Droit de suppression des quais",
+      "action": "delete",
+      "subject": "Quai",
+      "conditions": null,
       "resourceId": "9d5fd4ec-dfe8-4b8f-9eb7-6088d4291d99",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.609Z",
-      "updatedAt": "2026-04-07T13:47:59.609Z"
+      "updatedAt": "2026-05-05T15:22:50.847Z"
     },
     {
       "permissionId": "93bfd0ba-3700-4df5-9ac9-e3aa7849bf30",
+      "name": "REPORT:CREATE",
+      "guardName": "api",
       "code": "REPORT:CREATE",
       "description": "Droit de création des rapports",
+      "action": "create",
+      "subject": "Report",
+      "conditions": null,
       "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.635Z",
-      "updatedAt": "2026-04-07T13:47:59.635Z"
+      "updatedAt": "2026-05-05T15:22:50.851Z"
     },
     {
       "permissionId": "7a829b4c-1fed-45c1-a7c5-62f119490e1b",
+      "name": "REPORT:READ",
+      "guardName": "api",
       "code": "REPORT:READ",
       "description": "Droit de consultation des rapports",
+      "action": "read",
+      "subject": "Report",
+      "conditions": null,
       "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.640Z",
-      "updatedAt": "2026-04-07T13:47:59.640Z"
+      "updatedAt": "2026-05-05T15:22:50.854Z"
     },
     {
       "permissionId": "648ba86d-2cfd-4873-84a8-c39ba1dd30b2",
+      "name": "REPORT:UPDATE",
+      "guardName": "api",
       "code": "REPORT:UPDATE",
       "description": "Droit de modification des rapports",
+      "action": "update",
+      "subject": "Report",
+      "conditions": null,
       "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.644Z",
-      "updatedAt": "2026-04-07T13:47:59.644Z"
+      "updatedAt": "2026-05-05T15:22:50.857Z"
     },
     {
       "permissionId": "0d029cee-2681-4c20-913d-4022143b6c46",
+      "name": "REPORT:DELETE",
+      "guardName": "api",
       "code": "REPORT:DELETE",
       "description": "Droit de suppression des rapports",
+      "action": "delete",
+      "subject": "Report",
+      "conditions": null,
       "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.650Z",
-      "updatedAt": "2026-04-07T13:47:59.650Z"
+      "updatedAt": "2026-05-05T15:22:50.860Z"
     },
     {
       "permissionId": "a6b37cb5-3d80-456d-b975-70429495224b",
+      "name": "REPORT:PRINT",
+      "guardName": "api",
       "code": "REPORT:PRINT",
       "description": "Droit d'impression des rapports",
+      "action": "print",
+      "subject": "Report",
+      "conditions": null,
       "resourceId": "95114544-7671-4ebe-8263-831ca6b6e49e",
       "actionId": "e5bdd626-03d0-4c8f-b245-757c539e4a68",
       "createdAt": "2026-04-07T13:47:59.666Z",
-      "updatedAt": "2026-04-07T13:47:59.666Z"
+      "updatedAt": "2026-05-05T15:22:50.863Z"
     },
     {
       "permissionId": "224a776d-823e-4e64-ac3a-8c394d881493",
+      "name": "WORKFLOW:CREATE",
+      "guardName": "api",
       "code": "WORKFLOW:CREATE",
       "description": "Droit de création des workflows",
+      "action": "create",
+      "subject": "Workflow",
+      "conditions": null,
       "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.670Z",
-      "updatedAt": "2026-04-07T13:47:59.670Z"
+      "updatedAt": "2026-05-05T15:22:50.866Z"
     },
     {
       "permissionId": "26f082fe-8cd0-4e9c-adc9-2a92a6b3a9f7",
+      "name": "WORKFLOW:READ",
+      "guardName": "api",
       "code": "WORKFLOW:READ",
       "description": "Droit de consultation des workflows",
+      "action": "read",
+      "subject": "Workflow",
+      "conditions": null,
       "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.674Z",
-      "updatedAt": "2026-04-07T13:47:59.674Z"
+      "updatedAt": "2026-05-05T15:22:50.869Z"
     },
     {
       "permissionId": "6303a98a-c24f-451f-af75-38562915ab8b",
+      "name": "WORKFLOW:UPDATE",
+      "guardName": "api",
       "code": "WORKFLOW:UPDATE",
       "description": "Droit de modification des workflows",
+      "action": "update",
+      "subject": "Workflow",
+      "conditions": null,
       "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.678Z",
-      "updatedAt": "2026-04-07T13:47:59.678Z"
+      "updatedAt": "2026-05-05T15:22:50.872Z"
     },
     {
       "permissionId": "2701ea06-2600-4cbb-ac0b-c6eb87c405e5",
+      "name": "WORKFLOW:DELETE",
+      "guardName": "api",
       "code": "WORKFLOW:DELETE",
       "description": "Droit de suppression des workflows",
+      "action": "delete",
+      "subject": "Workflow",
+      "conditions": null,
       "resourceId": "38cbd7af-2e3f-4078-8a2e-2f34c1f3b4cd",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.683Z",
-      "updatedAt": "2026-04-07T13:47:59.683Z"
+      "updatedAt": "2026-05-05T15:22:50.874Z"
     },
     {
       "permissionId": "1b9caf50-00fc-42be-8db6-210d52417ca5",
+      "name": "BORNE:CREATE",
+      "guardName": "api",
       "code": "BORNE:CREATE",
       "description": "Droit de création des bornes",
+      "action": "create",
+      "subject": "Borne",
+      "conditions": null,
       "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T13:47:59.708Z",
-      "updatedAt": "2026-04-07T13:47:59.708Z"
+      "updatedAt": "2026-05-05T15:22:50.877Z"
     },
     {
       "permissionId": "3356bc2c-c8f4-49e1-bb5b-7079b8fd1816",
+      "name": "BORNE:READ",
+      "guardName": "api",
       "code": "BORNE:READ",
       "description": "Droit de consultation des bornes",
+      "action": "read",
+      "subject": "Borne",
+      "conditions": null,
       "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T13:47:59.712Z",
-      "updatedAt": "2026-04-07T13:47:59.712Z"
+      "updatedAt": "2026-05-05T15:22:50.880Z"
     },
     {
       "permissionId": "cf066b3e-57aa-4aa8-88ef-53e304247295",
+      "name": "BORNE:UPDATE",
+      "guardName": "api",
       "code": "BORNE:UPDATE",
       "description": "Droit de modification des bornes",
+      "action": "update",
+      "subject": "Borne",
+      "conditions": null,
       "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T13:47:59.717Z",
-      "updatedAt": "2026-04-07T13:47:59.717Z"
+      "updatedAt": "2026-05-05T15:22:50.882Z"
     },
     {
       "permissionId": "9637e011-311e-4a11-8c2a-a49a808839f8",
+      "name": "BORNE:DELETE",
+      "guardName": "api",
       "code": "BORNE:DELETE",
       "description": "Droit de suppression des bornes",
+      "action": "delete",
+      "subject": "Borne",
+      "conditions": null,
       "resourceId": "e4eeeb5b-f6bb-4615-8f7a-486e1d26fbd5",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T13:47:59.721Z",
-      "updatedAt": "2026-04-07T13:47:59.721Z"
+      "updatedAt": "2026-05-05T15:22:50.886Z"
     },
     {
       "permissionId": "9ac990c0-7929-41c7-a1fa-0de4276e3b50",
+      "name": "SOCIETES:CREATE",
+      "guardName": "api",
       "code": "SOCIETES:CREATE",
       "description": "Droit de création des sociétés",
+      "action": "create",
+      "subject": "Societes",
+      "conditions": null,
       "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-07T16:06:29.089Z",
-      "updatedAt": "2026-04-07T16:06:29.089Z"
+      "updatedAt": "2026-05-05T15:22:50.888Z"
     },
     {
       "permissionId": "7506f309-a255-48f3-9606-ca45918729e5",
+      "name": "SOCIETES:READ",
+      "guardName": "api",
       "code": "SOCIETES:READ",
       "description": "Droit de consultation des sociétés",
+      "action": "read",
+      "subject": "Societes",
+      "conditions": null,
       "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-07T16:06:29.089Z",
-      "updatedAt": "2026-04-07T16:06:29.089Z"
+      "updatedAt": "2026-05-05T15:22:50.891Z"
     },
     {
       "permissionId": "8a94a251-8160-44bc-91c8-8118ff715a8f",
+      "name": "SOCIETES:UPDATE",
+      "guardName": "api",
       "code": "SOCIETES:UPDATE",
       "description": "Droit de modification des sociétés",
+      "action": "update",
+      "subject": "Societes",
+      "conditions": null,
       "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-07T16:06:29.089Z",
-      "updatedAt": "2026-04-07T16:06:29.089Z"
+      "updatedAt": "2026-05-05T15:22:50.894Z"
     },
     {
       "permissionId": "6709a95a-7c34-4d0e-86af-a2112f8b3e4d",
+      "name": "SOCIETES:DELETE",
+      "guardName": "api",
       "code": "SOCIETES:DELETE",
       "description": "Droit de suppression des sociétés",
+      "action": "delete",
+      "subject": "Societes",
+      "conditions": null,
       "resourceId": "3aa31d3f-c2b4-4fce-acfe-d31a107d44f7",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-07T16:06:29.089Z",
-      "updatedAt": "2026-04-07T16:06:29.089Z"
+      "updatedAt": "2026-05-05T15:22:50.897Z"
     },
     {
       "permissionId": "bdd67bd9-5e24-4496-ab15-ee8795c3a4fa",
+      "name": "LOGS:CREATE",
+      "guardName": "api",
       "code": "LOGS:CREATE",
       "description": "Droit de création des logs",
+      "action": "create",
+      "subject": "Logs",
+      "conditions": null,
       "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
       "actionId": "81927b22-a178-422f-89a9-08f6ce8dc34e",
       "createdAt": "2026-04-13T11:24:04.678Z",
-      "updatedAt": "2026-04-13T11:24:04.678Z"
+      "updatedAt": "2026-05-05T15:22:50.900Z"
     },
     {
       "permissionId": "851b88d4-cca4-427d-8e0b-3156f425f82d",
+      "name": "LOGS:READ",
+      "guardName": "api",
       "code": "LOGS:READ",
       "description": "Droit de consultation des logs",
+      "action": "read",
+      "subject": "Logs",
+      "conditions": null,
       "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
       "actionId": "3bdb0f7e-4ab8-44de-996e-33363a2bb4b7",
       "createdAt": "2026-04-13T11:24:04.679Z",
-      "updatedAt": "2026-04-13T11:24:04.679Z"
+      "updatedAt": "2026-05-05T15:22:50.903Z"
     },
     {
       "permissionId": "2b0b6114-145f-45e6-b22e-c1d2f30cc1d6",
+      "name": "LOGS:UPDATE",
+      "guardName": "api",
       "code": "LOGS:UPDATE",
       "description": "Droit de modification des logs",
+      "action": "update",
+      "subject": "Logs",
+      "conditions": null,
       "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
       "actionId": "ad1ee7c6-8af7-4d58-85af-6c477c6dc04f",
       "createdAt": "2026-04-13T11:24:04.680Z",
-      "updatedAt": "2026-04-13T11:24:04.680Z"
+      "updatedAt": "2026-05-05T15:22:50.907Z"
     },
     {
       "permissionId": "b5303248-048b-40b8-95ba-5b7f027b215c",
+      "name": "LOGS:DELETE",
+      "guardName": "api",
       "code": "LOGS:DELETE",
       "description": "Droit de suppression des logs",
+      "action": "delete",
+      "subject": "Logs",
+      "conditions": null,
       "resourceId": "82ffb952-df06-42ae-9c33-809410872fb5",
       "actionId": "13bab396-2cdb-4f96-9197-813c9cc6cdbc",
       "createdAt": "2026-04-13T11:24:04.680Z",
-      "updatedAt": "2026-04-13T11:24:04.680Z"
+      "updatedAt": "2026-05-05T15:22:50.910Z"
     }
   ],
   "roles": [
     {
-      "roleId": "a38bb09b-bb74-48fd-8a51-65fc847f1246",
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
       "name": "ADMINISTRATOR",
+      "guardName": "api",
       "description": "Accès total système",
       "scope": "GLOBAL",
-      "createdAt": "2026-03-30T10:55:05.060Z",
-      "updatedAt": "2026-03-30T10:55:05.060Z"
+      "createdAt": "2026-05-05T11:26:02.287Z",
+      "updatedAt": "2026-05-05T15:22:50.934Z"
     },
     {
-      "roleId": "1572879e-1266-4890-a0ec-cd4ea4014a05",
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
       "name": "MANAGER",
+      "guardName": "api",
       "description": "Pilotage société",
       "scope": "COMPANY",
-      "createdAt": "2026-03-30T10:55:05.101Z",
-      "updatedAt": "2026-03-30T10:55:05.101Z"
+      "createdAt": "2026-05-05T11:26:02.305Z",
+      "updatedAt": "2026-05-05T15:22:50.937Z"
     },
     {
-      "roleId": "9603ffc2-486f-45a9-8e22-a34b7d8d3c07",
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
       "name": "SUPERVISOR",
+      "guardName": "api",
       "description": "Gestionnaire de site",
       "scope": "SITE",
-      "createdAt": "2026-03-30T10:55:05.103Z",
-      "updatedAt": "2026-03-30T10:55:05.103Z"
+      "createdAt": "2026-05-05T11:26:02.311Z",
+      "updatedAt": "2026-05-05T15:22:50.940Z"
     },
     {
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
       "name": "AGENT_QUAI",
+      "guardName": "api",
       "description": "Opérateur de quai",
       "scope": "SITE",
-      "createdAt": "2026-03-30T10:55:05.104Z",
-      "updatedAt": "2026-03-30T10:55:05.104Z"
+      "createdAt": "2026-05-05T11:26:02.316Z",
+      "updatedAt": "2026-05-05T15:22:50.942Z"
     }
   ],
-  "rolePermissions": [],
-  "categoryQueues": [],
+  "sites": [
+    {
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "companyId": "38839360-d2a9-429c-b9cc-f40f9cc5ca68",
+      "workflowId": "14aa75b4-0708-48b9-b0e4-4bf80ea14f09",
+      "name": "ABIDJAN",
+      "code": "ABJ01",
+      "address": "Abidjan PK23 Zone Industrielle",
+      "alertThreshold": 45,
+      "isActived": true,
+      "createdAt": "2026-05-05T11:37:06.302Z"
+    },
+    {
+      "siteId": "e90293cc-a2a0-426e-844e-ebaff114db28",
+      "companyId": "38839360-d2a9-429c-b9cc-f40f9cc5ca68",
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "SAN-PEDRO",
+      "code": "SPD01",
+      "address": null,
+      "alertThreshold": 45,
+      "isActived": true,
+      "createdAt": "2026-05-06T08:31:07.466Z"
+    },
+    {
+      "siteId": "eb9b4f4d-1e91-469a-817e-05c505018589",
+      "companyId": "38839360-d2a9-429c-b9cc-f40f9cc5ca68",
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "YAMOUSSOKRO",
+      "code": "YAM01",
+      "address": null,
+      "alertThreshold": 45,
+      "isActived": true,
+      "createdAt": "2026-05-06T08:31:40.759Z"
+    },
+    {
+      "siteId": "58d88acf-d940-47be-9208-5add9c442fb3",
+      "companyId": "38839360-d2a9-429c-b9cc-f40f9cc5ca68",
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "KORHOGO",
+      "code": "KRG01",
+      "address": null,
+      "alertThreshold": 45,
+      "isActived": true,
+      "createdAt": "2026-05-06T08:33:12.397Z"
+    }
+  ],
+  "workflowSteps": [
+    {
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "workflowId": "14aa75b4-0708-48b9-b0e4-4bf80ea14f09",
+      "name": "Enregistrement ",
+      "stepCode": "STP_1_ENREGISTREMENT_",
+      "orderNumber": 1,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:15:31.331Z",
+      "updatedAt": "2026-05-05T15:22:51.045Z"
+    },
+    {
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "workflowId": "14aa75b4-0708-48b9-b0e4-4bf80ea14f09",
+      "name": "Pesée Initiale ",
+      "stepCode": "STP_2_PESÉE_INITIALE_",
+      "orderNumber": 2,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:16:01.995Z",
+      "updatedAt": "2026-05-05T15:22:51.048Z"
+    },
+    {
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "workflowId": "14aa75b4-0708-48b9-b0e4-4bf80ea14f09",
+      "name": "Chargement ",
+      "stepCode": "STP_3_CHARGEMENT_",
+      "orderNumber": 3,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:16:19.251Z",
+      "updatedAt": "2026-05-05T15:22:51.051Z"
+    },
+    {
+      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
+      "workflowId": "14aa75b4-0708-48b9-b0e4-4bf80ea14f09",
+      "name": "Pesée Sortie ",
+      "stepCode": "STP_4_PESÉE_SORTIE_",
+      "orderNumber": 4,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-03-30T11:16:37.240Z",
+      "updatedAt": "2026-05-05T15:22:51.054Z"
+    },
+    {
+      "stepId": "90518028-dcf3-4618-b86a-0d6a997a3e07",
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "Réception",
+      "stepCode": "STP_1_RÉCEPTION",
+      "orderNumber": 1,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-05-06T08:28:39.236Z",
+      "updatedAt": "2026-05-06T08:28:39.236Z"
+    },
+    {
+      "stepId": "41a19ba0-feeb-4124-8d22-38ea11cfd4bb",
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "Chargement ",
+      "stepCode": "STP_2_CHARGEMENT_",
+      "orderNumber": 2,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-05-06T08:29:05.452Z",
+      "updatedAt": "2026-05-06T08:29:05.452Z"
+    },
+    {
+      "stepId": "66b59426-40a7-4a54-95f1-41c5cae36e8d",
+      "workflowId": "9ef0f61a-d219-4d6b-b765-d6e4a05db9d2",
+      "name": "Finalisation ",
+      "stepCode": "STP_3_FINALISATION_",
+      "orderNumber": 3,
+      "isActived": true,
+      "formConfig": [],
+      "isolationAfterRecalls": 3,
+      "createdAt": "2026-05-06T08:29:48.880Z",
+      "updatedAt": "2026-05-06T08:29:48.880Z"
+    }
+  ],
+  "workflowTransitions": [],
+  "users": [
+    {
+      "userId": "8149ee8e-2186-44a9-ac57-d6b92283cfb7",
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "LABELMANAGER",
+      "email": "info.dsi@sibmci.com",
+      "password": "$2b$10$.U7.QTi2S9E6u8/QtYpBvuHVqFdgyIl0acC3R/3Xa/Fjjj79Rbc1i",
+      "firstName": "ADMIN",
+      "lastName": "DSI",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-05T11:26:02.407Z",
+      "updatedAt": "2026-05-05T11:27:42.536Z"
+    },
+    {
+      "userId": "7d36ee96-75fe-4b9c-a460-cb47072ef02d",
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "RSI",
+      "email": "j.kouadio@sibmci.com",
+      "password": "$2b$10$B4WQaEgz0qBE2MJmlgnxWOKoOFTGUWJsyKT0tAYLANy3hUYiCt7KW",
+      "firstName": "KOUADIO",
+      "lastName": "Philippe",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-05T16:12:45.081Z",
+      "updatedAt": "2026-05-05T16:12:45.081Z"
+    },
+    {
+      "userId": "e048c08c-28b6-4735-b15d-c80fbf48a36d",
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "STAGIAIRE",
+      "email": "stagiaire.info@sibmci.com",
+      "password": "$2b$10$fZJuPH/nzQOfNow9/5DmXe/sVRmeAlNz1IyjXP.xyfOHLL1DTkd0C",
+      "firstName": "KEI",
+      "lastName": "FREJUSTE",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-05T16:11:10.537Z",
+      "updatedAt": "2026-05-05T16:13:17.016Z"
+    },
+    {
+      "userId": "0635b8dd-abc0-4a14-bf83-2aa01076c133",
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "AIFORMATIQUE",
+      "email": "support.info@sibmci.com",
+      "password": "$2b$10$XUzK8eSsI2xVHCN3dAwR1ehDkrRvDtF3QM3iO3JxuCgl9iJxnZ7NW",
+      "firstName": "TROH",
+      "lastName": "Ephrem",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-05T16:14:10.745Z",
+      "updatedAt": "2026-05-05T16:14:10.745Z"
+    },
+    {
+      "userId": "9fa4c42d-1a0f-42fb-876c-2d81b379e8ce",
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
+      "siteId": null,
+      "companyId": "38839360-d2a9-429c-b9cc-f40f9cc5ca68",
+      "assignedQueueId": null,
+      "username": "DSC",
+      "email": "e.yao@sibmci.com",
+      "password": "$2b$10$XYBX36J/1nRG3wTn8w3/BuSUnig8mh3V4ni/BoVPsidfmkMJc4kVC",
+      "firstName": "YAO",
+      "lastName": "Eugène",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-05T16:15:23.788Z",
+      "updatedAt": "2026-05-05T16:15:23.788Z"
+    },
+    {
+      "userId": "048aad0b-e68f-4b41-8e71-50af647f6564",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "username": "AVENTE",
+      "email": "a.vente@sibmci.com",
+      "password": "$2b$10$0VXdgHHic.hXvUnwlzePG.kQqRfP9DIaCTLPaDele4.bxeAIAZEWe",
+      "firstName": "Mathurin",
+      "lastName": "ZERBO",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:38:23.732Z",
+      "updatedAt": "2026-05-06T08:43:37.718Z"
+    },
+    {
+      "userId": "fba7888a-3056-4319-9462-38e223d37a0c",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "username": "VENTEBAT",
+      "email": "vente.bat@sibmci.com",
+      "password": "$2b$10$h8WgpC8dru9RXB1l0X.nneZnl5wVhkAaH1YXVS2zRxr4UdfwQxCNS",
+      "firstName": "Hamède",
+      "lastName": "COULYBALI",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:51:02.208Z",
+      "updatedAt": "2026-05-06T08:51:02.208Z"
+    },
+    {
+      "userId": "76a33bb0-d332-4cb6-a232-d8a7e0daab6a",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "username": "VENTEINFRA",
+      "email": "vente.infra@sibmci.com",
+      "password": "$2b$10$cFsqWRfJh3se0JG9pqWelu2jEIQS4Ukeb8ma/WKZzKPcf002nkVia",
+      "firstName": "Serge",
+      "lastName": "IRIE",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:51:54.707Z",
+      "updatedAt": "2026-05-06T08:51:54.707Z"
+    },
+    {
+      "userId": "9350dbe9-098b-47d8-80c0-9e90ff522102",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "username": "VENTEELEC",
+      "email": "vente.elec@sibmci.com",
+      "password": "$2b$10$jx9oaXC435NNhfz2MNgi5OFtWQeWozdnf/pp3IsIAlOWDq5yoyAQO",
+      "firstName": "Charles",
+      "lastName": "KONAN",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:53:04.467Z",
+      "updatedAt": "2026-05-06T08:53:04.467Z"
+    },
+    {
+      "userId": "0ebc14ad-62f8-427a-b775-573efe2b860f",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "username": "APESEUR",
+      "email": "pont.bascule@sibmci.com",
+      "password": "$2b$10$OveqWtQfuL2249W7CW68h.znRi9IWfRWO6XL6o3mF11IQMYKhwp3a",
+      "firstName": "Edward",
+      "lastName": "BROU",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:54:18.891Z",
+      "updatedAt": "2026-05-06T08:54:18.891Z"
+    },
+    {
+      "userId": "2936f731-791a-4a6a-b155-c978992a6de2",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "username": "EXPORTBAT",
+      "email": "export.bat@sibmci.com",
+      "password": "$2b$10$C15yAbhD8HwjNs2GIzJ.VefsyAemztVj34GEtl3vWb9pLXApj.uFS",
+      "firstName": "Maurice",
+      "lastName": "KACOU",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:55:40.500Z",
+      "updatedAt": "2026-05-06T08:55:40.500Z"
+    },
+    {
+      "userId": "f02ff884-bdcd-44d2-b65a-a64bf8acf7e9",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "username": "EXPORTELEC",
+      "email": "export.elec@sibmci.com",
+      "password": "$2b$10$jiN5iEGaQV6R71h8DE/CQuRl7mVfelqXd5kgVgu1RO.IwB7MCLHiC",
+      "firstName": "Sarah",
+      "lastName": "GUEU",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:56:42.971Z",
+      "updatedAt": "2026-05-06T08:56:42.971Z"
+    },
+    {
+      "userId": "1e86361f-fd49-4081-9798-dcd141f344e1",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "username": "EXPORTINFRA",
+      "email": "export.infra@sibmci.com",
+      "password": "$2b$10$t.cPIWU9ulz2jxamz9i71.qyLEH8kiISINaAFlkDNUbLoTuir4AAW",
+      "firstName": "Jeanne",
+      "lastName": "KASSI",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:57:35.513Z",
+      "updatedAt": "2026-05-06T08:57:35.513Z"
+    },
+    {
+      "userId": "bc63e5a0-69f9-4b74-83d9-a12055e36544",
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "siteId": null,
+      "companyId": null,
+      "assignedQueueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "username": "SUPERVENTE",
+      "email": "super.vente@sibmci.com",
+      "password": "$2b$10$WOhB2Y1wST8VYcvekZ5xNeG799EXDw1WH1fgfR3WOf1HLYD/ao8MO",
+      "firstName": "Esther",
+      "lastName": "GBALE",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-06T08:59:25.222Z",
+      "updatedAt": "2026-05-06T08:59:25.222Z"
+    },
+    {
+      "userId": "7d68200b-5274-4245-aa57-2c90cf357d2e",
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "companyId": null,
+      "assignedQueueId": null,
+      "username": "RVENTE",
+      "email": "a.koffi@sibmci.com",
+      "password": "$2b$10$fvrfFjlglOyblqbkhxebzut6kgvtdY7t462xFWO9kJjYpxBFAeOZO",
+      "firstName": "Alain",
+      "lastName": "KOFFI",
+      "isActive": true,
+      "failedAttempts": 0,
+      "lockUntil": null,
+      "createdAt": "2026-05-05T16:27:05.755Z",
+      "updatedAt": "2026-05-06T10:39:18.967Z"
+    }
+  ],
+  "quaiParameters": [
+    {
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "label": "Quai Vente ",
+      "siteId": "58d88acf-d940-47be-9208-5add9c442fb3",
+      "categoryId": null,
+      "stepId": "66b59426-40a7-4a54-95f1-41c5cae36e8d",
+      "stepIds": [
+        "66b59426-40a7-4a54-95f1-41c5cae36e8d",
+        "90518028-dcf3-4618-b86a-0d6a997a3e07",
+        "41a19ba0-feeb-4124-8d22-38ea11cfd4bb"
+      ],
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [
+        "bc63e5a0-69f9-4b74-83d9-a12055e36544"
+      ],
+      "createdAt": "2026-05-06T08:35:29.142Z",
+      "updatedAt": "2026-05-06T08:59:40.215Z"
+    },
+    {
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "label": "Bureau Vente",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "categoryId": null,
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "stepIds": [
+        "64309b07-01e2-4612-ba85-55e6a7e52859"
+      ],
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [
+        "9350dbe9-098b-47d8-80c0-9e90ff522102",
+        "76a33bb0-d332-4cb6-a232-d8a7e0daab6a",
+        "fba7888a-3056-4319-9462-38e223d37a0c",
+        "048aad0b-e68f-4b41-8e71-50af647f6564"
+      ],
+      "createdAt": "2026-03-30T11:41:08.875Z",
+      "updatedAt": "2026-05-06T09:00:01.360Z"
+    },
+    {
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "label": "Parc Export",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "categoryId": null,
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "stepIds": [
+        "e3207115-012a-46aa-ad5b-9edad4607659"
+      ],
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [
+        "1e86361f-fd49-4081-9798-dcd141f344e1",
+        "f02ff884-bdcd-44d2-b65a-a64bf8acf7e9",
+        "2936f731-791a-4a6a-b155-c978992a6de2"
+      ],
+      "createdAt": "2026-03-30T11:42:11.645Z",
+      "updatedAt": "2026-05-06T09:00:13.904Z"
+    },
+    {
+      "quaiId": "c014080c-3792-4d53-b2da-e8c8a2bbe122",
+      "label": "Pont Bascule ",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "categoryId": null,
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "stepIds": [
+        "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+        "8cb2678c-b14c-40cd-a88b-3881aecf0d54"
+      ],
+      "expectedStepCode": null,
+      "formConfig": [],
+      "allowedUsers": [
+        "0ebc14ad-62f8-427a-b775-573efe2b860f"
+      ],
+      "createdAt": "2026-05-05T15:48:50.329Z",
+      "updatedAt": "2026-05-06T09:00:22.935Z"
+    }
+  ],
+  "queues": [
+    {
+      "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "name": "Parc BAT",
+      "description": "Parc export Bâtiment ",
+      "isActived": true,
+      "categoryId": "caae74eb-94e0-4542-9a75-0e11ba6df7bb",
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:14:57.580Z",
+      "updatedAt": "2026-05-05T15:30:00.788Z"
+    },
+    {
+      "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "name": "Parc ELEC",
+      "description": "Parc export électricité ",
+      "isActived": true,
+      "categoryId": "340bce4b-c1a4-4354-a0d2-7f347dc2a1ff",
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:14:25.138Z",
+      "updatedAt": "2026-05-05T15:30:38.973Z"
+    },
+    {
+      "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "name": "Parc INFRA",
+      "description": "Parc export infrastructure ",
+      "isActived": true,
+      "categoryId": "55fb71c2-5f5e-4d1c-9244-e6911ee31114",
+      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
+      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:14:04.302Z",
+      "updatedAt": "2026-05-05T15:31:36.339Z"
+    },
+    {
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "name": "Vente Bat",
+      "description": "Bureau de Vente Bâtiment ",
+      "isActived": true,
+      "categoryId": "caae74eb-94e0-4542-9a75-0e11ba6df7bb",
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:13:20.358Z",
+      "updatedAt": "2026-05-05T15:32:10.469Z"
+    },
+    {
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "name": "Vente Elec",
+      "description": "Bureau de Vente Produits électricité",
+      "isActived": true,
+      "categoryId": "340bce4b-c1a4-4354-a0d2-7f347dc2a1ff",
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:12:29.313Z",
+      "updatedAt": "2026-05-05T15:32:22.171Z"
+    },
+    {
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "name": "Vente INFRA",
+      "description": "Bureau de Vente de Produits Infra",
+      "isActived": true,
+      "categoryId": "55fb71c2-5f5e-4d1c-9244-e6911ee31114",
+      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
+      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:06:25.567Z",
+      "updatedAt": "2026-05-05T15:32:32.939Z"
+    },
+    {
+      "queueId": "3c1f26e8-a249-477d-963b-330a5436872c",
+      "name": "Pont Bascule",
+      "description": "File d'attente de la pesée ",
+      "isActived": false,
+      "categoryId": null,
+      "stepId": null,
+      "quaiId": null,
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-05-05T11:39:43.177Z",
+      "updatedAt": "2026-05-05T15:32:42.524Z"
+    },
+    {
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "name": "Pont Bascule ",
+      "description": "Pont de pesage ",
+      "isActived": true,
+      "categoryId": null,
+      "stepId": null,
+      "quaiId": "c014080c-3792-4d53-b2da-e8c8a2bbe122",
+      "siteId": "f0b29863-a6f0-4498-87d8-5ce350ac96de",
+      "createdAt": "2026-03-30T11:07:10.959Z",
+      "updatedAt": "2026-05-06T09:17:20.248Z"
+    }
+  ],
+  "rolePermissions": [
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "017c3e5c-be85-4b6d-8a0a-4329c0fa4da3"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "e8730692-c5dd-4120-b2e7-d06fade1da4e"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "65bf5e6e-a6fa-4637-a62c-3dfc8d7e6ce8"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "a8b8200e-4bff-4d37-82ee-fc9e50f16819"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "f0efc00a-ed37-480b-b79b-aedacd198de6"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "87151a55-0da0-42cc-b622-deaa03b057c3"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "c28ed143-338d-4bce-82ce-dbe2222b1d05"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "ed37ceb0-ce11-4514-9067-20d4a35dfb15"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "52f5b0da-a30b-4c0f-a335-1a10b9770039"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "05d1d177-2a38-47e0-a8ba-d52dce073d5e"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "54d7fdce-379a-4244-b326-882b764d347a"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "2b843d0b-7779-4e15-a172-7fe89deed2f6"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "01be4385-52ab-49ab-bd01-bd2478ed9016"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "adeb8cbe-9d7b-4942-8d76-e2a229b0f880"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "aad787ae-1627-4c35-8a08-15d9f3896717"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "1b70bc6b-7831-4f8d-892f-bf4ee9d75907"
+    },
+    {
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "permissionId": "5f5a692e-d960-414a-962e-394a6aa25e7e"
+    },
+    {
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
+      "permissionId": "05d1d177-2a38-47e0-a8ba-d52dce073d5e"
+    },
+    {
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
+      "permissionId": "54d7fdce-379a-4244-b326-882b764d347a"
+    },
+    {
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
+      "permissionId": "ed37ceb0-ce11-4514-9067-20d4a35dfb15"
+    },
+    {
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
+      "permissionId": "2b843d0b-7779-4e15-a172-7fe89deed2f6"
+    },
+    {
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "permissionId": "2b843d0b-7779-4e15-a172-7fe89deed2f6"
+    },
+    {
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "permissionId": "01be4385-52ab-49ab-bd01-bd2478ed9016"
+    },
+    {
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "permissionId": "adeb8cbe-9d7b-4942-8d76-e2a229b0f880"
+    },
+    {
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "permissionId": "1b70bc6b-7831-4f8d-892f-bf4ee9d75907"
+    },
+    {
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "permissionId": "5f5a692e-d960-414a-962e-394a6aa25e7e"
+    },
+    {
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "permissionId": "aad787ae-1627-4c35-8a08-15d9f3896717"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "permissionId": "1b70bc6b-7831-4f8d-892f-bf4ee9d75907"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "permissionId": "2b843d0b-7779-4e15-a172-7fe89deed2f6"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "permissionId": "01be4385-52ab-49ab-bd01-bd2478ed9016"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "permissionId": "adeb8cbe-9d7b-4942-8d76-e2a229b0f880"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "permissionId": "aad787ae-1627-4c35-8a08-15d9f3896717"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "permissionId": "05d1d177-2a38-47e0-a8ba-d52dce073d5e"
+    }
+  ],
   "quaiQueues": [
     {
       "id": "a7970495-4578-409b-8aab-8111c38112e8",
@@ -678,18 +1923,60 @@
       "updatedAt": "2026-03-30T11:42:11.663Z"
     },
     {
-      "id": "a0874e4d-21bb-43fd-a254-ba09c4035601",
-      "quaiId": "60c1dc2d-03b5-48d0-95ab-6e7ba727458b",
-      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
-      "createdAt": "2026-03-30T11:42:37.624Z",
-      "updatedAt": "2026-03-30T11:42:37.624Z"
+      "id": "c923cd08-8594-4aa0-b43d-815d475fd40d",
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "createdAt": "2026-05-06T08:35:29.176Z",
+      "updatedAt": "2026-05-06T08:35:29.176Z"
     },
     {
-      "id": "e85e6738-b28a-484f-b081-47125046039c",
-      "quaiId": "95250fe0-41ac-414a-ae00-a85d86f4aeaf",
+      "id": "4fb93f09-9d42-4444-b578-9f15cdae4710",
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "createdAt": "2026-05-06T08:35:29.176Z",
+      "updatedAt": "2026-05-06T08:35:29.176Z"
+    },
+    {
+      "id": "2e341c5a-a71c-40f8-a90e-fbfc78409731",
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "createdAt": "2026-05-06T08:35:29.176Z",
+      "updatedAt": "2026-05-06T08:35:29.176Z"
+    },
+    {
+      "id": "acfb6aee-9b21-41e9-af50-37e8d4d9824b",
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "createdAt": "2026-05-06T08:35:29.176Z",
+      "updatedAt": "2026-05-06T08:35:29.176Z"
+    },
+    {
+      "id": "bd77c668-72ec-47e2-b690-2988b2f048ba",
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "createdAt": "2026-05-06T08:35:29.176Z",
+      "updatedAt": "2026-05-06T08:35:29.176Z"
+    },
+    {
+      "id": "2a57d3dc-17ce-49ab-a425-bffe5d97778e",
+      "quaiId": "79952178-17fc-4226-b8fb-2c801309ee23",
+      "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "createdAt": "2026-05-06T08:35:29.176Z",
+      "updatedAt": "2026-05-06T08:35:29.176Z"
+    },
+    {
+      "id": "f6db5da7-7c19-40de-8943-3c0b0e0c7747",
+      "quaiId": "c014080c-3792-4d53-b2da-e8c8a2bbe122",
+      "queueId": "3c1f26e8-a249-477d-963b-330a5436872c",
+      "createdAt": "2026-05-06T10:48:28.857Z",
+      "updatedAt": "2026-05-06T10:48:28.857Z"
+    },
+    {
+      "id": "b7c75768-6409-4b84-a659-387c6716526b",
+      "quaiId": "c014080c-3792-4d53-b2da-e8c8a2bbe122",
       "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
-      "createdAt": "2026-03-30T11:42:52.470Z",
-      "updatedAt": "2026-03-30T11:42:52.470Z"
+      "createdAt": "2026-05-06T10:50:01.025Z",
+      "updatedAt": "2026-05-06T10:50:01.025Z"
     }
   ],
   "workflowStepQueues": [
@@ -715,13 +2002,6 @@
       "updatedAt": "2026-03-30T11:15:31.347Z"
     },
     {
-      "id": "2d6f7ff0-991e-4c96-85ce-83cba9bdbbba",
-      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
-      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
-      "createdAt": "2026-03-30T11:16:02.009Z",
-      "updatedAt": "2026-03-30T11:16:02.009Z"
-    },
-    {
       "id": "cf64f2be-56d1-4a4d-bcbd-0dc2c38d47bf",
       "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
       "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
@@ -743,463 +2023,212 @@
       "updatedAt": "2026-03-30T11:16:19.265Z"
     },
     {
-      "id": "a3aff5be-6fef-43a0-aeed-500fde0c3515",
-      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
-      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
-      "createdAt": "2026-03-30T11:16:37.253Z",
-      "updatedAt": "2026-03-30T11:16:37.253Z"
-    }
-  ],
-  "userSites": [],
-  "userQueues": [],
-  "companies": [
-    {
-      "companyId": "0eb47bd8-1e6e-4aff-839e-6634f48e57f2",
-      "name": "Société Ivoirienne de Béton Manufacturé ",
-      "code": "SIBM",
-      "isActived": true,
-      "createdAt": "2026-03-30T10:59:59.586Z"
-    },
-    {
-      "companyId": "9f919226-89e6-4289-9081-314b861e9f37",
-      "name": "ABC",
-      "code": "abc",
-      "isActived": true,
-      "createdAt": "2026-03-30T12:35:03.540Z"
-    }
-  ],
-  "sites": [
-    {
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "companyId": "0eb47bd8-1e6e-4aff-839e-6634f48e57f2",
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "ABIDJAN",
-      "code": "ABJ01",
-      "address": "Abidjan PK23 Zone Industrielle",
-      "alertThreshold": 45,
-      "isActived": true,
-      "createdAt": "2026-03-30T11:11:11.642Z"
-    },
-    {
-      "siteId": "0d346e27-17cb-42a9-a69c-54541da3aa4f",
-      "companyId": "9f919226-89e6-4289-9081-314b861e9f37",
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "YAMOUSSOUKRO",
-      "code": "YAM01",
-      "address": "Yamoussoukro",
-      "alertThreshold": 25,
-      "isActived": true,
-      "createdAt": "2026-03-30T12:36:50.569Z"
-    }
-  ],
-  "queues": [
-    {
+      "id": "f37dd17f-782a-470c-940e-e08b79eadb53",
+      "stepId": "90518028-dcf3-4618-b86a-0d6a997a3e07",
       "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
-      "name": "Vente INFRA",
-      "description": "Bureau de Vente de Produits Infra",
-      "isActived": true,
-      "categoryId": "e80fa404-a9bf-46e0-ac75-dc5e1bd07d6e",
-      "stepId": null,
-      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
-      "createdAt": "2026-03-30T11:06:25.567Z",
-      "updatedAt": "2026-03-30T16:25:21.501Z"
+      "createdAt": "2026-05-06T08:28:39.268Z",
+      "updatedAt": "2026-05-06T08:28:39.268Z"
     },
     {
+      "id": "9c0a8b3a-69e5-4176-9db8-b12991ed29ac",
+      "stepId": "90518028-dcf3-4618-b86a-0d6a997a3e07",
       "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
-      "name": "Vente Elec",
-      "description": "Bureau de Vente Produits électricité",
-      "isActived": true,
-      "categoryId": "b50c0b73-66dc-421b-8582-1cc05ccf3a4e",
-      "stepId": null,
-      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
-      "createdAt": "2026-03-30T11:12:29.313Z",
-      "updatedAt": "2026-03-30T16:25:21.501Z"
+      "createdAt": "2026-05-06T08:28:39.268Z",
+      "updatedAt": "2026-05-06T08:28:39.268Z"
     },
     {
+      "id": "b558a8af-2cfd-464e-8d4b-fbc596454987",
+      "stepId": "90518028-dcf3-4618-b86a-0d6a997a3e07",
       "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
-      "name": "Vente Bat",
-      "description": "Bureau de Vente Bâtiment ",
-      "isActived": true,
-      "categoryId": "5f1c21f8-44e4-4a87-ba66-d50e64cc077c",
-      "stepId": null,
-      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
-      "createdAt": "2026-03-30T11:13:20.358Z",
-      "updatedAt": "2026-03-30T16:25:21.501Z"
+      "createdAt": "2026-05-06T08:28:39.268Z",
+      "updatedAt": "2026-05-06T08:28:39.268Z"
     },
     {
+      "id": "c6f900c7-1447-40f2-8d00-baaa5197d53f",
+      "stepId": "41a19ba0-feeb-4124-8d22-38ea11cfd4bb",
       "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
-      "name": "Parc INFRA",
-      "description": "Parc export infrastructure ",
-      "isActived": true,
-      "categoryId": "e80fa404-a9bf-46e0-ac75-dc5e1bd07d6e",
-      "stepId": null,
-      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
-      "createdAt": "2026-03-30T11:14:04.302Z",
-      "updatedAt": "2026-03-30T16:25:21.889Z"
+      "createdAt": "2026-05-06T08:29:05.476Z",
+      "updatedAt": "2026-05-06T08:29:05.476Z"
     },
     {
+      "id": "33664564-2b8b-4bfd-9ea5-39b4d5ec4a25",
+      "stepId": "41a19ba0-feeb-4124-8d22-38ea11cfd4bb",
       "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
-      "name": "Parc ELEC",
-      "description": "Parc export électricité ",
-      "isActived": true,
-      "categoryId": "b50c0b73-66dc-421b-8582-1cc05ccf3a4e",
-      "stepId": null,
-      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
-      "createdAt": "2026-03-30T11:14:25.138Z",
-      "updatedAt": "2026-03-30T16:25:21.889Z"
+      "createdAt": "2026-05-06T08:29:05.476Z",
+      "updatedAt": "2026-05-06T08:29:05.476Z"
     },
     {
+      "id": "9c1604f2-f313-4ae7-b9a9-b337462edf30",
+      "stepId": "41a19ba0-feeb-4124-8d22-38ea11cfd4bb",
       "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
-      "name": "Parc BAT",
-      "description": "Parc export Bâtiment ",
-      "isActived": true,
-      "categoryId": "5f1c21f8-44e4-4a87-ba66-d50e64cc077c",
-      "stepId": null,
-      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
-      "createdAt": "2026-03-30T11:14:57.580Z",
-      "updatedAt": "2026-03-30T16:25:21.889Z"
+      "createdAt": "2026-05-06T08:29:05.476Z",
+      "updatedAt": "2026-05-06T08:29:05.476Z"
     },
     {
+      "id": "3623f250-0e38-483a-bf65-d6fd2f8c50e2",
+      "stepId": "66b59426-40a7-4a54-95f1-41c5cae36e8d",
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "createdAt": "2026-05-06T08:29:48.904Z",
+      "updatedAt": "2026-05-06T08:29:48.904Z"
+    },
+    {
+      "id": "b049a2ff-ab7f-493b-83bc-0767d4a3717f",
+      "stepId": "66b59426-40a7-4a54-95f1-41c5cae36e8d",
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "createdAt": "2026-05-06T08:29:48.904Z",
+      "updatedAt": "2026-05-06T08:29:48.904Z"
+    },
+    {
+      "id": "c5ccb90f-9cd2-4dfb-94c9-a6abe4f0e5dd",
+      "stepId": "66b59426-40a7-4a54-95f1-41c5cae36e8d",
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "createdAt": "2026-05-06T08:29:48.904Z",
+      "updatedAt": "2026-05-06T08:29:48.904Z"
+    },
+    {
+      "id": "cb2c3f2f-c5c1-48ac-b601-0c7a849a8966",
+      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
       "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
-      "name": "Pont Bascule ",
-      "description": "Pont de pesage ",
-      "isActived": true,
-      "categoryId": null,
-      "stepId": null,
-      "quaiId": "f7f60396-278c-4707-bc59-907ec0f42322",
-      "createdAt": "2026-03-30T11:07:10.959Z",
-      "updatedAt": "2026-03-30T16:25:21.892Z"
-    }
-  ],
-  "categories": [
-    {
-      "categoryId": "5f1c21f8-44e4-4a87-ba66-d50e64cc077c",
-      "name": "Bâtiment ",
-      "prefix": "BAT",
-      "color": "#3b82f6",
-      "estimatedDuration": 30,
-      "description": "Produits relatif à construction de bâtisse ",
-      "isActive": true,
-      "createdAt": "2026-03-30T11:04:00.777Z",
-      "updatedAt": "2026-03-30T11:04:00.777Z"
+      "createdAt": "2026-05-06T10:42:26.155Z",
+      "updatedAt": "2026-05-06T10:42:26.155Z"
     },
     {
-      "categoryId": "e80fa404-a9bf-46e0-ac75-dc5e1bd07d6e",
-      "name": "Infrastructure ",
-      "prefix": "INFRA",
-      "color": "#f77d3b",
-      "estimatedDuration": 30,
-      "description": "Produits relatif à la construction d'infrastructure ",
-      "isActive": true,
-      "createdAt": "2026-03-30T11:05:07.126Z",
-      "updatedAt": "2026-03-30T11:08:12.696Z"
-    },
-    {
-      "categoryId": "b50c0b73-66dc-421b-8582-1cc05ccf3a4e",
-      "name": "Electricité ",
-      "prefix": "ELEC",
-      "color": "#903bf7",
-      "estimatedDuration": 30,
-      "description": "Produits relatif à la construction d'infrastructure électrique ",
-      "isActive": true,
-      "createdAt": "2026-03-30T11:09:21.050Z",
-      "updatedAt": "2026-03-30T11:09:21.050Z"
-    }
-  ],
-  "workflows": [
-    {
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "Parcours Client ",
-      "description": "Flux  standard ",
-      "isActived": true,
-      "createdAt": "2026-03-30T11:03:07.868Z"
-    }
-  ],
-  "workflowSteps": [
-    {
-      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "Enregistrement ",
-      "stepCode": "STP_1_ENREGISTREMENT_",
-      "orderNumber": 1,
-      "isActived": true,
-      "formConfig": [],
-      "isolationAfterRecalls": 3,
-      "createdAt": "2026-03-30T11:15:31.331Z",
-      "updatedAt": "2026-03-30T11:15:31.331Z"
-    },
-    {
-      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "Pesée Initiale ",
-      "stepCode": "STP_2_PESÉE_INITIALE_",
-      "orderNumber": 2,
-      "isActived": true,
-      "formConfig": [],
-      "isolationAfterRecalls": 3,
-      "createdAt": "2026-03-30T11:16:01.995Z",
-      "updatedAt": "2026-03-30T11:16:01.995Z"
-    },
-    {
-      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "Chargement ",
-      "stepCode": "STP_3_CHARGEMENT_",
-      "orderNumber": 3,
-      "isActived": true,
-      "formConfig": [],
-      "isolationAfterRecalls": 3,
-      "createdAt": "2026-03-30T11:16:19.251Z",
-      "updatedAt": "2026-03-30T11:16:19.251Z"
-    },
-    {
+      "id": "fa4e6590-8e2d-4a75-8161-bc37f9d15f94",
       "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
-      "workflowId": "3cbc4b1f-a89a-438f-8fc6-de7b9f2e3544",
-      "name": "Pesée Sortie ",
-      "stepCode": "STP_4_PESÉE_SORTIE_",
-      "orderNumber": 4,
-      "isActived": true,
-      "formConfig": [],
-      "isolationAfterRecalls": 3,
-      "createdAt": "2026-03-30T11:16:37.240Z",
-      "updatedAt": "2026-03-30T11:16:37.240Z"
+      "queueId": "3c1f26e8-a249-477d-963b-330a5436872c",
+      "createdAt": "2026-05-06T10:42:26.155Z",
+      "updatedAt": "2026-05-06T10:42:26.155Z"
+    },
+    {
+      "id": "f65b8800-08d2-42b6-aa28-8d8eb2aac10a",
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "queueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
+      "createdAt": "2026-05-06T10:42:32.768Z",
+      "updatedAt": "2026-05-06T10:42:32.768Z"
+    },
+    {
+      "id": "099ece0a-8f09-409c-801a-3a0399c81fc4",
+      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
+      "queueId": "3c1f26e8-a249-477d-963b-330a5436872c",
+      "createdAt": "2026-05-06T10:42:32.768Z",
+      "updatedAt": "2026-05-06T10:42:32.768Z"
     }
   ],
-  "workflowTransitions": [],
-  "quaiParameters": [
+  "categoryQueues": [
     {
-      "quaiId": "20f42a5a-9c5b-40da-8791-ca39f3b992de",
-      "label": "Bureau Vente ",
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "categoryId": null,
-      "stepId": "64309b07-01e2-4612-ba85-55e6a7e52859",
-      "expectedStepCode": null,
-      "formConfig": [],
-      "allowedUsers": [],
-      "createdAt": "2026-03-30T11:41:08.875Z",
-      "updatedAt": "2026-03-30T11:41:08.875Z"
+      "categoryId": "caae74eb-94e0-4542-9a75-0e11ba6df7bb",
+      "queueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
+      "maxCapacity": null,
+      "createdAt": "2026-05-05T15:33:57.900Z",
+      "updatedAt": "2026-05-05T15:33:57.900Z"
     },
     {
-      "quaiId": "78d32df5-9ebe-41e8-a843-00fd0561df8f",
-      "label": "Parc Export",
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "categoryId": null,
-      "stepId": "e3207115-012a-46aa-ad5b-9edad4607659",
-      "expectedStepCode": null,
-      "formConfig": [],
-      "allowedUsers": [],
-      "createdAt": "2026-03-30T11:42:11.645Z",
-      "updatedAt": "2026-03-30T11:42:11.645Z"
+      "categoryId": "caae74eb-94e0-4542-9a75-0e11ba6df7bb",
+      "queueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
+      "maxCapacity": null,
+      "createdAt": "2026-05-05T15:33:57.900Z",
+      "updatedAt": "2026-05-05T15:33:57.900Z"
     },
     {
-      "quaiId": "60c1dc2d-03b5-48d0-95ab-6e7ba727458b",
-      "label": "Pesée Sortie",
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "categoryId": null,
-      "stepId": "8cb2678c-b14c-40cd-a88b-3881aecf0d54",
-      "expectedStepCode": null,
-      "formConfig": [],
-      "allowedUsers": [],
-      "createdAt": "2026-03-30T11:42:37.606Z",
-      "updatedAt": "2026-03-30T11:42:37.606Z"
+      "categoryId": "340bce4b-c1a4-4354-a0d2-7f347dc2a1ff",
+      "queueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
+      "maxCapacity": null,
+      "createdAt": "2026-05-05T15:34:10.462Z",
+      "updatedAt": "2026-05-05T15:34:10.462Z"
     },
     {
-      "quaiId": "95250fe0-41ac-414a-ae00-a85d86f4aeaf",
-      "label": "Pesée Entrée",
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "categoryId": null,
-      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
-      "expectedStepCode": null,
-      "formConfig": [],
-      "allowedUsers": [],
-      "createdAt": "2026-03-30T11:42:52.452Z",
-      "updatedAt": "2026-03-30T11:42:52.452Z"
+      "categoryId": "340bce4b-c1a4-4354-a0d2-7f347dc2a1ff",
+      "queueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
+      "maxCapacity": null,
+      "createdAt": "2026-05-05T15:34:10.462Z",
+      "updatedAt": "2026-05-05T15:34:10.462Z"
     },
     {
-      "quaiId": "f7f60396-278c-4707-bc59-907ec0f42322",
-      "label": "Pont Bascule (Entrée/Sortie)",
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "categoryId": null,
-      "stepId": "2cfafcd5-41eb-4d59-b701-b6f16dbbbd4b",
-      "expectedStepCode": "STP_2_PESÉE_INITIALE_,STP_4_PESÉE_SORTIE_",
-      "formConfig": [],
-      "allowedUsers": [],
-      "createdAt": "2026-03-30T11:41:44.842Z",
-      "updatedAt": "2026-03-31T16:35:28.673Z"
+      "categoryId": "55fb71c2-5f5e-4d1c-9244-e6911ee31114",
+      "queueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
+      "maxCapacity": null,
+      "createdAt": "2026-05-05T15:34:25.146Z",
+      "updatedAt": "2026-05-05T15:34:25.146Z"
+    },
+    {
+      "categoryId": "55fb71c2-5f5e-4d1c-9244-e6911ee31114",
+      "queueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
+      "maxCapacity": null,
+      "createdAt": "2026-05-05T15:34:25.146Z",
+      "updatedAt": "2026-05-05T15:34:25.146Z"
     }
   ],
-  "quaiConfigs": [],
-  "systemSettings": [],
-  "users": [
+  "modelHasRoles": [
     {
-      "userId": "07c87e77-5434-4174-9e03-4e24815954e1",
-      "roleId": "a38bb09b-bb74-48fd-8a51-65fc847f1246",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": null,
-      "username": "Kei Frejuste",
-      "email": "stagiaire.info@sibmci.com",
-      "password": "$2b$10$KFL0DStJ8aBIGj6Bs3TOc.UI4s1Ugc9Hy1uMlZWpc7B.p1V7kFkQm",
-      "firstName": "Kei",
-      "lastName": "Frejuste",
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T10:55:05.264Z",
-      "updatedAt": "2026-03-30T10:55:05.264Z"
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "modelType": "User",
+      "modelId": "e048c08c-28b6-4735-b15d-c80fbf48a36d"
     },
     {
-      "userId": "c2138e7a-1e32-433e-902c-08b7aafdf07d",
-      "roleId": "1572879e-1266-4890-a0ec-cd4ea4014a05",
-      "siteId": null,
-      "companyId": "0eb47bd8-1e6e-4aff-839e-6634f48e57f2",
-      "assignedQueueId": null,
-      "username": "DSC",
-      "email": "directeur.supplychain@sibmci.com",
-      "password": "$2b$10$q/RYkDPh7TQeocnFS.xIyOySWnK.CUOkViwepcZsdNP4rsdnap7z.",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:54:29.633Z",
-      "updatedAt": "2026-03-30T11:54:29.633Z"
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "modelType": "User",
+      "modelId": "7d36ee96-75fe-4b9c-a460-cb47072ef02d"
     },
     {
-      "userId": "07e57a8e-49c9-40a2-9a9c-0a58070fca50",
-      "roleId": "9603ffc2-486f-45a9-8e22-a34b7d8d3c07",
-      "siteId": "47783df4-793f-4a3e-bb7b-5061f60e0ad8",
-      "companyId": null,
-      "assignedQueueId": null,
-      "username": "Responsable Vente",
-      "email": "responsable.vente@sibmci.com",
-      "password": "$2b$10$6PYav4Eag928GhtBV6jDwOFstEP7SEzs4jtm/dpUNsmFaSP6Vyzgi",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:54:56.878Z",
-      "updatedAt": "2026-03-30T11:54:56.878Z"
+      "roleId": "babfa1c0-1f60-49f5-834d-4746be134f2a",
+      "modelType": "User",
+      "modelId": "0635b8dd-abc0-4a14-bf83-2aa01076c133"
     },
     {
-      "userId": "4979ccc1-8d34-45c0-a521-665da6daa537",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "77b4bd51-d84a-420a-a7b4-0fd552a37a7b",
-      "username": "Assistant Vente Infra",
-      "email": "vente.infra@sibmci.com",
-      "password": "$2b$10$pk2QX0q.hFh2PY0rEyeCL.ZwcoepqeOoo20DNlK4yOYMSBhDnfRTK",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:55:43.099Z",
-      "updatedAt": "2026-03-30T11:55:43.099Z"
+      "roleId": "e0b43e01-8c39-48cd-b932-c65b0aaa7839",
+      "modelType": "User",
+      "modelId": "9fa4c42d-1a0f-42fb-876c-2d81b379e8ce"
     },
     {
-      "userId": "0bf73ce4-dda5-4827-abeb-7329d03817a5",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "b84d77ab-757e-483e-85ea-fe7b54a028e0",
-      "username": "Assistant Vente Bat",
-      "email": "vente.bat@sibmci.com",
-      "password": "$2b$10$2nfY09.hsbX/v99YkAD81.u4j4VcTHYyU9bxI.t6/DaXMPu3fhwDa",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:56:11.416Z",
-      "updatedAt": "2026-03-30T11:56:11.416Z"
+      "roleId": "0be27d59-fab9-4585-b06b-93d4290713bf",
+      "modelType": "User",
+      "modelId": "7d68200b-5274-4245-aa57-2c90cf357d2e"
     },
     {
-      "userId": "a0efc4e8-123d-4f69-8f8b-4069c85c5866",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "e74bab6d-7632-4e29-82bf-63f606c8b337",
-      "username": "Assistant Vente Elec",
-      "email": "vente.elec@sibmci.com",
-      "password": "$2b$10$Q/P1qvjZjTLIhYakgtCG9.gbgEy0Ez8NowRb9R2LJG2mOOn/z8wOm",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:56:43.376Z",
-      "updatedAt": "2026-03-30T11:56:43.376Z"
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "048aad0b-e68f-4b41-8e71-50af647f6564"
     },
     {
-      "userId": "8320ca9f-22fd-4d5a-8134-691164bbb4c4",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "19a4fa7a-8848-4a68-baf3-31b86067c713",
-      "username": "Agent Export Infra",
-      "email": "export.infra@sibmci.com",
-      "password": "$2b$10$hT4uK9REWzc/kJ824lTeOuEXXktcInL9WviGFInAZhnVQkTYj8ECi",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:57:55.843Z",
-      "updatedAt": "2026-03-30T11:57:55.843Z"
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "fba7888a-3056-4319-9462-38e223d37a0c"
     },
     {
-      "userId": "98d878ef-57a1-4174-ad46-93d3b90d9969",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "93a088cf-26bf-4e97-8c10-6fb534da1f6f",
-      "username": "Agent Péseur",
-      "email": "pont.bascule@sibmci.com",
-      "password": "$2b$10$ygwUqv3JfTq6QfibiqF2UuNhqeQCEoG6gYjSk7jzf.htcXwv/AW82",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:58:38.126Z",
-      "updatedAt": "2026-03-30T11:58:38.126Z"
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "76a33bb0-d332-4cb6-a232-d8a7e0daab6a"
     },
     {
-      "userId": "3d5dfbaf-f429-44b8-88d2-3602c1c61e12",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "46d08fe0-bdc0-4dab-b7a4-a5634514ff75",
-      "username": "Agent export Bat",
-      "email": "export.bat@sibmci.com",
-      "password": "$2b$10$hfE/65IVkUT3OJO/Cu3GMuBxxgDW5FafTpulZUnRfLd6THrz0/cEK",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T11:59:35.052Z",
-      "updatedAt": "2026-03-30T11:59:35.052Z"
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "9350dbe9-098b-47d8-80c0-9e90ff522102"
     },
     {
-      "userId": "90c10551-fef5-40c3-9fa3-4c3dd7fb42bb",
-      "roleId": "7fa8b0b4-3e3d-4367-bf29-5f453d76fa88",
-      "siteId": null,
-      "companyId": null,
-      "assignedQueueId": "e352ba22-9fdd-46d6-8762-c962357d15a4",
-      "username": "Agent export Elec",
-      "email": "export.elec@sibmci.com",
-      "password": "$2b$10$LAlBaU28MPb2tT2gwaij5uiS8JdONA6T8YIb.Zlv3wwORc2hJRkRi",
-      "firstName": null,
-      "lastName": null,
-      "isActive": true,
-      "failedAttempts": 0,
-      "lockUntil": null,
-      "createdAt": "2026-03-30T12:00:06.521Z",
-      "updatedAt": "2026-03-30T12:00:06.521Z"
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "0ebc14ad-62f8-427a-b775-573efe2b860f"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "2936f731-791a-4a6a-b155-c978992a6de2"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "f02ff884-bdcd-44d2-b65a-a64bf8acf7e9"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "1e86361f-fd49-4081-9798-dcd141f344e1"
+    },
+    {
+      "roleId": "e098c64d-2307-4f0e-953a-08966eb6411a",
+      "modelType": "User",
+      "modelId": "bc63e5a0-69f9-4b74-83d9-a12055e36544"
     }
-  ]
+  ],
+  "modelHasPermissions": []
 }

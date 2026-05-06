@@ -26,7 +26,7 @@ const ZONES: Zone[] = [
 ];
 
 // Spring transition matching SiteMap's sidebar animation
-const SPRING = { type: 'spring', damping: 25, stiffness: 200 };
+const SPRING = { type: 'spring', damping: 25, stiffness: 200 } as const;
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export function WorkflowSynoptic() {

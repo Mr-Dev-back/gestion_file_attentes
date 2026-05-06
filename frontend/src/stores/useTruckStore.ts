@@ -103,16 +103,25 @@ export const useTruckStore = create<TruckStore>((set, get) => ({
 
     updateStatus: async (ticketId, status, extraData = {}) => {
         try {
-            // Route to specific endpoints based on status for new workflow logic
-            // new routes: only PUT /:ticketId/status
-            // But logic inside store might want specialized calls if available.
-            // ticketController only has updateTicketStatus generic.
-            // So we use generic.
+            // Map legacy status updates to specific action endpoints
+            let endpoint = `/tickets/${ticketId}/status`; // fallback
+            let method: 'patch' | 'post' = 'patch';
 
-            const response = await api.put(`/tickets/${ticketId}/status`, { status, ...extraData });
+            if (status === 'APPELE') endpoint = `/tickets/${ticketId}/call`;
+            else if (status === 'EN_TRAITEMENT') endpoint = `/tickets/${ticketId}/process`;
+            else if (status === 'ANNULE') {
+                endpoint = `/tickets/${ticketId}/cancel`;
+                method = 'post';
+            }
+            else if (status === 'COMPLETE') {
+                endpoint = `/tickets/${ticketId}/complete`;
+                method = 'post';
+            }
+
+            const response = await api[method](endpoint, extraData);
 
             // Refresh the specific truck in the list
-            const updatedData = response.data; // ticketController returns ticket object
+            const updatedData = response.data.ticket || response.data; 
 
             set((state) => ({
                 trucks: state.trucks.map(t => t.ticketId === ticketId ? { ...t, ...updatedData } : t)
@@ -125,14 +134,7 @@ export const useTruckStore = create<TruckStore>((set, get) => ({
 
     transferTicket: async (ticketId, newCategory) => {
         try {
-            // ticketController doesn't have transfer logic yet in my implementation!
-            // I only implemented updateStatus.
-            // I need to add transferTicket to ticketController?
-            // Or assume updateStatus handles it? No.
-            // For now, I'll comment out or leave as is but it will fail call.
-            // I should update ticketController if transfer is needed.
-            // But for now let's just update the ID reference.
-            const response = await api.put(`/tickets/${ticketId}/transfer`, { newCategory });
+            const response = await api.patch(`/tickets/${ticketId}/transfer`, { categoryId: newCategory });
             // Refresh the truck list to reflect changes
             await get().fetchTrucks();
             // Return the transfer information
@@ -148,7 +150,7 @@ export const useTruckStore = create<TruckStore>((set, get) => ({
 
     weighIn: async (ticketId, weight) => {
         try {
-            await api.post(`/tickets/${ticketId}/weigh-in`, { weight });
+            await api.post(`/tickets/${ticketId}/complete`, { formData: { weightIn: weight } });
             // Refresh the truck list to reflect changes
             await get().fetchTrucks();
         } catch (error) {
@@ -159,7 +161,7 @@ export const useTruckStore = create<TruckStore>((set, get) => ({
 
     weighOut: async (ticketId, weight) => {
         try {
-            await api.post(`/tickets/${ticketId}/weigh-out`, { weight });
+            await api.post(`/tickets/${ticketId}/complete`, { formData: { weightOut: weight } });
             // Refresh the truck list to reflect changes
             await get().fetchTrucks();
         } catch (error) {

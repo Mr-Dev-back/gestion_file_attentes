@@ -129,10 +129,10 @@ class CompanyController {
                 return res.status(400).json({ error: 'Une liste d\'IDs est requise.' });
             }
 
-            await Company.destroy({ where: { id: ids }, transaction });
+            await Company.destroy({ where: { companyId: ids }, transaction });
 
             await AuditLog.create({
-                userId: req.user.id,
+                userId: req.user.userId || req.user.id,
                 action: 'BULK_DELETE_COMPANY',
                 details: { count: ids.length, ids },
                 ipAddress: req.ip

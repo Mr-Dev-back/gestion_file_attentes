@@ -92,11 +92,11 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        // Détecter 401 (Unauthorized) - Sauf sur l'URL de refresh elle-même pour éviter les boucles
+        // Détecter 401 (Unauthorized) - Sauf sur login et refresh-token
         if (error.response?.status === 401 && !originalRequest._retry) {
             
-            // Si c'est déjà une tentative de refresh qui échoue -> logout immédiat
-            if (originalRequest.url?.includes('/auth/refresh-token')) {
+            // Si c'est le login ou le refresh qui échoue -> on ne tente pas de refresh
+            if (originalRequest.url?.includes('/auth/login') || originalRequest.url?.includes('/auth/refresh-token')) {
                 useAuthStore.getState().logout();
                 if (window.location.pathname !== '/login') {
                     window.location.href = '/login';

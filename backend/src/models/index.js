@@ -180,6 +180,9 @@ WorkflowStep.hasMany(Queue, { foreignKey: 'stepId', as: 'stepQueues' });
 Queue.belongsTo(QuaiParameter, { foreignKey: 'quaiId', as: 'quai' });
 QuaiParameter.hasMany(Queue, { foreignKey: 'quaiId', as: 'quaiQueues' });
 
+Queue.belongsTo(Site, { foreignKey: 'siteId', as: 'site' });
+Site.hasMany(Queue, { foreignKey: 'siteId', as: 'queues' });
+
 // ==========================================
 // Hardware
 // ==========================================
@@ -204,7 +207,7 @@ Ticket.belongsTo(Queue, { foreignKey: 'queueId', as: 'queue' });
 Ticket.belongsTo(User, { foreignKey: 'calledBy', as: 'caller', onDelete: 'SET NULL' });
 
 Ticket.hasOne(TicketVehicleInfo, { foreignKey: 'ticketId', as: 'vehicleInfo' });
-TicketVehicleInfo.belongsTo(Ticket, { foreignKey: 'ticketId' });
+TicketVehicleInfo.belongsTo(Ticket, { foreignKey: 'ticketId', as: 'ticket' });
 
 Ticket.hasOne(TicketLogistic, { foreignKey: 'ticketId', as: 'logistic' });
 TicketLogistic.belongsTo(Ticket, { foreignKey: 'ticketId' });

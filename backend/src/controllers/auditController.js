@@ -21,6 +21,12 @@ class AuditController {
 
             const offset = (page - 1) * limit;
             const where = {};
+            const userIncludeWhere = {};
+
+            // Security: Manager only sees logs from their site
+            if (req.user.role === 'MANAGER' && req.user.siteId) {
+                userIncludeWhere.siteId = req.user.siteId;
+            }
 
             if (userId) where.userId = userId;
             if (action) where.action = action;
@@ -45,7 +51,9 @@ class AuditController {
                 include: [{
                     model: User,
                     as: 'user',
-                    attributes: ['userId', 'username', 'email', 'firstName', 'lastName']
+                    attributes: ['userId', 'username', 'email', 'firstName', 'lastName', 'siteId'],
+                    where: userIncludeWhere,
+                    required: !!userIncludeWhere.siteId
                 }],
                 order: [['occurredAt', 'DESC']]
             };

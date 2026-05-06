@@ -47,13 +47,28 @@ router.get('/supervisor/queues',
  * Manager Dashboard Routes
  */
 router.get('/manager/stats',
-    authMiddleware.authorize(['MANAGER', 'ADMINISTRATOR']),
+    authMiddleware.authorize(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
     dashboardController.getManagerStats
 );
 
 router.get('/manager/performance',
     authMiddleware.authorize(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
     dashboardController.getManagerPerformance
+);
+
+router.get('/manager/distribution',
+    authMiddleware.authorize(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
+    dashboardController.getManagerDistribution
+);
+
+router.get('/manager/site-comparison',
+    authMiddleware.authorize(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
+    dashboardController.getManagerSiteComparison
+);
+
+router.get('/manager/map-stats',
+    authMiddleware.authorize(['MANAGER', 'SUPERVISOR', 'ADMINISTRATOR']),
+    dashboardController.getMapStats
 );
 
 /**

@@ -3,20 +3,18 @@
 ## Ports Utilisés
 
 ### Ports Publics (Accessibles de l'extérieur)
-- **80**: Nginx (HTTP) - **Frontend accessible ici** ✅
-- **443**: Nginx (HTTPS) - Futur
+- **80/443**: Nginx (Reverse Proxy) ✅
 - **2112**: SSH
 
-### Ports Internes (Services backend via Nginx)
-- **8080**: Frontend Dev Server (Vite) - Optionnel pour développement
-- **8081**: Backend Node.js/Express - Accessible via `/api`
-- **8082**: FastAPI (gTTS) - Accessible via `/fastapi`
-- **5432**: PostgreSQL - Localhost uniquement
-- **6379**: Redis - Localhost uniquement
+### Ports Docker (Mapping Host)
+- **3006**: Frontend (Nginx Container)
+- **3003**: Backend (Node.js Container)
+- **8082**: FastAPI (Python Container)
 
-### Ports Déjà Utilisés (Ne Pas Toucher)
-- **3000-3002**: Autres services du serveur
-- **5000**: Autre service du serveur
+### Ports Internes (Réseau Docker uniquement)
+- **5432**: PostgreSQL
+- **6379**: Redis
+- **3000**: Backend (Interne au conteneur)
 
 ## Architecture Complète
 
@@ -133,9 +131,24 @@ socket.on('ticket:called', (data) => {
 });
 ```
 
-## Configuration PM2
+## 📦 Gestion des Services (Docker)
+
+Le projet utilise désormais **Docker Compose** pour la gestion des services en production.
 
 ### Démarrage des Services
+```bash
+# Via le script de déploiement (recommandé)
+./deploy.sh
+
+# Ou manuellement
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+```
+
+### [OBSOLÈTE] Configuration PM2 (Ancienne Méthode)
+> [!WARNING]
+> La méthode PM2 est conservée ici pour référence historique mais ne doit plus être utilisée pour les nouveaux déploiements. Utilisez Docker à la place.
+
+### Démarrage des Services (Legacy)
 
 ```bash
 # Backend Node.js
@@ -145,21 +158,6 @@ pm2 start src/server.js --name gesparc-backend
 # FastAPI
 cd /home/ftuser/gfa-sibm/fastapi
 pm2 start "uvicorn main:app --host 0.0.0.0 --port 8082" --name gesparc-fastapi
-
-# Frontend - Servi par Nginx (pas de PM2 nécessaire)
-# Les fichiers statiques dans frontend/dist/ sont servis directement par Nginx sur le port 80
-
-# Optionnel: Frontend Dev Server (développement uniquement)
-# cd /home/ftuser/gfa-sibm/frontend
-# pm2 start "npm run dev" --name gfa-frontend-dev
-
-# Sauvegarder
-pm2 save
-```
-
-### Vérification
-```bash
-pm2 status
 ```
 
 **Résultat attendu:**

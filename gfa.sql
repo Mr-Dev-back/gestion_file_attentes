@@ -1,5 +1,5 @@
 -- ============================================================
--- GFA — Gestion Flux Arrivée
+-- GesParc — Gestion de Flotte Automobile
 -- Schéma PostgreSQL — Conventions camelCase
 -- ============================================================
 -- Conventions :
@@ -1043,7 +1043,7 @@ INSERT INTO public."Role" ("name", "description", "scope") VALUES
 ON CONFLICT ("name") DO NOTHING;
 
 INSERT INTO public."SystemSetting" ("key", "value", "type", "scope", "category", "description") VALUES
-    ('establishment_name',  'GFA — Gestion Flux Arrivée', 'STRING',  'GLOBAL', 'GENERAL',  'Nom affiché sur les tickets et interfaces'),
+    ('establishment_name',  'GesParc', 'STRING',  'GLOBAL', 'GENERAL',  'Nom affiché sur les tickets et interfaces'),
     ('ticket_expiry_hours', '24',  'INTEGER', 'GLOBAL', 'TICKETS',  'Durée de vie d''un ticket non traité en heures'),
     ('max_reprint_count',   '3',   'INTEGER', 'GLOBAL', 'TICKETS',  'Nombre maximal de réimpressions par ticket'),
     ('session_ttl_minutes', '480', 'INTEGER', 'GLOBAL', 'SECURITY', 'Durée de vie d''une session en minutes (8h)'),
@@ -1072,7 +1072,7 @@ BEGIN
         WHERE n.nspname = 'public' AND t.typtype = 'e';
 
     RAISE NOTICE '============================================';
-    RAISE NOTICE 'GFA SCHEMA — RÉSUMÉ CRÉATION';
+    RAISE NOTICE 'GesParc SCHEMA — RÉSUMÉ CRÉATION';
     RAISE NOTICE '============================================';
     RAISE NOTICE 'Tables   : % (attendu ≥ 28)', v_tables;
     RAISE NOTICE 'Index    : % (attendu ≥ 35)', v_indexes;
@@ -1083,7 +1083,7 @@ BEGIN
     IF v_tables < 28 THEN RAISE EXCEPTION 'Tables insuffisantes : %', v_tables; END IF;
     IF v_fks    < 38 THEN RAISE EXCEPTION 'FK insuffisantes : %',     v_fks;    END IF;
 
-    RAISE NOTICE 'Schéma GFA créé avec succès.';
+    RAISE NOTICE 'Schéma GesParc créé avec succès.';
 END $$;
 
 COMMIT;

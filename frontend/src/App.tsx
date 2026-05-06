@@ -4,8 +4,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { queryClient } from './lib/queryClient';
-import { api } from './services/api';
+import { api, performTokenRefresh } from './services/api';
 import { useAuthStore } from './stores/useAuthStore';
+import { isTokenExpired } from './utils/auth';
 import Login from './pages/Login';
 import Entry from './pages/Entry';
 import Admin from './pages/Admin';
@@ -36,6 +37,17 @@ function App() {
   useEffect(() => {
     const syncAuth = async () => {
       if (isAuthenticated && token) {
+        // Pré-vérification de l'expiration pour éviter les erreurs 401 bruyantes dans la console
+        if (isTokenExpired(token)) {
+          try {
+            const newToken = await performTokenRefresh();
+            if (!newToken) return; // Le store a déjà été mis à jour ou déconnecté
+          } catch (e) {
+            console.error("Initial sync refresh failed:", e);
+            return;
+          }
+        }
+
         try {
           const { data } = await api.get('/auth/me');
           // The backend /auth/me returns the user object directly, not wrapped in { user: ... }
@@ -107,6 +119,15 @@ function App() {
                     <OperationalDashboard
                       title="Poste Opérationnel"
                       description="Traitement des tickets selon le workflow"
+                    />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/weighing" element={
+                  <ProtectedRoute allowedRoles={['AGENT_QUAI', 'SUPERVISOR', 'ADMINISTRATOR', 'EXPLOITATION']}>
+                    <OperationalDashboard
+                      title="Bascule"
+                      description="Interface de pesée (pont bascule)"
                     />
                   </ProtectedRoute>
                 } />

@@ -8,6 +8,7 @@ import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
 import { Card, CardContent } from '../molecules/ui/card';
 import { Badge } from '../atoms/ui/badge';
+import { printTicket } from '../../utils/printTicket';
 import { 
     Loader2, 
     Plus, 
@@ -44,7 +45,7 @@ const KioskStatusBadge = ({ status }: { status: Kiosk['status'] }) => {
 };
 
 const DEFAULT_CONFIG = {
-    welcomeMessage: "Bienvenue chez SIBM",
+    welcomeMessage: "Bienvenue sur GesParc SIBM",
     primaryColor: "#3B82F6",
     logoUrl: null,
     showWeather: true,
@@ -288,6 +289,23 @@ export const KioskManager = () => {
                                 </div>
 
                                 <div className="flex justify-end gap-2 pt-2 border-t border-border/10 mt-auto">
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="h-8 rounded-lg text-slate-400 hover:text-primary transition-all" 
+                                        title="Tester l'impression"
+                                        onClick={() => printTicket({
+                                            ticketNumber: 'TEST-001',
+                                            licensePlate: 'TEST-PL',
+                                            driverName: 'TEST CHAUFFEUR',
+                                            companyName: 'SOCIETE TEST',
+                                            arrivedAt: new Date(),
+                                            status: 'EN_ATTENTE',
+                                            site: { name: kiosk.site?.name || 'SITE TEST' }
+                                        })}
+                                    >
+                                        <Printer className="h-3.5 w-3.5" />
+                                    </Button>
                                     <Button size="sm" variant="ghost" className="h-8 rounded-lg" onClick={() => handleOpenModal(kiosk)}><Edit2 className="h-3.5 w-3.5" /></Button>
                                     <Button size="sm" variant="ghost" className="h-8 text-danger rounded-lg" onClick={() => {
                                         setConfirmState({

@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/useAuthStore';
 import { performTokenRefresh } from '../services/api';
 import type { ConnectionState } from '../components/atoms/ui/ConnectionStatus';
 import { SocketContext } from '../contexts/socketContext';
+import { isTokenExpired } from '../utils/auth';
 
 interface SocketProviderProps {
     children: ReactNode;
@@ -20,6 +21,15 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
         if (!token && !siteIdFromUrl) {
             return;
+        }
+
+        // Si le token est expiré, on refresh AVANT de tenter la connexion socket
+        // pour éviter les erreurs 401/jwt-expired inutiles dans la console.
+        if (token && isTokenExpired(token)) {
+            performTokenRefresh().catch(err => {
+                console.error('Initial socket token refresh failed:', err);
+            });
+            return; // L'update du token via performTokenRefresh relancera cet effet
         }
 
         const SOCKET_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3000';

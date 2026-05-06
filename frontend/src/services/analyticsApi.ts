@@ -21,7 +21,7 @@ export const analyticsApi = {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `rapport_gfa_${startDate}_${endDate}.csv`);
+        link.setAttribute('download', `rapport_gesparc_${startDate}_${endDate}.csv`);
         document.body.appendChild(link);
         link.click();
     }

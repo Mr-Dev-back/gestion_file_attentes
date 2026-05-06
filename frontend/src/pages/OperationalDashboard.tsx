@@ -21,7 +21,10 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { DynamicForm } from '../components/molecules/ui/DynamicForm';
+import { soundAlerts } from '../utils/soundAlerts';
+import { useRef } from 'react';
 import type { Ticket, TicketFormData } from '../types/ticket';
+import { differenceInMinutes } from 'date-fns';
 
 interface OperationalDashboardProps {
     queueId?: string;
@@ -70,6 +73,41 @@ export default function OperationalDashboard({ queueId: initialQueueId, title, d
     
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+    const alertedTickets = useRef<Set<string>>(new Set());
+    const prevCount = useRef(tickets?.length || 0);
+
+    // Sound Alerts Logic
+    useEffect(() => {
+        if (!tickets) return;
+
+        // 1. Alert for new tickets
+        if (tickets.length > prevCount.current) {
+            soundAlerts.playNewTicket();
+        }
+        prevCount.current = tickets.length;
+
+        // 2. Alert for wait thresholds
+        tickets.forEach(ticket => {
+            const diff = differenceInMinutes(new Date(), new Date(ticket.arrivedAt));
+            
+            if (diff >= 45 && !alertedTickets.current.has(ticket.ticketId + '-critical')) {
+                soundAlerts.playCritical();
+                alertedTickets.current.add(ticket.ticketId + '-critical');
+            } else if (diff >= 30 && diff < 45 && !alertedTickets.current.has(ticket.ticketId + '-urgent')) {
+                soundAlerts.playUrgent();
+                alertedTickets.current.add(ticket.ticketId + '-urgent');
+            }
+        });
+
+        // Cleanup
+        const currentIds = new Set(tickets.map(t => t.ticketId));
+        const toRemove: string[] = [];
+        alertedTickets.current.forEach(key => {
+            const id = key.split('-')[0];
+            if (!currentIds.has(id)) toRemove.push(key);
+        });
+        toRemove.forEach(key => alertedTickets.current.delete(key));
+    }, [tickets]);
 
     const ticketList = tickets || [];
 

@@ -55,13 +55,14 @@ export const AuditLogs: React.FC = () => {
   };
 
   const getActionColor = (action: string) => {
-    if (action.includes('CREATE') || action.includes('SUCCESS') || action === 'TICKET_FINISH') {
+    const act = action.toUpperCase();
+    if (act.includes('CREATE') || act.includes('SUCCESS') || act.includes('FINISH') || act.includes('VALIDATE')) {
       return 'success';
     }
-    if (action.includes('UPDATE') || action.includes('CALL') || action.includes('START') || action === 'UNLOCK_USER') {
+    if (act.includes('UPDATE') || act.includes('CALL') || act.includes('START') || act.includes('ASSIGN') || act.includes('TRANSFER')) {
       return 'warning';
     }
-    if (action.includes('DELETE') || action.includes('FAILED') || action.includes('REVOKE')) {
+    if (act.includes('DELETE') || act.includes('FAILED') || act.includes('REVOKE') || act.includes('CANCEL') || act.includes('REJECT')) {
       return 'danger';
     }
     return 'secondary';
@@ -295,6 +296,26 @@ export const AuditLogs: React.FC = () => {
                   <p className="text-sm font-mono text-primary font-bold">{selectedLog.ipAddress}</p>
                 </div>
               </div>
+
+              {selectedLog.resourceType === 'Ticket' && (
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-slate-800">Historique Complet du Ticket</p>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Voir toutes les etapes de ce vehicule</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setFilters({ ...filters, search: selectedLog.resourceId || '', page: 1 })}
+                    className="px-4 py-2 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-md hover:shadow-primary/20 transition-all"
+                  >
+                    Filtrer par ce Ticket
+                  </button>
+                </div>
+              )}
 
               <div className="h-px bg-slate-100" />
 

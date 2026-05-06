@@ -5,7 +5,7 @@ import { useUsers, type User } from '../../hooks/useUsers';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../molecules/ui/card';
 import { Button } from '../atoms/ui/button';
 import { Input } from '../atoms/ui/input';
-import { Plus, Trash2, Edit2, Layout, Code, Save, X, Loader2, MapPin } from 'lucide-react';
+import { Plus, Trash2, Edit2, Layout, Code, Save, X, Loader2, MapPin, GitBranch } from 'lucide-react';
 import { useSites, type Site } from '../../hooks/useSites';
 import { Modal } from '../molecules/ui/modal';
 import { cn } from '../../lib/utils';
@@ -29,6 +29,9 @@ export const QuaiParameterManager = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingParam, setEditingParam] = useState<QuaiParameter | null>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [paramToDelete, setParamToDelete] = useState<string | null>(null);
+  const [isBulkDeleteConfirmOpen, setIsBulkDeleteConfirmOpen] = useState(false);
 
   const {
     register,
@@ -43,7 +46,7 @@ export const QuaiParameterManager = () => {
     defaultValues: {
       label: '',
       siteId: '',
-      stepId: '',
+      stepIds: [],
       queueIds: [],
       formConfig: [],
       allowedUsers: []
@@ -66,10 +69,11 @@ export const QuaiParameterManager = () => {
     name: 'formConfig'
   });
 
-  const watchedStepId = watch('stepId');
+  const watchedStepIds = watch('stepIds') || [];
   const watchedAllowedUsers = watch('allowedUsers') || [];
   const watchedQueueIds = watch('queueIds') || [];
   const watchedFormConfig = watch('formConfig') || [];
+  const watchedSiteId = watch('siteId');
 
   const handleOpenModal = (param: QuaiParameter | null = null) => {
     if (param) {
@@ -77,7 +81,7 @@ export const QuaiParameterManager = () => {
       reset({
         label: param.label,
         siteId: param.siteId ?? '',
-        stepId: param.stepId,
+        stepIds: param.stepIds ?? (param.stepId ? [param.stepId] : []),
         queueIds: param.queueIds ?? (param.queues ? param.queues.map(q => q.queueId) : []),
         formConfig: param.formConfig ?? [],
         allowedUsers: param.allowedUsers ?? []
@@ -87,7 +91,7 @@ export const QuaiParameterManager = () => {
       reset({
         label: '',
         siteId: '',
-        stepId: '',
+        stepIds: [],
         queueIds: [],
         formConfig: [],
         allowedUsers: []
@@ -97,17 +101,39 @@ export const QuaiParameterManager = () => {
   };
 
   const onSave = (data: QuaiParameterFormValues) => {
-    saveParameter.mutate(data as any, {
+    const payload = {
+      ...data,
+      quaiId: editingParam?.quaiId // Ensure quaiId is passed for updates
+    };
+    saveParameter.mutate(payload as any, {
       onSuccess: () => setIsModalOpen(false)
     });
   };
 
-  const handleBulkDelete = () => {
-    if (window.confirm(`Voulez-vous vraiment supprimer les ${selectedCount} configurations de quais sÃ©lectionnÃ©es ?`)) {
-      bulkDeleteParameters.mutate(selectedIds, {
-        onSuccess: () => clearSelection()
+  const handleDeleteClick = (id: string) => {
+    setParamToDelete(id);
+    setIsConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (paramToDelete) {
+      deleteParameter.mutate(paramToDelete, {
+        onSuccess: () => setIsConfirmOpen(false)
       });
     }
+  };
+
+  const handleBulkDeleteClick = () => {
+    setIsBulkDeleteConfirmOpen(true);
+  };
+
+  const confirmBulkDelete = () => {
+    bulkDeleteParameters.mutate(selectedIds, {
+      onSuccess: () => {
+        clearSelection();
+        setIsBulkDeleteConfirmOpen(false);
+      }
+    });
   };
 
   const toggleUser = (userId: string) => {
@@ -120,6 +146,17 @@ export const QuaiParameterManager = () => {
     }
   };
 
+  const toggleStep = (stepId: string) => {
+    const current = [...watchedStepIds];
+    const index = current.indexOf(stepId);
+    if (index > -1) {
+      setValue('stepIds', current.filter(id => id !== stepId), { shouldDirty: true });
+    } else {
+      setValue('stepIds', [...current, stepId], { shouldDirty: true });
+    }
+    // Reset queues when steps change if needed, or keep them
+  };
+
   const toggleQueue = (queueId: string) => {
     const current = [...watchedQueueIds];
     const index = current.indexOf(queueId);
@@ -130,12 +167,25 @@ export const QuaiParameterManager = () => {
     }
   };
 
-  const allSteps = workflows.flatMap(wf =>
-    (wf.steps || []).map(step => ({
-      ...step,
-      workflowName: wf.name
-    }))
-  );
+  const allSteps = (() => {
+    const stepMap = new Map<string, WorkflowStep & { workflowName: string }>();
+    workflows.forEach(wf => {
+      (wf.steps || []).forEach((step: WorkflowStep) => {
+        if (!stepMap.has(step.stepId)) {
+          stepMap.set(step.stepId, { ...step, workflowName: wf.name });
+        }
+      });
+    });
+    return Array.from(stepMap.values());
+  })();
+
+  // Filter steps based on selected site if possible
+  const filteredSteps = watchedSiteId 
+    ? allSteps.filter(s => {
+        const site = (sites as Site[]).find((st: Site) => st.siteId === watchedSiteId);
+        return site?.workflowId ? workflows.find(w => w.workflowId === site.workflowId)?.steps?.some(ws => ws.stepId === s.stepId) : true;
+      })
+    : allSteps;
 
   if (isLoading) {
     return (
@@ -157,7 +207,7 @@ export const QuaiParameterManager = () => {
             <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
               <Layout className="h-6 w-6 text-primary" /> Configuration des Quais Dynamiques
             </h2>
-            <p className="text-sm text-slate-500 font-medium mt-1">GÃ©rez les terminaux et les formulaires par Ã©tape.</p>
+            <p className="text-sm text-slate-500 font-medium mt-1">Gérez les terminaux et les formulaires par étape.</p>
           </div>
           {parameters.length > 0 && (
             <Button
@@ -166,7 +216,7 @@ export const QuaiParameterManager = () => {
               onClick={toggleSelectAll}
               className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5 rounded-xl border border-primary/10 transition-all active:scale-95"
             >
-              {isAllSelected ? "Tout dÃ©sÃ©lectionner" : "Tout sÃ©lectionner"}
+              {isAllSelected ? "Tout désélectionner" : "Tout sélectionner"}
             </Button>
           )}
         </div>
@@ -179,7 +229,7 @@ export const QuaiParameterManager = () => {
         <EmptyState
           icon={Layout}
           title="Aucune configuration de quai"
-          description="Vous n'avez pas encore dÃ©fini de configurations pour vos terminaux d'accueil."
+          description="Vous n'avez pas encore défini de configurations pour vos terminaux d'accueil."
           actionLabel="Nouveau Quai"
           onAction={() => handleOpenModal()}
         />
@@ -213,7 +263,7 @@ export const QuaiParameterManager = () => {
                   </div>
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button variant="ghost" size="sm" onClick={() => handleOpenModal(param)} className="h-8 w-8 rounded-lg hover:bg-primary/10"><Edit2 className="h-4 w-4 text-primary" /></Button>
-                    <Button variant="ghost" size="sm" onClick={() => deleteParameter.mutate(param.quaiId!)} className="h-8 w-8 rounded-lg hover:bg-danger/10"><Trash2 className="h-4 w-4 text-danger" /></Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(param.quaiId!)} className="h-8 w-8 rounded-lg hover:bg-danger/10"><Trash2 className="h-4 w-4 text-danger" /></Button>
                   </div>
                 </div>
                 <CardTitle className="text-lg font-black text-slate-800 uppercase tracking-tight">{param.label}</CardTitle>
@@ -227,20 +277,27 @@ export const QuaiParameterManager = () => {
                     <span className="font-bold text-slate-400 uppercase tracking-widest">Site</span>
                     <div className="flex items-center gap-1.5 font-black text-emerald-600">
                       <MapPin className="h-3 w-3" />
-                      {sites.find((site: Site) => site.siteId === param.siteId)?.name || 'Non spÃ©cifiÃ©'}
+                      {sites.find((site: Site) => site.siteId === param.siteId)?.name || 'Non spécifié'}
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between text-xs py-2 border-b border-slate-100">
-                    <span className="font-bold text-slate-400 uppercase tracking-widest">Ã‰tape liÃ©e</span>
-                    <span className="font-black text-primary">{allSteps.find((step: WorkflowStep) => step.stepId === param.stepId)?.name || 'Inconnue'}</span>
+                    <span className="font-bold text-slate-400 uppercase tracking-widest">Étapes liées</span>
+                    <div className="flex flex-wrap justify-end gap-1 max-w-[60%]">
+                      {(param.stepIds || (param.stepId ? [param.stepId] : [])).map(sid => (
+                        <Badge key={sid} variant="outline" className="text-[8px] font-black border-primary/20 text-primary px-1 py-0 uppercase">
+                          {allSteps.find(s => s.stepId === sid)?.name || 'Inconnue'}
+                        </Badge>
+                      ))}
+                      {(param.stepIds?.length === 0 && !param.stepId) && <span className="font-black text-slate-300">Aucune</span>}
+                    </div>
                   </div>
                   <div className="flex items-center justify-between text-xs py-2 border-b border-slate-100">
                     <span className="font-bold text-slate-400 uppercase tracking-widest">Files (Queues)</span>
-                    <span className="font-black text-indigo-600">
+                    <span className="font-black text-indigo-600 truncate max-w-[50%] text-right">
                       {param.queues && param.queues.length > 0
                         ? param.queues.map(q => q.name).join(', ')
-                        : 'Par dÃ©faut / Toutes'}
+                        : 'Toutes'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs py-2 border-b border-slate-100">
@@ -248,7 +305,7 @@ export const QuaiParameterManager = () => {
                     <span className="font-black text-slate-700">{param.formConfig.length} champs</span>
                   </div>
                   <div className="flex items-center justify-between text-xs py-2">
-                    <span className="font-bold text-slate-400 uppercase tracking-widest">AccÃ¨s</span>
+                    <span className="font-bold text-slate-400 uppercase tracking-widest">Accès</span>
                     <div className="flex -space-x-2">
                       {param.allowedUsers.slice(0, 3).map((uid: string) => {
                         const user = users.find((u: User) => u.userId === uid);
@@ -278,7 +335,7 @@ export const QuaiParameterManager = () => {
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1 md:col-span-2">
               <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Nom du terminal</label>
-              <Input placeholder="Ex: Quai de PesÃ©e Sud" {...register('label')} error={errors.label?.message} className="h-11 rounded-xl" />
+              <Input placeholder="Ex: Quai de Pesée Sud" {...register('label')} error={errors.label?.message} className="h-11 rounded-xl" />
             </div>
 
             <div className="space-y-1 md:col-span-2">
@@ -290,7 +347,7 @@ export const QuaiParameterManager = () => {
                 )}
                 {...register('siteId')}
               >
-                <option value="">-- SÃ©lectionner un site --</option>
+                <option value="">-- Sélectionner un site --</option>
                 {sites.map((site: Site) => (
                   <option key={site.siteId} value={site.siteId}>{site.name}</option>
                 ))}
@@ -298,35 +355,44 @@ export const QuaiParameterManager = () => {
               {errors.siteId && <p className="text-[10px] font-bold text-danger ml-1">{errors.siteId.message}</p>}
             </div>
 
-            <div className="space-y-1 md:col-span-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Ã‰tape du Workflow</label>
-              <select
-                className={cn(
-                  "w-full h-11 px-3 border-2 border-slate-100 rounded-xl outline-none font-bold text-sm bg-white transition-all",
-                  errors.stepId ? "border-danger focus:ring-danger/20" : "focus:border-primary/50"
-                )}
-                {...register('stepId')}
-              >
-                <option value="">-- SÃ©lectionner une Ã©tape --</option>
-                {workflows.map((wf, wfIdx) => (
-                  <optgroup key={wf.workflowId || `wf-opt-${wfIdx}`} label={wf.name}>
-                    {(wf.steps || []).map((step, sIdx) => (
-                      <option key={step.stepId || `step-opt-${sIdx}`} value={step.stepId}>
-                        {step.name} (Ordre {(step as any).orderNumber || step.order})
-                      </option>
-                    ))}
-                  </optgroup>
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-[10px] font-black uppercase text-slate-400 ml-1 flex items-center gap-1">
+                <GitBranch className="h-3 w-3" /> Étapes du Workflow (Sélection Multiple)
+              </label>
+              <div className="flex flex-wrap gap-2 p-4 bg-slate-50/50 rounded-2xl border border-slate-100 min-h-[60px]">
+                {filteredSteps.map((step) => (
+                  <div
+                    key={step.stepId}
+                    onClick={() => toggleStep(step.stepId)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase cursor-pointer transition-all border-2 flex items-center gap-2",
+                      watchedStepIds.includes(step.stepId)
+                        ? "bg-primary border-primary text-white shadow-md shadow-primary/20"
+                        : "bg-white border-slate-100 text-slate-400 hover:border-primary/30"
+                    )}
+                  >
+                    <span className="opacity-50">[{step.workflowName}]</span> {step.name}
+                  </div>
                 ))}
-              </select>
-              {errors.stepId && <p className="text-[10px] font-bold text-danger ml-1">{errors.stepId.message}</p>}
+                {filteredSteps.length === 0 && <p className="text-[10px] text-slate-400 italic">Aucune étape disponible pour ce site.</p>}
+              </div>
+              {errors.stepIds && <p className="text-[10px] font-bold text-danger ml-1">{errors.stepIds.message}</p>}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase text-slate-400 ml-1 italic">Files d'attente liÃ©es (Optionnel)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400 ml-1 italic">Files d'attente liées (Optionnel)</label>
             <div className="flex flex-wrap gap-2 p-4 bg-slate-50/50 rounded-2xl border border-slate-100 min-h-[60px]">
-              {!watchedStepId && <p className="text-[10px] text-slate-400 italic">SÃ©lectionnez d'abord une Ã©tape pour voir les files d'attente.</p>}
-              {watchedStepId && allSteps.find((step: WorkflowStep) => step.stepId === watchedStepId)?.queues?.map((q: Queue) => (
+              {watchedStepIds.length === 0 && <p className="text-[10px] text-slate-400 italic">Sélectionnez au moins une étape pour voir les files d'attente.</p>}
+              {watchedStepIds.length > 0 && (() => {
+                // Deduplicate queues by ID
+                const queueMap = new Map<string, Queue>();
+                watchedStepIds.forEach((sid: string) => {
+                  const step = allSteps.find(s => s.stepId === sid);
+                  step?.queues?.forEach((q: Queue) => queueMap.set(q.queueId, q));
+                });
+                return Array.from(queueMap.values());
+              })().map((q: Queue) => (
                 <div
                   key={q.queueId}
                   onClick={() => toggleQueue(q.queueId)}
@@ -340,9 +406,6 @@ export const QuaiParameterManager = () => {
                   {q.name}
                 </div>
               ))}
-              {watchedStepId && (!allSteps.find((step: WorkflowStep) => step.stepId === watchedStepId)?.queues || allSteps.find((step: WorkflowStep) => step.stepId === watchedStepId)?.queues?.length === 0) && (
-                <p className="text-[10px] text-slate-400 italic">Aucune file d'attente n'est liÃ©e Ã  cette Ã©tape dans le workflow.</p>
-              )}
             </div>
           </div>
 
@@ -394,7 +457,7 @@ export const QuaiParameterManager = () => {
 
                   {watchedFormConfig[idx]?.type === 'select' && (
                     <div className="pl-4 border-l-2 border-primary/20 space-y-1">
-                      <label className="text-[8px] font-black uppercase text-primary">Options (SÃ©parÃ©es par des virgules)</label>
+                      <label className="text-[8px] font-black uppercase text-primary">Options (Séparées par des virgules)</label>
                       <Input
                         placeholder="Option 1, Option 2, Option 3"
                         {...register(`formConfig.${idx}.options` as const, {
@@ -408,12 +471,12 @@ export const QuaiParameterManager = () => {
                   )}
                 </div>
               ))}
-              {fields.length === 0 && <p className="text-center py-4 text-xs font-bold text-slate-300 italic">Aucun champ configurÃ©</p>}
+              {fields.length === 0 && <p className="text-center py-4 text-xs font-bold text-slate-300 italic">Aucun champ configuré</p>}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Utilisateurs AutorisÃ©s (Laissez vide pour tous)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Utilisateurs Autorisés (Laissez vide pour tous)</label>
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
               {users.filter((u: User) => u.role !== 'ADMINISTRATOR').map((user: User) => (
                 <div
@@ -440,7 +503,7 @@ export const QuaiParameterManager = () => {
               disabled={!isValid || saveParameter.isPending}
             >
               {saveParameter.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-              {editingParam ? 'Enregistrer les modifications' : 'CrÃ©er le terminal'}
+              {editingParam ? 'Enregistrer les modifications' : 'Créer le terminal'}
             </Button>
           </div>
         </form>
@@ -448,11 +511,54 @@ export const QuaiParameterManager = () => {
 
       <BulkActionsToolbar
         selectedCount={selectedCount}
-        onDelete={handleBulkDelete}
+        onDelete={handleBulkDeleteClick}
         onClear={clearSelection}
         isLoading={bulkDeleteParameters.isPending}
-        label="quais sÃ©lectionnÃ©s"
+        label="quais sélectionnés"
       />
+
+      {/* Custom Confirmation Modals */}
+      <Modal isOpen={isConfirmOpen} onClose={() => setIsConfirmOpen(false)} title="Confirmer la suppression" size="sm">
+        <div className="py-6 text-center space-y-4">
+          <div className="h-16 w-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
+            <Trash2 className="h-8 w-8" />
+          </div>
+          <p className="font-bold text-slate-800">Êtes-vous sûr de vouloir supprimer cette configuration de quai ?</p>
+          <p className="text-sm text-slate-500">Cette action est irréversible.</p>
+          <div className="flex justify-center gap-3 pt-4">
+            <Button variant="outline" onClick={() => setIsConfirmOpen(false)} className="rounded-xl h-11 px-6">Annuler</Button>
+            <Button onClick={confirmDelete} isLoading={deleteParameter.isPending} className="bg-danger hover:bg-danger/90 text-white rounded-xl h-11 px-6">Supprimer</Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal isOpen={isBulkDeleteConfirmOpen} onClose={() => setIsBulkDeleteConfirmOpen(false)} title="Suppression groupée" size="sm">
+        <div className="py-6 text-center space-y-4">
+          <div className="h-16 w-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
+            <Trash2 className="h-8 w-8" />
+          </div>
+          <p className="font-bold text-slate-800">Supprimer les {selectedCount} configurations sélectionnées ?</p>
+          <p className="text-sm text-slate-500">Cette action est irréversible.</p>
+          <div className="flex justify-center gap-3 pt-4">
+            <Button variant="outline" onClick={() => setIsBulkDeleteConfirmOpen(false)} className="rounded-xl h-11 px-6">Annuler</Button>
+            <Button onClick={confirmBulkDelete} isLoading={bulkDeleteParameters.isPending} className="bg-danger hover:bg-danger/90 text-white rounded-xl h-11 px-6">Supprimer tout</Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
+
+// Helper Badge component since it might not be imported or available as a standalone atom in this context
+const Badge = ({ children, variant, className, style }: any) => (
+  <span 
+    style={style}
+    className={cn(
+      "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset",
+      variant === 'outline' ? "bg-white text-slate-600 ring-slate-200" : "bg-primary/10 text-primary ring-primary/20",
+      className
+    )}
+  >
+    {children}
+  </span>
+);

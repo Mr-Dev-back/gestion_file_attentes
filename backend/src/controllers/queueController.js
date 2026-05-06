@@ -1,4 +1,4 @@
-import { Queue, Ticket, WorkflowStep, Category, QuaiParameter, AuditLog, sequelize } from '../models/index.js';
+import { Queue, Ticket, WorkflowStep, Category, QuaiParameter, AuditLog, sequelize, Site } from '../models/index.js';
 import { Op } from 'sequelize';
 import logger from '../config/logger.js';
 
@@ -21,6 +21,11 @@ class QueueController {
                         model: Category,
                         as: 'category',
                         attributes: ['categoryId', 'name', 'prefix', 'color']
+                    },
+                    {
+                        model: Site,
+                        as: 'site',
+                        attributes: ['siteId', 'name', 'code']
                     }
                 ]
             });
@@ -87,7 +92,7 @@ class QueueController {
 
     async createQueue(req, res) {
         try {
-            const { name, isActive, description, categoryId, stepId, quaiId } = req.body;
+            const { name, isActive, description, categoryId, stepId, quaiId, siteId } = req.body;
 
             const queue = await Queue.create({
                 name,
@@ -95,7 +100,8 @@ class QueueController {
                 isActived: isActive ?? true,
                 categoryId: categoryId || null,
                 stepId: stepId || null,
-                quaiId: quaiId || null
+                quaiId: quaiId || null,
+                siteId: siteId || null
             });
 
             const plain = queue.toJSON();
@@ -112,7 +118,7 @@ class QueueController {
     async updateQueue(req, res) {
         try {
             const { id } = req.params;
-            const { name, isActive, description, categoryId, stepId, quaiId } = req.body;
+            const { name, isActive, description, categoryId, stepId, quaiId, siteId } = req.body;
 
             const queue = await Queue.findByPk(id);
             if (!queue) return res.status(404).json({ error: 'File d\'attente non trouvée' });
@@ -123,7 +129,8 @@ class QueueController {
                 isActived: isActive,
                 categoryId: categoryId || null,
                 stepId: stepId || null,
-                quaiId: quaiId || null
+                quaiId: quaiId || null,
+                siteId: siteId || null
             });
 
             const plain = queue.toJSON();

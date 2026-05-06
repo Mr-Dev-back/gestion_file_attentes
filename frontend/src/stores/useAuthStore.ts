@@ -3,7 +3,13 @@ import { persist } from 'zustand/middleware';
 
 
 
-export type UserRole = 'SUPERVISOR' | 'MANAGER' | 'AGENT_QUAI' | 'ADMINISTRATOR' | 'EXPLOITATION';
+export type UserRole =
+    | 'ADMINISTRATOR'
+    | 'MANAGER'
+    | 'SUPERVISOR'
+    | 'AGENT_QUAI'
+    | 'AGENT_GUERITE'
+    | 'EXPLOITATION';
 
 interface User {
     userId: string;

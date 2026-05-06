@@ -23,6 +23,11 @@ TicketVehicleInfo.init({
     companyName: {
         type: DataTypes.STRING(255),
         comment: 'Snapshot — conservé même si l\'entreprise est renommée'
+    },
+    originRegion: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: 'Zone de provenance du véhicule (ex: Bouaké, San Pedro)'
     }
 }, {
     sequelize,

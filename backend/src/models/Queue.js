@@ -36,6 +36,11 @@ Queue.init({
         type: DataTypes.UUID,
         allowNull: true,
         references: { model: 'QuaiParameter', key: 'quaiId' }
+    },
+    siteId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: { model: 'Site', key: 'siteId' }
     }
 }, {
     sequelize,

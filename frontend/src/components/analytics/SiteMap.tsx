@@ -42,20 +42,37 @@ export const SiteMap: React.FC = () => {
 
   // Coordinates mapping
   const SITE_COORDINATES: Record<string, { x: number; y: number }> = {
-    'ABIDJAN': { x: 75, y: 88 },
-    'SAN PEDRO': { x: 35, y: 92 },
+    'ABIDJAN': { x: 78, y: 85 },
+    'YOPOUGON': { x: 74, y: 83 },
+    'SAN PEDRO': { x: 32, y: 90 },
     'BOUAKE': { x: 55, y: 55 },
+    'YAMOUSSOUKRO': { x: 52, y: 68 },
+    'KORHOGO': { x: 50, y: 25 },
+    'MAN': { x: 25, y: 62 },
+    'DALOA': { x: 42, y: 65 },
+    'ABENGOUROU': { x: 85, y: 60 },
     'default': { x: 50, y: 50 }
   };
 
   const mappedSites: SiteStatus[] = useMemo(() => {
-    return (sites || []).map(s => ({
-      id: s.id,
-      name: s.name,
-      truckCount: s.truckCount || 0,
-      status: (s.truckCount || 0) > 20 ? 'congested' : (s.truckCount || 0) > 10 ? 'busy' : 'fluid',
-      coordinates: SITE_COORDINATES[s.name.toUpperCase()] || SITE_COORDINATES.default
-    }));
+    return (sites || []).map((s, index) => {
+      const baseCoords = SITE_COORDINATES[s.name.toUpperCase()] || SITE_COORDINATES.default;
+      
+      // If it's a default coordinate, add a slight jitter based on index to avoid stacking
+      const jitterX = baseCoords === SITE_COORDINATES.default ? (index % 5) * 4 - 8 : 0;
+      const jitterY = baseCoords === SITE_COORDINATES.default ? Math.floor(index / 5) * 4 - 4 : 0;
+
+      return {
+        id: s.siteId,
+        name: s.name,
+        truckCount: s.truckCount || 0,
+        status: (s.truckCount || 0) > 20 ? 'congested' : (s.truckCount || 0) > 10 ? 'busy' : 'fluid',
+        coordinates: {
+          x: baseCoords.x + jitterX,
+          y: baseCoords.y + jitterY
+        }
+      };
+    });
   }, [sites]);
 
   const filteredSites = useMemo(() => {

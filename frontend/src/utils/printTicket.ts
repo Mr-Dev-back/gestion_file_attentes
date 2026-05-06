@@ -111,7 +111,7 @@ export const printTicket = (ticket: PrintableTicket) => {
     </head>
     <body>
         <div class="header">
-            <div class="title">${ticket.company?.name || 'SIBM'}</div>
+            <div class="title">${ticket.company?.name || 'GesParc SIBM'}</div>
             <div class="subtitle">${ticket.site?.name || 'SITE EXPLOITATION'}</div>
             <div class="subtitle">Ticket d'Entrée - ${date}</div>
         </div>

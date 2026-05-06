@@ -6,6 +6,9 @@ import SiteMap from '../components/analytics/SiteMap';
 import CategoryDistribution from '../components/analytics/CategoryDistribution';
 import WorkflowMonitor from '../components/analytics/WorkflowMonitor';
 import ArchiveSearch from './ArchiveSearch';
+import ManagerAlerts from './manager/ManagerAlerts';
+import ManagerTiming from './manager/ManagerTiming';
+import ManagerAudit from './manager/ManagerAudit';
 
 // 1. GLOBAL CONTEXT
 interface ManagerContextType {
@@ -79,28 +82,6 @@ const ManagerHeader = () => {
   );
 };
 
-// Generic Placeholder Component for Views in construction
-const ViewPlaceholder = ({ title, description, icon: Icon }: { title: string, description: string, icon: any }) => (
-  <div className="flex flex-col items-center justify-center py-24 px-4 text-center space-y-6">
-    <div className="p-6 bg-primary/5 rounded-full ring-8 ring-primary/5 shadow-inner">
-      <Icon className="w-16 h-16 text-primary/40" />
-    </div>
-    <div className="max-w-md space-y-2">
-      <h2 className="text-2xl font-black text-slate-700 tracking-tight">{title}</h2>
-      <p className="text-slate-500 font-medium leading-relaxed">
-        {description}
-      </p>
-    </div>
-    <div className="pt-4 flex items-center gap-3 text-sm text-primary/60 font-bold bg-white px-4 py-2 rounded-xl shadow-sm border border-black/5">
-      <span className="relative flex h-3 w-3">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20"></span>
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary/40"></span>
-      </span>
-      En cours de développement
-    </div>
-  </div>
-);
-
 export default function Manager() {
   const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
 
@@ -129,28 +110,16 @@ export default function Manager() {
 
               {/* 2. Flux & Workflows */}
               <Route path="workflows/monitor" element={<WorkflowMonitor />} />
-              <Route path="alerts" element={<ViewPlaceholder 
-                title="Goulots & Alertes Live" 
-                description="Liste centralisée des points de blocages critiques et temps d'attentes anormaux signalés." 
-                icon={Activity} />} 
-              />
+              <Route path="alerts" element={<ManagerAlerts />} />
 
               {/* 3. Analyses & Rapports */}
               <Route path="reports" element={<ArchiveSearch />} />
               <Route path="stats/categories" element={<CategoryDistribution />} />
-              <Route path="stats/timing" element={<ViewPlaceholder 
-                title="Analyse du Temps de Cadencement" 
-                description="Étude détaillée des temps de cycle (Time-in-Site) de l'entrée à la sortie des transporteurs." 
-                icon={Activity} />} 
-              />
+              <Route path="stats/timing" element={<ManagerTiming />} />
 
               {/* 4. Contrôle */}
               <Route path="history" element={<ArchiveSearch />} />
-              <Route path="audit" element={<ViewPlaceholder 
-                title="Journaux d'Opérations" 
-                description="Traçabilité totale et consultation des logs métiers (Pesée entrées/sorties, affectations)." 
-                icon={ClipboardCheck} />} 
-              />
+              <Route path="audit" element={<ManagerAudit />} />
 
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="dashboard" replace />} />

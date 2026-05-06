@@ -94,8 +94,9 @@ const TrendChart = ({ data }: { data: TicketTrendData[] }) => (
         </div>
       }
     />
-    <CardContent className="p-6 flex-1 min-h-[300px]">
-      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+    <CardContent className="p-6 flex-1 min-h-[300px] flex flex-col min-w-0">
+      <div className="flex-1 w-full min-h-0">
+        <ResponsiveContainer width="99.9%" height="100%">
         <AreaChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
           <defs>
             <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -119,7 +120,8 @@ const TrendChart = ({ data }: { data: TicketTrendData[] }) => (
           />
         </AreaChart>
       </ResponsiveContainer>
-    </CardContent>
+    </div>
+  </CardContent>
   </Card>
 );
 
@@ -130,9 +132,9 @@ const DistributionChart = ({ data }: { data: CategoryDistData[] }) => {
     <Card className="border-slate-200/60 shadow-lg bg-white rounded-2xl overflow-hidden flex flex-col min-h-[400px]">
       <CustomCardHeader icon={PieChartIcon} label="Analyses" title="Distribution" />
 
-      <CardContent className="p-6 pt-2 flex flex-col flex-1">
+      <CardContent className="p-6 pt-2 flex flex-col flex-1 min-w-0">
         <div className="relative w-full flex-1 flex items-center justify-center min-h-[220px]">
-          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+          <ResponsiveContainer width="99.9%" height="100%">
             <PieChart>
               <Pie
                 data={data}

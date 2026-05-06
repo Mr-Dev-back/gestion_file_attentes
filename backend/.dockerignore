@@ -5,3 +5,8 @@ npm-debug.log
 dist
 build
 *.log
+scripts
+docs
+*.sql
+*.md
+!README.md

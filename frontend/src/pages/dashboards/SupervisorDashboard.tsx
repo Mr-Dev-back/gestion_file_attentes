@@ -27,7 +27,7 @@ export default function SupervisorDashboard() {
     const { state: socketState } = useSocket();
     const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useSupervisorStats();
     const { data: deptData, isLoading: deptLoading, refetch: refetchDepts } = useSupervisorDepartments();
-    const siteId = user?.siteId || '';
+    const siteId = user?.siteId;
     const { data: queuesData, isLoading: queuesLoading, refetch: refetchQueues } = useSupervisorQueues(siteId);
 
     // Real-time updates

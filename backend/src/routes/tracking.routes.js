@@ -8,7 +8,7 @@ const router = express.Router();
 router.get(
     '/search/:plateNumber',
     authMiddleware.verifyToken,
-    authMiddleware.hasRole('SUPERVISOR'),
+    authMiddleware.authorize(['SUPERVISOR', 'ADMINISTRATOR', 'EXPLOITATION']),
     trackingController.searchVehicle
 );
 
