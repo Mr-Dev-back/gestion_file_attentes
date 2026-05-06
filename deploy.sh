@@ -34,12 +34,16 @@ sleep 15
 
 # 5. Migrations et Seeding base de données
 echo "🔄 Exécution des migrations complémentaires..."
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T backend npm run db:migrate || echo "⚠️ Attention : Les migrations ont rencontré un problème"
+docker compose -f "$COMPOSE_FILE" exec -T backend npm run db:migrate || echo "⚠️ Attention : Les migrations ont rencontré un problème"
 
 echo "🌱 Injection des données de configuration (Seeding)..."
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" exec -T backend npm run seed:prod || echo "⚠️ Attention : Le seeding a échoué"
+docker compose -f "$COMPOSE_FILE" exec -T backend npm run seed:prod || echo "⚠️ Attention : Le seeding a échoué"
 
-# 6. Nettoyage
+# 6. Démarrage final du backend et frontend
+echo "🚢 Démarrage des services applicatifs..."
+docker compose -f "$COMPOSE_FILE" up -d backend frontend
+
+# 7. Nettoyage
 echo "🧹 Nettoyage des images inutilisées..."
 docker image prune -f
 
