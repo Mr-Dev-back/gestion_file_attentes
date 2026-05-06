@@ -29,7 +29,7 @@ echo "🏗 Construction et démarrage des services..."
 docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --build
 
 # Attendre que le backend ait fini de synchroniser les tables (sync alter: true)
-echo "⏳ Attente de l'initialisation du schéma..."
+echo "⏳ Attente de l'initialisation du schéma (Sequelize sync)..."
 sleep 15
 
 # 5. Migrations et Seeding base de données
@@ -39,8 +39,8 @@ docker compose -f "$COMPOSE_FILE" exec -T backend npm run db:migrate || echo "�
 echo "🌱 Injection des données de configuration (Seeding)..."
 docker compose -f "$COMPOSE_FILE" exec -T backend npm run seed:prod || echo "⚠️ Attention : Le seeding a échoué"
 
-# 6. Démarrage final du backend et frontend
-echo "🚢 Démarrage des services applicatifs..."
+# 6. Démarrage final (s'assurer que tout est up)
+echo "🚢 Finalisation du démarrage des services..."
 docker compose -f "$COMPOSE_FILE" up -d backend frontend
 
 # 7. Nettoyage
