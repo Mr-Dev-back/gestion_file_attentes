@@ -284,12 +284,12 @@ export const QuaiParameterManager = () => {
                   <div className="flex items-center justify-between text-xs py-2 border-b border-slate-100">
                     <span className="font-bold text-slate-400 uppercase tracking-widest">Étapes liées</span>
                     <div className="flex flex-wrap justify-end gap-1 max-w-[60%]">
-                      {(param.stepIds || (param.stepId ? [param.stepId] : [])).map(sid => (
+                      {(Array.isArray(param.stepIds) ? param.stepIds : (param.stepId ? [param.stepId] : [])).map(sid => (
                         <Badge key={sid} variant="outline" className="text-[8px] font-black border-primary/20 text-primary px-1 py-0 uppercase">
                           {allSteps.find(s => s.stepId === sid)?.name || 'Inconnue'}
                         </Badge>
                       ))}
-                      {(param.stepIds?.length === 0 && !param.stepId) && <span className="font-black text-slate-300">Aucune</span>}
+                      {((!Array.isArray(param.stepIds) || param.stepIds.length === 0) && !param.stepId) && <span className="font-black text-slate-300">Aucune</span>}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs py-2 border-b border-slate-100">
@@ -307,7 +307,7 @@ export const QuaiParameterManager = () => {
                   <div className="flex items-center justify-between text-xs py-2">
                     <span className="font-bold text-slate-400 uppercase tracking-widest">Accès</span>
                     <div className="flex -space-x-2">
-                      {param.allowedUsers.slice(0, 3).map((uid: string) => {
+                      {Array.isArray(param.allowedUsers) && param.allowedUsers.slice(0, 3).map((uid: string) => {
                         const user = users.find((u: User) => u.userId === uid);
                         return (
                           <div key={uid} className="h-6 w-6 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[8px] font-black" title={user?.username}>
@@ -315,12 +315,12 @@ export const QuaiParameterManager = () => {
                           </div>
                         );
                       })}
-                      {param.allowedUsers.length > 3 && (
+                      {Array.isArray(param.allowedUsers) && param.allowedUsers.length > 3 && (
                         <div className="h-6 w-6 rounded-full bg-primary text-white border-2 border-white flex items-center justify-center text-[8px] font-black">
                           +{param.allowedUsers.length - 3}
                         </div>
                       )}
-                      {param.allowedUsers.length === 0 && <span className="text-slate-300 italic">Tous</span>}
+                      {(!Array.isArray(param.allowedUsers) || param.allowedUsers.length === 0) && <span className="text-slate-300 italic">Tous</span>}
                     </div>
                   </div>
                 </div>
