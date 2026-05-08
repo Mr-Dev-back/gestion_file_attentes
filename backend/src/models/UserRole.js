@@ -17,7 +17,7 @@ UserRole.init({
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-            model: 'Role',
+            model: 'roles',
             key: 'roleId'
         },
         primaryKey: true

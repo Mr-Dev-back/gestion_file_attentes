@@ -12,7 +12,7 @@ TransitionAllowedRole.init({
     roleId: {
         type: DataTypes.UUID,
         primaryKey: true,
-        references: { model: 'Role', key: 'roleId' }
+        references: { model: 'roles', key: 'roleId' }
     }
 }, {
     sequelize,
