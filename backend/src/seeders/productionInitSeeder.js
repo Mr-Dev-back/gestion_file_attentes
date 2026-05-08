@@ -3,7 +3,8 @@ import {
     sequelize, Resource, Action, Permission, Role, RolePermission,
     Company, Site, Queue, Category, CategoryQueue,
     Workflow, WorkflowStep, WorkflowTransition,
-    QuaiParameter, QuaiQueue, WorkflowStepQueue
+    QuaiParameter, QuaiQueue, WorkflowStepQueue,
+    User, ModelHasRole, ModelHasPermission
 } from '../models/index.js';
 import fs from 'fs/promises';
 import path from 'path';
