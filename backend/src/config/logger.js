@@ -68,12 +68,10 @@ class LoggerService {
             ]
         });
 
-        // Add console transport in non-production environments
-        if (process.env.NODE_ENV !== 'production') {
-            this.logger.add(new winston.transports.Console({
-                format: consoleFormat
-            }));
-        }
+        // Console transport — toujours actif (nécessaire pour docker logs)
+        this.logger.add(new winston.transports.Console({
+            format: process.env.NODE_ENV === 'production' ? logFormat : consoleFormat
+        }));
     }
 
     getInstance() {
