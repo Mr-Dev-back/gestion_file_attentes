@@ -110,7 +110,14 @@ export async function seedProduction() {
         await WorkflowTransition.bulkCreate(processedTransitions, { transaction, ignoreDuplicates: true });
 
         // 11. QuaiParameters (Unique by label + siteId context or just label)
-        idMap = await smartSeed(QuaiParameter, dump.quaiParameters, 'label', transaction, idMap, 'quaiId');
+        const processedQuais = dump.quaiParameters.map(q => ({
+            ...q,
+            siteId: idMap[q.siteId] || q.siteId,
+            stepId: idMap[q.stepId] || q.stepId,
+            stepIds: Array.isArray(q.stepIds) ? q.stepIds.map(id => idMap[id] || id) : [],
+            allowedUsers: Array.isArray(q.allowedUsers) ? q.allowedUsers.map(id => idMap[id] || id) : []
+        }));
+        idMap = await smartSeed(QuaiParameter, processedQuais, 'label', transaction, idMap, 'quaiId');
 
         // 12. Queues (Unique by name + siteId)
         idMap = await smartSeed(Queue, dump.queues, 'name', transaction, idMap, 'queueId');

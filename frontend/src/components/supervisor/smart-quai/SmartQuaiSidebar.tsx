@@ -75,7 +75,7 @@ export function SmartQuaiSidebar({
   return (
     <motion.aside
       initial={{ x: -300 }} animate={{ x: 0 }}
-      className="w-[320px] bg-slate-50/50 backdrop-blur-xl border-r border-slate-200 flex flex-col z-20 shadow-xl"
+      className="lg:w-[320px] w-full bg-slate-50/50 backdrop-blur-xl lg:border-r border-slate-200 flex flex-col z-20 shadow-xl"
     >
       <div className="p-8 bg-white/80 border-b border-slate-200">
         <div className="flex items-center justify-between mb-4">
@@ -173,7 +173,7 @@ export function SmartQuaiSidebar({
               
               <div className="flex flex-col gap-1">
                 <p className="text-[9px] text-slate-500 font-bold uppercase truncate">
-                  {(ticket as any).driverName || (ticket as any).companyName || 'En attente'}
+                  {ticket.driverName || ticket.companyName || 'En attente'}
                 </p>
                 <div className="flex items-center gap-1.5 mt-1 border-t border-slate-100 pt-1">
                   {(() => {

@@ -11,7 +11,7 @@ async function createProdAdmin() {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash('SIBMlab@2026', salt);
 
-        const [user, created] = await User.findOrCreate({
+        const [_user, created] = await User.findOrCreate({
             where: { username: 'LABELMANAGER' },
             defaults: {
                 email: 'info.dsi@sibmci.com',

@@ -9,9 +9,19 @@ import type { Ticket } from '../../types/ticket';
 import type { Category } from '../../hooks/useCategories';
 import { cn } from '../../lib/utils';
 
+interface EntryFormData {
+    licensePlate: string;
+    driverName: string;
+    driverPhone: string;
+    orderNumber: string;
+    categoryId: string;
+    priority: number;
+    siteId?: string;
+}
+
 interface EntryFormViewProps {
-    formData: any;
-    setFormData: (data: any) => void;
+    formData: EntryFormData;
+    setFormData: React.Dispatch<React.SetStateAction<EntryFormData>>;
     customerName: string;
     setCustomerName: (name: string) => void;
     salesPerson: string;
@@ -28,42 +38,31 @@ interface EntryFormViewProps {
     hasPrinter?: boolean;
 }
 
-export function EntryFormView({
-    formData, setFormData,
-    customerName, setCustomerName,
-    salesPerson, setSalesPerson,
-    successTicket, isLoading, isValidatingOrder,
-    availableCategories, isLoadingCats,
-    onReset, onValidateOrder, onSubmit, onGoHome,
-    hasPrinter = true
-}: EntryFormViewProps) {
+interface SuccessViewProps {
+    ticket: Ticket;
+    onReset: () => void;
+    onGoHome: () => void;
+    hasPrinter: boolean;
+}
+
+function SuccessView({ ticket, onReset, onGoHome, hasPrinter }: SuccessViewProps) {
     const [countdown, setCountdown] = useState(10);
 
-    // Auto-reset on success
     useEffect(() => {
-        let timer: any;
-        if (successTicket) {
-            setCountdown(10);
-            timer = setInterval(() => {
-                setCountdown(prev => {
-                    if (prev <= 1) {
-                        onReset();
-                        onGoHome();
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
-            
-            // Auto-print if enabled
-            if (hasPrinter) {
-                handlePrint(successTicket);
-            }
-        }
+        const timer = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) {
+                    onReset();
+                    onGoHome();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
         return () => clearInterval(timer);
-    }, [successTicket]);
+    }, [onReset, onGoHome]);
 
-    const handlePrint = async (ticket: Ticket) => {
+    const handlePrintLocal = async () => {
         try {
             await api.post(`/tickets/${ticket.ticketId}/log-print`);
             printTicket(ticket);
@@ -73,43 +72,70 @@ export function EntryFormView({
         }
     };
 
-    if (successTicket) {
-        return (
-            <div className="max-w-3xl mx-auto px-6 py-12 text-center animate-in zoom-in duration-500">
-                <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] p-12 shadow-2xl border border-white">
-                    <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-success/10 mb-8">
-                        <CheckCircle2 className="h-20 w-20 text-success animate-bounce-message" />
-                    </div>
-                    
-                    <h2 className="text-5xl font-black text-text-main mb-4 tracking-tight">C'EST TOUT BON !</h2>
-                    <p className="text-2xl text-text-muted mb-8">Votre ticket est enregistré sous le numéro :</p>
-                    
-                    <div className="bg-slate-100 rounded-2xl p-6 mb-10 inline-block border-2 border-dashed border-slate-300">
-                        <span className="text-6xl font-black font-mono tracking-widest text-primary">{successTicket.ticketNumber}</span>
-                    </div>
+    // Auto-print on mount if enabled
+    useEffect(() => {
+        if (hasPrinter) {
+            handlePrintLocal();
+        }
+    }, []);
 
-                    <div className="space-y-6">
-                        <p className="text-xl font-bold text-primary animate-pulse">
-                            {hasPrinter ? "Récupérez votre ticket imprimé ci-dessous." : "Veuillez noter ce numéro ou prendre une photo."}
-                        </p>
+    return (
+        <div className="max-w-3xl mx-auto px-6 py-12 text-center animate-in zoom-in duration-500">
+            <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] p-12 shadow-2xl border border-white">
+                <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-success/10 mb-8">
+                    <CheckCircle2 className="h-20 w-20 text-success animate-bounce-message" />
+                </div>
+                
+                <h2 className="text-3xl sm:text-5xl font-black text-text-main mb-4 tracking-tight uppercase">C'est tout bon !</h2>
+                <p className="text-2xl text-text-muted mb-8">Votre ticket est enregistré sous le numéro :</p>
+                
+                <div className="bg-slate-100 rounded-2xl p-4 sm:p-6 mb-10 inline-block border-2 border-dashed border-slate-300">
+                    <span className="text-4xl sm:text-6xl font-black font-mono tracking-widest text-primary">{ticket.ticketNumber}</span>
+                </div>
+
+                <div className="space-y-6">
+                    <p className="text-xl font-bold text-primary animate-pulse">
+                        {hasPrinter ? "Récupérez votre ticket imprimé ci-dessous." : "Veuillez noter ce numéro ou prendre une photo."}
+                    </p>
+                    
+                    <div className="flex flex-col items-center gap-4 pt-4">
+                        <Button 
+                            onClick={handlePrintLocal} 
+                            variant="outline" 
+                            size="lg" 
+                            className="h-16 px-10 rounded-2xl text-xl font-bold border-2"
+                        >
+                            <Printer className="mr-3 h-6 w-6" /> Ré-imprimer
+                        </Button>
                         
-                        <div className="flex flex-col items-center gap-4 pt-4">
-                            <Button 
-                                onClick={() => handlePrint(successTicket)} 
-                                variant="outline" 
-                                size="lg" 
-                                className="h-16 px-10 rounded-2xl text-xl font-bold border-2"
-                            >
-                                <Printer className="mr-3 h-6 w-6" /> Ré-imprimer
-                            </Button>
-                            
-                            <p className="text-slate-400 text-sm font-medium pt-8">
-                                Retour à l'accueil dans <span className="font-black text-primary">{countdown}s</span>...
-                            </p>
-                        </div>
+                        <p className="text-slate-400 text-sm font-medium pt-8">
+                            Retour à l'accueil dans <span className="font-black text-primary">{countdown}s</span>...
+                        </p>
                     </div>
                 </div>
             </div>
+        </div>
+    );
+}
+
+export function EntryFormView({
+    formData, setFormData,
+    customerName,
+    successTicket, isLoading, isValidatingOrder,
+    availableCategories, isLoadingCats,
+    onReset, onValidateOrder, onSubmit, onGoHome,
+    hasPrinter = true
+}: EntryFormViewProps) {
+
+    if (successTicket) {
+        return (
+            <SuccessView 
+                key={successTicket.ticketId}
+                ticket={successTicket}
+                onReset={onReset}
+                onGoHome={onGoHome}
+                hasPrinter={hasPrinter}
+            />
         );
     }
 
@@ -125,8 +151,8 @@ export function EntryFormView({
                         <ArrowLeft className="h-8 w-8 text-primary" />
                     </Button>
                     <div>
-                        <h2 className="text-4xl font-black tracking-tight text-text-main uppercase">Enregistrement</h2>
-                        <p className="text-text-muted font-bold">Veuillez remplir les informations ci-dessous</p>
+                        <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-text-main uppercase">Enregistrement</h2>
+                        <p className="text-text-muted font-bold text-sm sm:text-base">Veuillez remplir les informations ci-dessous</p>
                     </div>
                 </div>
             </div>
@@ -277,7 +303,7 @@ export function EntryFormView({
                         type="submit"
                         disabled={isLoading || !formData.categoryId}
                         className={cn(
-                            "w-full h-24 text-3xl font-black rounded-[2rem] shadow-2xl transition-all duration-300 uppercase tracking-widest",
+                            "w-full h-20 sm:h-24 text-xl sm:text-3xl font-black rounded-[2rem] shadow-2xl transition-all duration-300 uppercase tracking-widest",
                             formData.categoryId 
                                 ? "bg-primary hover:bg-primary/90 text-white shadow-primary/30" 
                                 : "bg-slate-300 text-slate-500 cursor-not-allowed"

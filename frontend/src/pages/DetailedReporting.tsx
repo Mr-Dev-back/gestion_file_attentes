@@ -1,42 +1,33 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { analyticsApi } from '../services/analyticsApi';
 import { useSites } from '../hooks/useSites';
 import StatCards from '../components/analytics/StatCards';
-import AnalyticsTicketTable from '../components/analytics/AnalyticsTicketTable';
+import DetailedAnalyticsTicketTable from '../components/analytics/DetailedAnalyticsTicketTable';
 import TicketDetailsModal from '../components/analytics/TicketDetailsModal';
-import AnalyticsCharts from '../components/analytics/AnalyticsCharts';
 import { exportToExcel, exportToPDF } from '../utils/exportUtils';
 import { 
     Loader2, 
     AlertCircle, 
     Calendar, 
     Download, 
-    Filter, 
     RefreshCcw, 
     FileSpreadsheet,
-    FileCode,
     Building2,
-    BarChart3,
-    ClipboardList
+    History,
+    FileCode
 } from 'lucide-react';
 import { useAuthStore } from '../stores/useAuthStore';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/molecules/ui/card';
+import { Card, CardContent } from '../components/molecules/ui/card';
 import { Button } from '../components/atoms/ui/button';
 import { Input } from '../components/atoms/ui/input';
-import { cn } from '../lib/utils';
 
-export default function Reporting() {
+export default function DetailedReporting() {
     const { user } = useAuthStore();
     const { sites } = useSites();
     
     const [stats, setStats] = useState<any>(null);
-    const [reports, setReports] = useState<any>(null);
     const [ticketList, setTicketList] = useState<any[]>([]);
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
-    const [chartData, setChartData] = useState<{ hourlyVolume: any[]; categories: any[] }>({
-        hourlyVolume: [],
-        categories: []
-    });
     const [isLoading, setIsLoading] = useState(true);
     const [isExporting, setIsExporting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -55,19 +46,16 @@ export default function Reporting() {
             setIsLoading(true);
             setError(null);
             
-            const [statsRes, reportsData, listData] = await Promise.all([
+            const [statsRes, listData] = await Promise.all([
                 analyticsApi.getDashboardStats(selectedSite, dateRange.start, dateRange.end),
-                analyticsApi.getReports(dateRange.start, dateRange.end, selectedSite),
-                analyticsApi.getTicketsList(dateRange.start, dateRange.end, selectedSite)
+                analyticsApi.getDetailedTicketsList(dateRange.start, dateRange.end, selectedSite)
             ]);
             
             setStats(statsRes.summary);
-            setChartData(statsRes.charts || { hourlyVolume: [], categories: [] });
-            setReports(reportsData);
             setTicketList(listData.tickets || []);
         } catch (err) {
-            console.error("Error fetching analytics:", err);
-            setError("Impossible de charger les statistiques.");
+            console.error("Error fetching detailed analytics:", err);
+            setError("Impossible de charger les données détaillées.");
         } finally {
             setIsLoading(false);
         }
@@ -109,11 +97,11 @@ export default function Reporting() {
         <div className="space-y-8 p-6 animate-fade-in">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-black tracking-tighter flex items-center gap-3">
-                        <BarChart3 className="h-8 w-8 text-primary" />
-                        ANALYTICS & REPORTING
+                    <h2 className="text-3xl font-black tracking-tighter flex items-center gap-3 text-slate-800">
+                        <History className="h-8 w-8 text-primary" />
+                        REPORTING DÉTAILLÉ
                     </h2>
-                    <p className="text-text-muted font-medium">Indicateurs de performance et statistiques d'exploitation</p>
+                    <p className="text-text-muted font-medium">Analyse chronologique précise des flux par ticket</p>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-3">
@@ -215,96 +203,10 @@ export default function Reporting() {
 
             {stats && (
                 <div className="space-y-10">
-                    <StatCards summary={{
-                        ticketsToday: stats.ticketsTotal ?? 0,
-                        avgWaitingTime: stats.waitingTime?.avg ?? "0",
-                        avgProcessingTime: stats.processingTime?.avg ?? "0",
-                        avgTotalTime: stats.totalTime?.avg ?? "0",
-                        trucksInQueue: stats.trucksInQueue ?? 0,
-                        trucksInLoading: stats.trucksInLoading ?? 0,
-                        quaiOccupationRate: stats.quaiOccupationRate ?? "0"
-                    }} />
-
-                    {/* Visualisations */}
-                    {!isLoading && (chartData.hourlyVolume.length > 0 || chartData.categories.length > 0) && (
-                        <AnalyticsCharts 
-                            hourlyData={chartData.hourlyVolume} 
-                            categoryData={chartData.categories} 
-                        />
-                    )}
-
-                    {/* NEW: RECAP TABLE */}
-                    <AnalyticsTicketTable 
+                    <DetailedAnalyticsTicketTable 
                         tickets={ticketList} 
                         onViewDetails={(id) => setSelectedTicketId(id)}
                     />
-
-                    <div className="grid md:grid-cols-2 gap-6 pb-20">
-                        {/* Reports by Site */}
-                        <Card className="border-border/30 rounded-[2rem] overflow-hidden shadow-xl">
-                            <CardHeader className="border-b border-border/5 bg-slate-50/50">
-                                <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                                    <Building2 className="h-4 w-4" /> Flux par Site
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-0">
-                                <div className="divide-y divide-border/5">
-                                    {reports?.statsBySite?.length > 0 ? (
-                                        reports.statsBySite.map((item: any) => (
-                                            <div key={item.siteId} className="p-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                                                <div>
-                                                    <p className="font-bold text-slate-900">{item.site?.name}</p>
-                                                    <p className="text-[10px] text-text-muted font-black uppercase tracking-widest mt-0.5">Temps moyen: {parseFloat(item.avgDuration).toFixed(1)} min</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-2xl font-black text-slate-800 tracking-tighter">{item.total}</p>
-                                                    <p className="text-[10px] text-text-muted font-black uppercase tracking-widest">camions</p>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="p-12 text-center text-text-muted italic text-sm bg-slate-50/20">
-                                            Aucune donnée sur cette période.
-                                        </div>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Visual KPI Placeholder (Bar Chart like representation) */}
-                        <Card className="border-border/30 bg-primary/[0.02] rounded-[2rem] overflow-hidden shadow-xl">
-                            <CardHeader className="border-b border-border/5 bg-slate-50/50">
-                                <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                                    <Download className="h-4 w-4" /> Activité Récente
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-8">
-                                <div className="space-y-6">
-                                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-text-muted mb-8">
-                                        <span>Indicateur</span>
-                                        <span>Valeur Relative</span>
-                                    </div>
-                                    {[
-                                        { label: 'Occupation Quais', val: parseFloat(stats.quaiOccupationRate), max: 100, color: 'bg-secondary' },
-                                        { label: 'Flux Total', val: stats.ticketsTotal, max: 100, color: 'bg-success' }
-                                    ].map(kpi => (
-                                        <div key={kpi.label} className="space-y-3">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-xs font-black uppercase tracking-tight text-slate-700">{kpi.label}</span>
-                                                <span className="text-xs font-black text-primary">{kpi.val}{kpi.label.includes('Occupation') ? '%' : ''}</span>
-                                            </div>
-                                            <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                                                <div 
-                                                    className={cn("h-full transition-all duration-1000 rounded-full shadow-lg", kpi.color)} 
-                                                    style={{ width: `${Math.min((kpi.val / kpi.max) * 100, 100)}%` }} 
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
                 </div>
             )}
 
@@ -317,4 +219,3 @@ export default function Reporting() {
         </div>
     );
 }
-

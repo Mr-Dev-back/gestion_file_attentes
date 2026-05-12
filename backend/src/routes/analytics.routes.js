@@ -18,5 +18,6 @@ router.get('/stats', AnalyticsController.getStats);
 router.get('/reports', AnalyticsController.getReports);
 router.get('/export', AnalyticsController.exportData);
 router.get('/tickets', AnalyticsController.getTicketsList);
+router.get('/tickets/detailed', AnalyticsController.getDetailedTicketsList);
 
 export default router;

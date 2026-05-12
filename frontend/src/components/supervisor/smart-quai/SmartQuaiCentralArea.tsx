@@ -8,7 +8,7 @@ import { Button } from '../../../components/atoms/ui/button';
 import { Input } from '../../../components/atoms/ui/input';
 import { Timer } from '../../../components/atoms/ui/Timer';
 import { cn } from '../../../lib/utils';
-import type { Ticket, FormFieldConfig } from '../../../types/ticket';
+import type { Ticket, FormFieldConfig, TicketFormData } from '../../../types/ticket';
 import type { QuaiConfig } from '../../../hooks/useSmartQuaiLogic';
 
 interface SmartQuaiCentralAreaProps {
@@ -26,7 +26,7 @@ interface SmartQuaiCentralAreaProps {
   onIsolateTicket: (ticketId: string) => void;
   onRecallTicket: (ticketId: string) => void;
   onProcessTicket: (ticketId: string) => void;
-  onCompleteStep: (data: any) => void;
+  onCompleteStep: (data: TicketFormData) => void;
   onOpenTransfer: () => void;
 }
 
@@ -53,7 +53,7 @@ export function SmartQuaiCentralArea({
   const dynamicSchema = useMemo(() => {
     if (!config?.formConfig) return z.object({});
     const shape: Record<string, z.ZodTypeAny> = {};
-    config.formConfig.forEach((field) => {
+    config.formConfig.forEach((field: FormFieldConfig) => {
       const base: z.ZodTypeAny = field.type === 'number' ? z.coerce.number() : z.string();
       shape[field.name] = field.required ? base : base.optional().nullable();
     });
@@ -61,12 +61,12 @@ export function SmartQuaiCentralArea({
   }, [config]);
 
   const defaultValues = useMemo(() => {
-    const defaults: Record<string, any> = {};
-    config?.formConfig.forEach(f => { defaults[f.name] = f.defaultValue ?? ''; });
+    const defaults: TicketFormData = {};
+    config?.formConfig.forEach((f: FormFieldConfig) => { defaults[f.name] = f.defaultValue ?? ''; });
     return defaults;
   }, [config]);
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<Record<string, any>>({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<TicketFormData>({
     resolver: zodResolver(dynamicSchema) as unknown as ReturnType<typeof zodResolver>,
     defaultValues
   });
@@ -122,7 +122,7 @@ export function SmartQuaiCentralArea({
                     {config?.label || 'Poste de travail'}
                   </span>
                 </div>
-                <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none drop-shadow-2xl">
+                <h1 className="text-2xl lg:text-4xl font-black tracking-tighter uppercase italic leading-none drop-shadow-2xl">
                   {selectedTicket.licensePlate}
                 </h1>
                 {selectedTicket.isTransferred && (
@@ -149,11 +149,11 @@ export function SmartQuaiCentralArea({
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-1 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Chauffeur</p>
-                    <p className="text-xl font-black text-slate-900 uppercase">{(selectedTicket as any).driverName || '---'}</p>
+                    <p className="text-xl font-black text-slate-900 uppercase">{selectedTicket.driverName || '---'}</p>
                   </div>
                   <div className="space-y-1 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Société</p>
-                    <p className="text-xl font-black text-slate-900 uppercase">{(selectedTicket as any).companyName || '---'}</p>
+                    <p className="text-xl font-black text-slate-900 uppercase">{selectedTicket.companyName || '---'}</p>
                   </div>
                 </div>
 
@@ -206,7 +206,7 @@ export function SmartQuaiCentralArea({
                   <Phone className="h-4 w-4 animate-pulse" />
                   <span className="text-xs font-black uppercase tracking-[0.4em]">Appel en cours...</span>
                 </div>
-                <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none drop-shadow-2xl">
+                <h1 className="text-2xl lg:text-4xl font-black tracking-tighter uppercase italic leading-none drop-shadow-2xl">
                   {callingTicket.licensePlate}
                 </h1>
               </div>
@@ -261,10 +261,10 @@ export function SmartQuaiCentralArea({
                   <span className="bg-primary text-[9px] px-2 py-0.5 font-black tracking-widest uppercase rounded-full shadow-lg shadow-primary/20">Traitement</span>
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
                     <ChevronRight size={12} className="text-primary" />
-                    {(activeTicket as any).currentStep?.name || 'Saisie'}
+                    {activeTicket.currentStep?.name || 'Saisie'}
                   </span>
                 </div>
-                <h1 className="text-4xl font-black tracking-tighter uppercase italic leading-none drop-shadow-xl">
+                <h1 className="text-2xl lg:text-4xl font-black tracking-tighter uppercase italic leading-none drop-shadow-xl">
                   {activeTicket.licensePlate}
                 </h1>
                 {activeTicket.isTransferred && (
@@ -282,7 +282,7 @@ export function SmartQuaiCentralArea({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto bg-background p-10">
+            <div className="flex-1 overflow-y-auto bg-background p-4 lg:p-10">
               <div className="max-w-3xl mx-auto space-y-12">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -310,14 +310,17 @@ export function SmartQuaiCentralArea({
                               {field.type === 'select' ? (
                                 <select
                                   className="w-full h-16 px-6 bg-white border-2 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl outline-none transition-all text-xl font-black uppercase shadow-sm group-hover:border-slate-300"
-                                  value={value || ''} onChange={onChange}
+                                  value={value === null || value === undefined ? '' : String(value)}
+                                  onChange={onChange}
                                 >
                                   <option value="">-- CHOISIR --</option>
                                   {field.options?.map(o => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
                                 </select>
                               ) : (
                                 <Input
-                                  type={field.type} value={value || ''} onChange={onChange}
+                                  type={field.type} 
+                                  value={value === null || value === undefined ? '' : String(value)} 
+                                  onChange={onChange}
                                   placeholder={field.placeholder || field.label.toUpperCase()}
                                   className="h-16 bg-white border-2 border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl text-xl font-black uppercase px-6 shadow-sm group-hover:border-slate-300 transition-all"
                                 />

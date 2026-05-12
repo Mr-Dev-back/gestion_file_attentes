@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 import { subject } from '@casl/ability';
 import { useAbility } from '../auth/AbilityContext';
 import { useAuthStore } from '../stores/useAuthStore';
@@ -8,7 +9,7 @@ import { useSocketEvent } from './useSocketEvent';
 import { api } from '../services/api';
 import { ticketApi } from '../services/ticketApi';
 import { toast } from '../components/molecules/ui/toast';
-import type { Ticket, FormFieldConfig } from '../types/ticket';
+import type { Ticket, FormFieldConfig, SocketTicketEventPayload } from '../types/ticket';
 
 export interface QuaiConfig {
   label: string;
@@ -141,8 +142,9 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
       const response = await api.get<QuaiConfig>(`/quais/config/${quaiId}`);
       setConfig(response.data);
       document.title = `${response.data.label} | SIBM Terminal`;
-    } catch (err: any) {
-      setConfigError({ message: "Échec du chargement de la configuration du poste.", code: err.response?.status });
+    } catch (err: unknown) {
+      const apiError = err as AxiosError;
+      setConfigError({ message: "Échec du chargement de la configuration du poste.", code: apiError.response?.status });
       toast.error("Échec du chargement de la configuration du poste.");
     } finally {
       setIsLoadingConfig(false);
@@ -166,8 +168,8 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
   }, []);
 
   // WebSockets
-  useSocketEvent('ticket_updated', (payload: any) => {
-    if (['ticket_completed', 'ticket_cancelled', 'ticket_transferred'].includes(payload.event)) {
+  useSocketEvent('ticket_updated', (payload: SocketTicketEventPayload) => {
+    if (payload.event && ['ticket_completed', 'ticket_cancelled', 'ticket_transferred'].includes(payload.event)) {
       refetchHistory();
     }
   });
@@ -231,6 +233,7 @@ export function useSmartQuaiLogic(quaiIdParam?: string) {
     refetchHistory,
     centralView,
     authStore,
+    tick,
     workflow: {
       isLoadingTickets,
       isCalling,

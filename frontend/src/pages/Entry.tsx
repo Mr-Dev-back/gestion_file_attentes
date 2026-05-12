@@ -7,13 +7,28 @@ import { EntryFormView } from '../components/entry/EntryFormView';
 import { api } from '../services/api';
 import { Loader2 } from 'lucide-react';
 
+interface KioskConfig {
+    kioskId: string;
+    name: string;
+    siteId?: string;
+    config?: {
+        primaryColor?: string;
+        welcomeMessage?: string;
+        showWeather?: boolean;
+    };
+    capabilities?: {
+        hasPrinter?: boolean;
+    };
+}
+
 export default function Entry() {
     const { kioskId } = useParams();
     const [viewMode, setViewMode] = useState<'HOME' | 'ENTRY'>('HOME');
-    const [kioskConfig, setKioskConfig] = useState<any>(null);
+    const [kioskConfig, setKioskConfig] = useState<KioskConfig | null>(null);
     const [isLoadingKiosk, setIsLoadingKiosk] = useState(!!kioskId);
     
     const entryFormState = useEntryForm();
+    const { setFormData } = entryFormState;
 
     // Fetch Kiosk Config if ID is provided
     useEffect(() => {
@@ -25,7 +40,7 @@ export default function Entry() {
                 setKioskConfig(data);
                 // Pre-select site if kiosk has one
                 if (data.siteId) {
-                    entryFormState.setFormData(prev => ({ ...prev, siteId: data.siteId }));
+                    setFormData(prev => ({ ...prev, siteId: data.siteId }));
                 }
             } catch (error) {
                 console.error("Erreur chargement borne:", error);
@@ -35,7 +50,7 @@ export default function Entry() {
         };
 
         fetchKiosk();
-    }, [kioskId]);
+    }, [kioskId, setFormData]);
 
     if (isLoadingKiosk) {
         return (
@@ -65,7 +80,6 @@ export default function Entry() {
                 
                 <EntryHomeView 
                     welcomeMessage={welcomeMsg}
-                    showWeather={kioskConfig?.config?.showWeather}
                     queuedTrucks={entryFormState.tickets.filter(t => t.status === 'EN_ATTENTE')} 
                     onStartEntry={() => setViewMode('ENTRY')} 
                 />

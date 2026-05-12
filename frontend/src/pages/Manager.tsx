@@ -113,13 +113,7 @@ export default function Manager() {
               <Route path="alerts" element={<ManagerAlerts />} />
 
               {/* 3. Analyses & Rapports */}
-              <Route path="reports" element={<ArchiveSearch />} />
-              <Route path="stats/categories" element={<CategoryDistribution />} />
               <Route path="stats/timing" element={<ManagerTiming />} />
-
-              {/* 4. Contrôle */}
-              <Route path="history" element={<ArchiveSearch />} />
-              <Route path="audit" element={<ManagerAudit />} />
 
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="dashboard" replace />} />

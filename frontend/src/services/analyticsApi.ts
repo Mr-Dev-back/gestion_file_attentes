@@ -13,6 +13,10 @@ export const analyticsApi = {
         const { data } = await api.get('/analytics/tickets', { params: { startDate, endDate, siteId } });
         return data;
     },
+    getDetailedTicketsList: async (startDate?: string, endDate?: string, siteId = 'global'): Promise<any> => {
+        const { data } = await api.get('/analytics/tickets/detailed', { params: { startDate, endDate, siteId } });
+        return data;
+    },
     exportCSV: async (siteId = 'global', startDate: string, endDate: string) => {
         const response = await api.get('/analytics/export', { 
             params: { siteId, startDate, endDate },

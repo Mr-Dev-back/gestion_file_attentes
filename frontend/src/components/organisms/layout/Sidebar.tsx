@@ -62,9 +62,12 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
       )}
     >
       {/* Header : Logo & Toggle */}
-      <div className="flex h-20 items-center justify-between px-5 border-b border-slate-50">
+      <div className={cn(
+        "flex h-20 items-center border-b border-slate-50 transition-all duration-300",
+        collapsed ? "justify-center px-0" : "justify-between px-5"
+      )}>
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center shadow-md border border-slate-100 shrink-0 p-2">
+          <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-md border border-slate-100 shrink-0 p-1.5">
             <img src="/sibm.png" alt="Logo SIBM" className="h-full w-full object-contain" />
           </div>
           <AnimatePresence>
@@ -82,18 +85,18 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
           </AnimatePresence>
         </div>
         
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-primary transition-all active:scale-90"
-        >
-          <motion.div animate={{ rotate: collapsed ? 180 : 0 }}>
+        {!collapsed && (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-primary transition-all active:scale-90"
+          >
             <ChevronLeft size={18} />
-          </motion.div>
-        </button>
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1.5 no-scrollbar">
+      <nav className="flex-1 overflow-y-auto overflow-x-visible p-3 space-y-1.5 no-scrollbar">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-10 gap-3 text-slate-300">
             <Loader2 className="h-5 w-5 animate-spin text-primary/50" />
@@ -121,7 +124,8 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                         to={subItem.path} 
                         icon={subItem.icon} 
                         label={subItem.label} 
-                        collapsed={collapsed} 
+                        collapsed={collapsed}
+                        end={subItem.path === '/'}
                       />
                     ))}
                   </div>
@@ -134,7 +138,8 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                   to={item.path} 
                   icon={item.icon} 
                   label={item.label} 
-                  collapsed={collapsed} 
+                  collapsed={collapsed}
+                  end={item.path === '/'}
                 />
               );
             }
@@ -144,6 +149,14 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
 
       {/* Footer */}
       <div className="p-3 border-t border-slate-50">
+        {collapsed ? (
+          <button
+            onClick={() => setCollapsed(false)}
+            className="w-full h-11 flex items-center justify-center text-slate-400 hover:bg-slate-50 rounded-xl transition-all mb-2"
+          >
+            <Menu size={18} />
+          </button>
+        ) : null}
         <button
           onClick={logout}
           className={cn(
@@ -170,14 +183,15 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   );
 }
 
-function SidebarLink({ to, icon: Icon, label, collapsed }: { to: string, icon: any, label: string, collapsed: boolean }) {
+function SidebarLink({ to, icon: Icon, label, collapsed, end }: { to: string, icon: any, label: string, collapsed: boolean, end?: boolean }) {
   return (
     <NavLink
       to={to}
+      end={end}
       title={collapsed ? label : undefined}
       className={({ isActive }) =>
         cn(
-          'flex items-center rounded-xl transition-all duration-300 relative group overflow-hidden h-11',
+          'flex items-center rounded-xl transition-all duration-300 relative group h-11',
           collapsed ? 'justify-center mx-1' : 'px-3 mx-1',
           isActive
             ? 'bg-[#008F39] text-white shadow-lg shadow-[#008F39]/40 font-semibold'

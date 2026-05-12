@@ -1,6 +1,42 @@
 import { Op, fn, col, literal } from 'sequelize';
-import { Ticket, Site, QuaiParameter, Category } from '../models/index.js';
+import { Ticket, Site, QuaiParameter, Category, TicketActionLog, WorkflowStep } from '../models/index.js';
 import logger from '../config/logger.js';
+
+/**
+ * Helper pour construire le filtre de site en fonction du rôle et des accès de l'utilisateur
+ */
+const getSiteFilter = async (user, siteId) => {
+    // L'administrateur voit tout par défaut ou filtre par site spécifique
+    if (user.role === 'ADMINISTRATOR') {
+        if (siteId && siteId !== 'global') return { siteId };
+        return {};
+    }
+
+    // Si un site spécifique est demandé
+    if (siteId && siteId !== 'global') {
+        // Optionnel : vérifier ici si l'utilisateur a réellement accès à ce site
+        return { siteId };
+    }
+
+    // Si "global" est demandé
+    // 1. Si l'utilisateur est rattaché à un site précis
+    if (user.siteId) {
+        return { siteId: user.siteId };
+    }
+
+    // 2. Si c'est un Manager rattaché à une compagnie (voit tous les sites de sa compagnie)
+    if (user.companyId) {
+        const sites = await Site.findAll({ 
+            where: { companyId: user.companyId }, 
+            attributes: ['siteId'] 
+        });
+        const siteIds = sites.map(s => s.siteId);
+        return { siteId: { [Op.in]: siteIds } };
+    }
+
+    // 3. Par défaut, on restreint à son site (même si null)
+    return { siteId: user.siteId };
+};
 
 const AnalyticsController = {
     /**
@@ -13,22 +49,17 @@ const AnalyticsController = {
 
             // Construction de la clause WHERE
             let whereClause = {};
-            
+
             // Filtre Date
             const start = startDate ? new Date(startDate) : new Date(new Date().setHours(0, 0, 0, 0));
             const end = endDate ? new Date(endDate) : new Date();
-            
-            // Ajuster la fin de journée pour inclure tous les tickets du jour
             if (endDate) end.setHours(23, 59, 59, 999);
 
             whereClause.arrivedAt = { [Op.between]: [start, end] };
-            
+
             // Filtre Site (RBAC)
-            if (user.role !== 'ADMINISTRATOR' && siteId !== 'global') {
-                whereClause.siteId = user.siteId;
-            } else if (siteId && siteId !== 'global') {
-                whereClause.siteId = siteId;
-            }
+            const siteFilter = await getSiteFilter(user, siteId);
+            whereClause = { ...whereClause, ...siteFilter };
 
             const [totalTickets, pending, processing, times, totalQuais, occupiedQuais, hourlyVolume, categoryDistribution] = await Promise.all([
                 Ticket.count({ where: whereClause }),
@@ -43,7 +74,7 @@ const AnalyticsController = {
                     where: { ...whereClause, status: 'COMPLETE' },
                     raw: true
                 }),
-                QuaiParameter.count({ where: siteId && siteId !== 'global' ? { siteId } : {} }),
+                QuaiParameter.count({ where: siteId && siteId !== 'global' ? { siteId } : (siteFilter.siteId ? { siteId: siteFilter.siteId } : {}) }),
                 Ticket.count({ where: { ...whereClause, status: { [Op.in]: ['EN_TRAITEMENT', 'PROCESSING'] }, quaiId: { [Op.ne]: null } } }),
                 Ticket.findAll({
                     attributes: [
@@ -110,17 +141,12 @@ const AnalyticsController = {
             const end = endDate ? new Date(endDate) : new Date();
             if (endDate) end.setHours(23, 59, 59, 999);
 
+            const siteFilter = await getSiteFilter(user, siteId);
             const whereClause = {
                 arrivedAt: { [Op.between]: [start, end] },
-                status: 'COMPLETE'
+                status: 'COMPLETE',
+                ...siteFilter
             };
-
-            // Filtre Site (RBAC) - Pour le reporting consolidé ou spécifique
-            if (user.role !== 'ADMINISTRATOR' && (!siteId || siteId === 'global')) {
-                whereClause.siteId = user.siteId;
-            } else if (siteId && siteId !== 'global') {
-                whereClause.siteId = siteId;
-            }
 
             const statsBySite = await Ticket.findAll({
                 attributes: [
@@ -153,10 +179,14 @@ const AnalyticsController = {
     exportData: async (req, res) => {
         try {
             const { startDate, endDate, siteId } = req.query;
+            const { user } = req;
+
+            const siteFilter = await getSiteFilter(user, siteId);
+
             const tickets = await Ticket.findAll({
                 where: {
                     arrivedAt: { [Op.between]: [new Date(startDate), new Date(endDate)] },
-                    ...(siteId && siteId !== 'global' ? { siteId } : {})
+                    ...siteFilter
                 },
                 include: [{ model: Site, as: 'site', attributes: ['name'] }],
                 order: [['arrivedAt', 'DESC']]
@@ -188,16 +218,12 @@ const AnalyticsController = {
             const end = endDate ? new Date(endDate) : new Date();
             if (endDate) end.setHours(23, 59, 59, 999);
 
+            const siteFilter = await getSiteFilter(user, siteId);
             let whereClause = { 
                 status: 'COMPLETE',
-                arrivedAt: { [Op.between]: [start, end] }
+                arrivedAt: { [Op.between]: [start, end] },
+                ...siteFilter
             };
-
-            if (user.role !== 'ADMINISTRATOR' && (!siteId || siteId === 'global')) {
-                whereClause.siteId = user.siteId;
-            } else if (siteId && siteId !== 'global') {
-                whereClause.siteId = siteId;
-            }
 
             const tickets = await Ticket.findAll({
                 where: whereClause,
@@ -215,10 +241,54 @@ const AnalyticsController = {
             logger.error('Analytics tickets list error:', error);
             res.status(500).json({ error: error.message });
         }
+    },
+
+    /**
+     * Liste détaillée des tickets avec tout l'historique des actions
+     */
+    getDetailedTicketsList: async (req, res) => {
+        try {
+            const { siteId, startDate, endDate, limit = 500, offset = 0 } = req.query;
+            const { user } = req;
+
+            const start = startDate ? new Date(startDate) : new Date(new Date().setHours(0, 0, 0, 0));
+            const end = endDate ? new Date(endDate) : new Date();
+            if (endDate) end.setHours(23, 59, 59, 999);
+
+            const siteFilter = await getSiteFilter(user, siteId);
+            let whereClause = { 
+                status: 'COMPLETE',
+                arrivedAt: { [Op.between]: [start, end] },
+                ...siteFilter
+            };
+
+            const tickets = await Ticket.findAll({
+                where: whereClause,
+                include: [
+                    { model: Site, as: 'site', attributes: ['name'] },
+                    { model: Category, as: 'category', attributes: ['name'] },
+                    { 
+                        model: TicketActionLog, 
+                        as: 'actionLogs',
+                        include: [{ model: WorkflowStep, as: 'step', attributes: ['name'] }]
+                    }
+                ],
+                order: [
+                    ['completedAt', 'DESC'],
+                    [{ model: TicketActionLog, as: 'actionLogs' }, 'occurredAt', 'ASC']
+                ],
+                limit: parseInt(limit) || 500,
+                offset: parseInt(offset) || 0
+            });
+
+            res.json({ tickets });
+        } catch (error) {
+            logger.error('Analytics detailed tickets list error:', error);
+            res.status(500).json({ error: error.message });
+        }
     }
 };
 
-
-
 export default AnalyticsController;
+
 

@@ -6,13 +6,12 @@ import type { Ticket } from '../../types/ticket';
 
 interface EntryHomeViewProps {
     welcomeMessage: string;
-    showWeather?: boolean;
     queuedTrucks: Ticket[];
     onStartEntry: () => void;
 }
 
 
-export function EntryHomeView({ welcomeMessage, showWeather, queuedTrucks, onStartEntry }: EntryHomeViewProps) {
+export function EntryHomeView({ welcomeMessage, queuedTrucks, onStartEntry }: EntryHomeViewProps) {
     const navigate = useNavigate();
 
     return (
@@ -84,7 +83,7 @@ export function EntryHomeView({ welcomeMessage, showWeather, queuedTrucks, onSta
                         {queuedTrucks.length} Camions
                     </Badge>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     {queuedTrucks.length === 0 ? (
                         <p className="col-span-full text-center py-6 text-text-muted italic bg-surface/50 rounded-lg border border-dashed">
                             Aucun camion en attente actuellement.

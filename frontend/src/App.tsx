@@ -20,6 +20,7 @@ import AdminDashboard from './pages/dashboards/AdminDashboard';
 import Supervisor from './pages/Supervisor';
 import QueueView from './pages/QueueView';
 import Reporting from './pages/Reporting';
+import DetailedReporting from './pages/DetailedReporting';
 import Manager from './pages/Manager';
 import SmartQuai from './pages/SmartQuai';
 import { MainLayout } from './layouts/MainLayout';
@@ -133,8 +134,14 @@ function App() {
                 } />
                 
                 <Route path="/reporting" element={
-                  <ProtectedRoute allowedRoles={['ADMINISTRATOR', 'SUPERVISOR', 'MANAGER']}>
+                  <ProtectedRoute allowedRoles={['MANAGER']}>
                     <Reporting />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/reporting-detailed" element={
+                  <ProtectedRoute allowedRoles={['MANAGER']}>
+                    <DetailedReporting />
                   </ProtectedRoute>
                 } />
 

@@ -13,7 +13,7 @@ export function SmartQuaiHistory({ completedTickets, onOpenHistory }: SmartQuaiH
   return (
     <motion.aside
       initial={{ x: 250 }} animate={{ x: 0 }}
-      className="w-[300px] bg-slate-50/50 backdrop-blur-xl border-l border-slate-200 flex flex-col z-20"
+      className="lg:w-[300px] w-full bg-slate-50/50 backdrop-blur-xl lg:border-l border-slate-200 flex flex-col z-20"
     >
       <div className="p-8 bg-white/80 border-b border-slate-200">
         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">Historique</h2>

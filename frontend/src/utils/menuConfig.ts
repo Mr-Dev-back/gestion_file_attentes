@@ -4,15 +4,12 @@ import {
   ListOrdered,
   Settings,
   BarChart3,
-  Truck,
   Cpu,
   ShieldCheck,
   Activity,
   Tags,
   Globe,
   GitBranch,
-  ClipboardCheck,
-  FileText,
   Building2,
   History,
   Zap,
@@ -81,7 +78,14 @@ const allMenuItems: MenuElement[] = [
     label: 'Rapports',
     icon: BarChart3,
     path: '/reporting',
-    roles: ['ADMINISTRATOR', 'MANAGER', 'SUPERVISOR'],
+    roles: ['MANAGER'],
+  },
+  {
+    isGroup: false,
+    label: 'Rapports Détaillés',
+    icon: History,
+    path: '/reporting-detailed',
+    roles: ['MANAGER'],
   },
 ];
 
@@ -95,7 +99,6 @@ const adminMenuGroups: MenuGroup[] = [
     icon: LayoutDashboard,
     items: [
       { label: "Vue d'ensemble", path: "/dashboard/admin", icon: LayoutDashboard },
-      { label: "Reporting", path: "/reporting", icon: FileText },
       { label: "Audit & Logs", path: "/admin/audit", icon: History }
     ]
   },
@@ -146,40 +149,23 @@ const adminMenuGroups: MenuGroup[] = [
 const managerMenuGroups: MenuGroup[] = [
   {
     isGroup: true,
-    title: "Pilotage Société",
-    icon: Globe,
+    title: "Pilotage & Performance",
+    icon: LayoutDashboard,
     items: [
-      { label: "Cartographie des Sites", path: "/manager/map", icon: Globe },
       { label: "Performance Globale", path: "/manager/dashboard", icon: LayoutDashboard },
-      { label: "Comparatif Sites", path: "/manager/benchmark", icon: BarChart3 }
+      { label: "Cartographie des Sites", path: "/manager/map", icon: Globe },
+      { label: "Reporting Synthétique", path: "/reporting", icon: BarChart3 }
     ]
   },
   {
     isGroup: true,
-    title: "Flux & Workflows",
-    icon: GitBranch, 
+    title: "Analyse des Flux",
+    icon: Activity,
     items: [
+      { label: "Reporting Détaillé", path: "/reporting-detailed", icon: History },
       { label: "Suivi des Workflows", path: "/manager/workflows/monitor", icon: GitBranch },
-      { label: "Gestion des Alertes", path: "/manager/alerts", icon: Activity }
-    ]
-  },
-  {
-    isGroup: true,
-    title: "Analyses & Rapports",
-    icon: BarChart3,
-    items: [
-      { label: "Rapports d'Activité", path: "/manager/reports", icon: FileText },
-      { label: "Statistiques Produits", path: "/manager/stats/categories", icon: BarChart3 },
+      { label: "Gestion des Alertes", path: "/manager/alerts", icon: Activity },
       { label: "Temps de Traitement", path: "/manager/stats/timing", icon: Activity }
-    ]
-  },
-  {
-    isGroup: true,
-    title: "Contrôle",
-    icon: ClipboardCheck,
-    items: [
-      { label: "Historique des Tickets", path: "/manager/history", icon: History },
-      { label: "Audit des Opérations", path: "/manager/audit", icon: ClipboardCheck }
     ]
   }
 ];
@@ -190,21 +176,20 @@ const managerMenuGroups: MenuGroup[] = [
 const supervisorMenuGroups: MenuGroup[] = [
   {
     isGroup: true,
-    title: "Régulation Site",
+    title: "Pilotage Opérationnel",
     icon: Zap,
     items: [
       { label: "Synoptique Workflow", path: "/supervisor/workflow-view", icon: Zap },
-      { label: "Suivi Temps Réel",   path: "/supervisor/live-tracking",  icon: Activity },
-      { label: "Recherche Véhicule", path: "/supervisor/search",         icon: Search }
+      { label: "Tracking Véhicules", path: "/supervisor/live-tracking", icon: MapPinned },
+      { label: "Recherche & Archives", path: "/supervisor/search", icon: Search }
     ]
   },
   {
     isGroup: true,
-    title: "Analyse & Contrôle",
+    title: "Analyse & Performance",
     icon: TrendingUp,
     items: [
-      { label: "Stats de mon Site",  path: "/supervisor/dashboard",      icon: TrendingUp },
-      { label: "Cartographie",       path: "/supervisor/live-tracking",  icon: MapPinned }
+      { label: "Statistiques Site", path: "/supervisor/dashboard", icon: TrendingUp }
     ]
   }
 ];
@@ -245,98 +230,70 @@ export const getMenuItems = (
 
   const role = user.role as UserRole;
 
-  // Si l'utilisateur est administrateur, on lui renvoie uniquement la structure stricte de l'admin
+  // 0. Préparation des quais dynamiques (si applicables)
+  const dynamicQuaiGroup: MenuGroup | null = dynamicQuais.length > 0 ? {
+    isGroup: true,
+    title: 'Mes Quais',
+    icon: Zap,
+    items: dynamicQuais.map((q) => ({
+      label: q.label,
+      path: `/quai/${q.quaiId}`,
+      icon: Zap,
+    })),
+  } : null;
+
+  // 1. Structure stricte pour l'Administrateur (Pas de Borne/Entrée ici)
   if (role === 'ADMINISTRATOR') {
     return [...adminMenuGroups];
   }
 
-  // Si l'utilisateur est manager, on lui renvoie la structure par pôles Manager (la borne/entrée est exclue des groupes, on la remet si on veut, ou juste ses pôles)
+  // 2. Structure pour le Manager
   if (role === 'MANAGER') {
-    const entryItem: MenuItem = { isGroup: false, label: 'Borne / Entrée', icon: Home, path: '/' };
     return [
-      entryItem,
+      { isGroup: false, label: 'Borne / Entrée', icon: Home, path: '/' },
       ...managerMenuGroups
     ];
   }
 
-  // Si l'utilisateur est superviseur, il garde la vue des quais et a accès à son tableau de bord opérationnel
+  // 3. Structure pour le Superviseur (Supervision uniquement)
   if (role === 'SUPERVISOR') {
-    const dynamicQuaiGroup: MenuGroup | null = dynamicQuais.length > 0 ? {
-      isGroup: true,
-      title: "Accès Quais",
-      icon: ListOrdered,
-      items: dynamicQuais.map((quai) => ({
-        label: quai.label,
-        icon: ListOrdered,
-        path: `/quai/${quai.quaiId}`,
-      }))
-    } : null;
-    
-    const entryItem: MenuItem = { isGroup: false, label: 'Borne / Entrée', icon: Home, path: '/' };
     return [
-      entryItem,
-      ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : []),
-      ...supervisorMenuGroups
+      ...supervisorMenuGroups,
+      ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : [])
     ];
   }
 
-  // Comportement pour l'Agent de Quai
+  // 4. Agent de Quai / Guérite
   if (role === 'AGENT_QUAI' || role === 'AGENT_GUERITE') {
     return [
-      {
-        isGroup: false,
-        label: 'Poste Opérationnel',
-        icon: Zap,
-        path: '/operational',
-      },
-      {
-        isGroup: false,
-        label: "File d'Attente",
-        icon: ListOrdered,
-        path: '/queue',
-      }
+      { isGroup: false, label: 'Poste Opérationnel', icon: Zap, path: '/operational' },
+      { isGroup: false, label: "File d'Attente", icon: ListOrdered, path: '/queue' },
+      ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : [])
     ];
   }
 
-  // Rôle Exploitation : accès opérationnel + pilotage de base
+  // 5. Exploitation
   if (role === 'EXPLOITATION') {
     return [
       { isGroup: false, label: 'Poste Opérationnel', icon: Zap, path: '/operational' },
       { isGroup: false, label: "File d'Attente", icon: ListOrdered, path: '/queue' },
-      { isGroup: false, label: 'Rapports', icon: BarChart3, path: '/reporting' },
+      ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : [])
     ];
   }
 
-  // Fallback for other roles (like Supervisor)
+  // Fallback et déduplication pour les autres cas
   const dashboardItem = dashboardMenuItems[role];
-
   const accessibleStaticItems = allMenuItems.filter((item) => {
     if (item.isGroup) return false;
     if (item.roles && !item.roles.includes(role)) return false;
-    if (item.requiredPermission) {
-      return user.permissions?.includes(item.requiredPermission) || 
-             user.permissionCodes?.includes(item.requiredPermission);
-    }
     return true;
   }) as MenuItem[];
 
-  const dynamicQuaiGroup: MenuGroup | null = dynamicQuais.length > 0 ? {
-    isGroup: true,
-    title: "Accès Quais",
-    icon: ListOrdered,
-    items: dynamicQuais.map((quai) => ({
-      label: quai.label,
-      icon: ListOrdered,
-      path: `/quai/${quai.quaiId}`,
-    }))
-  } : null;
-
   return [
-    ...(dashboardItem ? [{ ...(dashboardItem as MenuItem), isGroup: false as const }] : []),
-    ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : []),
+    ...(dashboardItem ? [{ ...(dashboardItem as MenuItem), isGroup: false } as MenuItem] : []),
     ...accessibleStaticItems,
+    ...(dynamicQuaiGroup ? [dynamicQuaiGroup] : [])
   ].filter((item, index, self) => {
-      // Déduplication par path
       const firstIndex = self.findIndex((t) => !t.isGroup && !item.isGroup && t.path === item.path);
       return index === firstIndex || item.isGroup;
   });
