@@ -8,9 +8,22 @@ async function seedDemoTickets() {
 
         const site = await Site.findOne({ order: [['createdAt', 'ASC']], transaction });
         
-        // NETTOYAGE : Supprimer les anciens tickets pour repartir à zéro (Optionnel mais conseillé pour la démo)
         if (site) {
-            await Ticket.destroy({ where: { siteId: site.siteId }, transaction });
+            console.log('🧹 Nettoyage des anciennes données liées...');
+            const ticketIds = (await Ticket.findAll({ 
+                where: { siteId: site.siteId }, 
+                attributes: ['ticketId'],
+                transaction 
+            })).map(t => t.ticketId);
+
+            if (ticketIds.length > 0) {
+                // Supprimer dans l'ordre inverse des dépendances
+                await sequelize.model('TicketActionLog').destroy({ where: { ticketId: { [Op.in]: ticketIds } }, transaction });
+                await sequelize.model('TicketStep').destroy({ where: { ticketId: { [Op.in]: ticketIds } }, transaction });
+                await sequelize.model('TicketVehicleInfo').destroy({ where: { ticketId: { [Op.in]: ticketIds } }, transaction });
+                await sequelize.model('TicketLogistic').destroy({ where: { ticketId: { [Op.in]: ticketIds } }, transaction });
+                await Ticket.destroy({ where: { ticketId: { [Op.in]: ticketIds } }, transaction });
+            }
             console.log('🗑️ Anciens tickets supprimés.');
         }
 
