@@ -80,7 +80,7 @@ export default function Entry() {
                 
                 <EntryHomeView 
                     welcomeMessage={welcomeMsg}
-                    queuedTrucks={entryFormState.tickets.filter(t => t.status === 'EN_ATTENTE')} 
+                    queuedTrucks={(Array.isArray(entryFormState.tickets) ? entryFormState.tickets : []).filter(t => t.status === 'EN_ATTENTE')} 
                     onStartEntry={() => setViewMode('ENTRY')} 
                 />
             </div>

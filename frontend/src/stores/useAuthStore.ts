@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-
-
 export type UserRole =
     | 'ADMINISTRATOR'
     | 'MANAGER'
@@ -11,7 +9,7 @@ export type UserRole =
     | 'AGENT_GUERITE'
     | 'EXPLOITATION';
 
-interface User {
+export interface User {
     userId: string;
     username: string;
     role: UserRole;
@@ -25,7 +23,7 @@ interface User {
     };
     department?: string;
     permissions?: string[];
-    rules?: any[];
+    rules?: Record<string, unknown>[];
 }
 
 interface AuthState {

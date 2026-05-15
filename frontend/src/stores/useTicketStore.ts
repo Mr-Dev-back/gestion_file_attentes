@@ -24,11 +24,13 @@ export const useTicketStore = create<TicketStore>((set) => ({
     fetchTickets: async (filters) => {
         set({ isLoading: true });
         try {
-            const tickets = await ticketApi.getTickets(filters);
+            const data = await ticketApi.getTickets(filters);
+            // Sécurité : S'assurer que 'data' est bien un tableau
+            const tickets = Array.isArray(data) ? data : [];
             set({ tickets, isLoading: false });
         } catch (error) {
             console.error('Failed to fetch tickets:', error);
-            set({ isLoading: false });
+            set({ tickets: [], isLoading: false });
         }
     },
 

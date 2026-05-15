@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Zap, ShieldAlert, Loader2 } from 'lucide-react';
 import type { Ticket, WorkflowStep } from '../../types/ticket';
 import { api } from '../../services/api';
-import { useAuthStore } from '../../stores/useAuthStore';
+import { useAuthStore, type User } from '../../stores/useAuthStore';
 import { updateVehiclePriority, forceStepJump } from '../../services/supervisorApi';
 import { Button } from '../atoms/ui/button';
 import { toast } from 'sonner';
@@ -41,13 +41,14 @@ export function WorkflowSynoptic() {
     try {
       const response = await api.get<Ticket[]>('/tickets', {
         params: {
-          siteId: (user as any)?.siteId,
+          siteId: (user as User)?.siteId,
           status: ['EN_ATTENTE', 'CALLING', 'PROCESSING', 'ISOLE'],
         },
       });
-      setTickets(response.data);
+      setTickets(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Erreur refresh tickets:', err);
+      setTickets([]);
     }
   };
 
@@ -55,7 +56,7 @@ export function WorkflowSynoptic() {
     const init = async () => {
       try {
         setIsLoading(true);
-        const siteId = (user as any)?.siteId;
+        const siteId = (user as User)?.siteId;
         if (!siteId) return;
 
         // Fetch workflow steps for this site
@@ -79,7 +80,7 @@ export function WorkflowSynoptic() {
     init();
     const interval = setInterval(fetchTickets, 10_000);
     return () => clearInterval(interval);
-  }, [(user as any)?.siteId]);
+  }, [(user as User)?.siteId]);
 
   const handlePriority = async (ticketId: string, current: number) => {
     const next = current >= 2 ? 0 : current + 1;
@@ -117,7 +118,7 @@ export function WorkflowSynoptic() {
   };
 
   const getZoneTickets = (order: number) =>
-    getSortedQueue(tickets.filter(t => t.currentStep?.orderNumber === order));
+    getSortedQueue((Array.isArray(tickets) ? tickets : []).filter(t => t.currentStep?.orderNumber === order));
 
   if (isLoading) {
     return (

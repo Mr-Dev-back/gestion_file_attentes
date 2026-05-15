@@ -217,7 +217,7 @@ export function EntryFormView({
                         </CardHeader>
                         <CardContent className="space-y-6 p-8 pt-0">
                             <div className="space-y-3">
-                                <label className="text-xs font-black text-text-muted uppercase tracking-widest">Bon de Commande (SAP/SAGE)</label>
+                                <label className="text-xs font-black text-text-muted uppercase tracking-widest">Bon de Commande (SAGE)</label>
                                 <div className="flex gap-3">
                                     <Input
                                         placeholder="N° DE COMMANDE"
