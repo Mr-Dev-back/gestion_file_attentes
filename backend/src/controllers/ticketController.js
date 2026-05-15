@@ -245,11 +245,12 @@ class TicketController {
             const where = {};
             if (siteId) where.siteId = siteId;
             
-            // [RBAC] Restriction stricte pour l'AGENT_QUAI
-            // Il ne voit que les tickets de sa file d'attente assignée
-            if (req.user && await req.user.hasRole('AGENT_QUAI') && req.user.assignedQueueId) {
+            // [RBAC] Restriction intelligente pour l'AGENT_QUAI
+            // S'il n'est pas sur un Quai spécifique, on le restreint à sa file par défaut.
+            // S'il est sur un Quai, la logique plus bas (effectiveQueueId) prendra le relais.
+            if (req.user && await req.user.hasRole('AGENT_QUAI') && req.user.assignedQueueId && !quaiId) {
                 where.queueId = req.user.assignedQueueId;
-            } else if (categoryId) {
+            } else if (categoryId && !quaiId) {
                 where.categoryId = categoryId;
             }
             
